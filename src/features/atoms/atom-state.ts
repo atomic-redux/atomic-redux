@@ -1,4 +1,6 @@
+import { ValueOrGetter } from "./getter-setter-utils";
+
 export interface AtomState<T> {
     key: string;
-    default: T;
+    get: ValueOrGetter<T>;
 }

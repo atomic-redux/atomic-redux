@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import styles from './Counter.module.css';
-import { useAtomicState } from '../atoms/hooks/use-atomic-state';
-import { counterAtom } from './counter-atom';
+import { useAtomicState, useAtomicValue } from '../atoms/hooks/use-atomic-state';
+import { counterAtom, multipliedAtom } from './counter-atom';
 
 export function Counter() {
   const [count, setCount] = useAtomicState(counterAtom);
+  const multipliedCount = useAtomicValue(multipliedAtom);
   const [incrementAmount, setIncrementAmount] = useState('2');
 
   const incrementValue = Number(incrementAmount) || 0;
@@ -27,6 +28,9 @@ export function Counter() {
         >
           +
         </button>
+      </div>
+      <div className={styles.row}>
+        <span className={styles.value}>x2: {multipliedCount}</span>
       </div>
       <div className={styles.row}>
         <input

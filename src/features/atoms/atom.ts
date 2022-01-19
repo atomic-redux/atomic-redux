@@ -8,6 +8,6 @@ export type AtomInitialiser<T> = {
 export function atom<T>(initialiser: AtomInitialiser<T>): AtomState<T> {
     return {
         key: initialiser.key,
-        default: initialiser.default
+        get: initialiser.default
     }
 }

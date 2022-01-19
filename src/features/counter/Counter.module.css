@@ -21,6 +21,14 @@
   font-family: 'Courier New', Courier, monospace;
 }
 
+.value {
+  font-size: 60px;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-top: 2px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
 .button {
   appearance: none;
   background: none;

@@ -1,25 +1,19 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AtomicStoreState, resetAtom, setAtom } from "../atom-slice";
+import { AtomicStoreState, getAtomValueFromState, resetAtom, setAtom } from "../atom-slice";
 import { AtomState } from "../atom-state";
-
-type ValueOrSetterFunction<T> = T | ((state: T) => T);
+import { ValueOrSetter } from "../getter-setter-utils";
 
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
 
 export const useAtomicValue = <T>(atom: AtomState<T>): T => {
-    return useAtomicSelector(state => {
-        if (atom.key in state.atoms.values) {
-            return state.atoms.values[atom.key] as T;
-        }
-        return atom.default;
-    });
+    return useAtomicSelector(state => getAtomValueFromState(state, atom));
 };
 
-export const useSetAtomicState = <T>(atom: AtomState<T>): ((value: ValueOrSetterFunction<T>) => void) => {
+export const useSetAtomicState = <T>(atom: AtomState<T>): ((value: ValueOrSetter<T>) => void) => {
     const dispatch = useDispatch();
     const currentState = useAtomicValue(atom);
-    return useCallback((value: ValueOrSetterFunction<T>) => {
+    return useCallback((value: ValueOrSetter<T>) => {
         if (value instanceof Function) {
             dispatch(setAtom(atom, value(currentState)));
             return;
@@ -35,7 +29,7 @@ export const useResetAtomicState = (atom: AtomState<any>): () => void => {
     }
 };
 
-export const useAtomicState = <T>(atom: AtomState<T>): [value: T, set: (value: ValueOrSetterFunction<T>) => void] => {
+export const useAtomicState = <T>(atom: AtomState<T>): [value: T, set: (value: ValueOrSetter<T>) => void] => {
     const value = useAtomicValue(atom);
     const set = useSetAtomicState(atom);
     return [value, set];

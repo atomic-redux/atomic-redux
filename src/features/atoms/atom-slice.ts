@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
 import { AtomState } from "./atom-state";
+import { getValueFromGetter, ValueOrGetter } from "./getter-setter-utils";
 
 export type SliceState = {
-    values: Record<string, any>;
+    values: Record<string, ValueOrGetter<any>>;
 }
 
 export type AtomicStoreState = { atoms: SliceState };
@@ -31,12 +32,23 @@ export const atomsSlice = createSlice({
             }
         },
         resetAtom: (state, action: PayloadAction<AtomState<any>>) => {
-            state.values[action.payload.key] = action.payload.default;
+            state.values[action.payload.key] = action.payload.get;
         }
     }
 });
 
-export const getAtomValue = <T>(store: Store<AtomicStoreState>, atom: AtomState<T>): T => store.getState().atoms.values[atom.key] as T;
+export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: AtomState<T>): T => {
+    const state = store.getState();
+    return getAtomValueFromState(state, atom);
+}
+
+export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomState<T>): T => {
+    if (!(atom.key in state.atoms.values)) {
+        return getValueFromGetter(atom.get, atom => getAtomValueFromState(state, atom));
+    }
+
+    return getValueFromGetter(state.atoms.values[atom.key], atom => getAtomValueFromState(state, atom));
+}
 
 export const { setAtom, resetAtom } = atomsSlice.actions;
 export default atomsSlice.reducer;
