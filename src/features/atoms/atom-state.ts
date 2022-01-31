@@ -1,6 +1,6 @@
-import { ValueOrGetter } from "./getter-setter-utils";
+import { AtomValue } from "./getter-setter-utils";
 
 export interface AtomState<T> {
     key: string;
-    get: ValueOrGetter<T>;
+    get: AtomValue<T>;
 }

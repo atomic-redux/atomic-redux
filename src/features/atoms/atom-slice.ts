@@ -17,23 +17,27 @@ type SetAtomPayload<T> = {
     value: T;
 }
 
+const setAtomActionName = 'atoms/setAtom';
+export function setAtom<T>(atom: AtomState<T>, value: T): PayloadAction<SetAtomPayload<T>> {
+    return {
+        type: setAtomActionName,
+        payload: { atom, value }
+    }
+}
+setAtom.type = setAtomActionName;
+
 export const atomsSlice = createSlice({
     name: 'atoms',
     initialState,
     reducers: {
-        setAtom: {
-            reducer: (state, action: PayloadAction<SetAtomPayload<any>>) => {
-                state.values[action.payload.atom.key] = action.payload.value;
-            },
-            prepare: <T>(atom: AtomState<T>, value: T) => {
-                return {
-                    payload: { atom, value }
-                }
-            }
-        },
         resetAtom: (state, action: PayloadAction<AtomState<any>>) => {
             state.values[action.payload.key] = action.payload.get;
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(setAtom, (state, action) => {
+            state.values[action.payload.atom.key] = action.payload.value;
+        })
     }
 });
 
@@ -50,5 +54,5 @@ export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomStat
     return state.atoms.values[atom.key];
 }
 
-export const { setAtom, resetAtom } = atomsSlice.actions;
+export const { resetAtom } = atomsSlice.actions;
 export default atomsSlice.reducer;
