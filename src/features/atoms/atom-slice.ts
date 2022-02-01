@@ -35,7 +35,7 @@ export const atomsSlice = createSlice({
             state.values[action.payload.atomKey] = action.payload.value;
         },
         resetAtom: (state, action: PayloadAction<AtomState<any>>) => {
-            state.values[action.payload.key] = action.payload.get;
+            state.values[action.payload.key] = action.payload.defaultOrGetter;
         }
     }
 });
@@ -47,7 +47,7 @@ export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: A
 
 export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomState<T>): T => {
     if (!(atom.key in state.atoms.values)) {
-        return getValueFromGetter(atom.get, atom => getAtomValueFromState(state, atom));
+        return getValueFromGetter(atom.defaultOrGetter, atom => getAtomValueFromState(state, atom));
     }
 
     return state.atoms.values[atom.key];

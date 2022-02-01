@@ -8,7 +8,7 @@ export type AtomInitialiser<T> = {
 export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtomState<T> {
     return {
         key: initialiser.key,
-        get: initialiser.default,
+        defaultOrGetter: initialiser.default,
         set: (value, args, updateReduxState) => {
             updateReduxState(value);
         }

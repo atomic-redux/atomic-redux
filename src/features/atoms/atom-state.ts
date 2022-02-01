@@ -2,7 +2,7 @@ import { AtomValue, InternalAtomUpdateFunction } from "./getter-setter-utils";
 
 export interface AtomState<T> {
     key: string;
-    get: AtomValue<T>;
+    defaultOrGetter: AtomValue<T>;
 }
 
 export interface WritableAtomState<T> extends AtomState<T> {

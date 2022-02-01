@@ -16,13 +16,13 @@ export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T> | Writable
     if (isWritableInitialiser(initialiser)) {
         return {
             key: initialiser.key,
-            get: initialiser.get,
+            defaultOrGetter: initialiser.get,
             set: initialiser.set
         }
     }
     return {
         key: initialiser.key,
-        get: initialiser.get,
+        defaultOrGetter: initialiser.get,
     }
 }
 
