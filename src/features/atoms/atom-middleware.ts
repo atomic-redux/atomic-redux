@@ -2,7 +2,7 @@ import { Middleware, PayloadAction } from '@reduxjs/toolkit';
 import { AtomicStoreState, internalSet, setAtom, SetAtomPayload } from './atom-slice';
 import { AtomState, isWritableAtom } from './atom-state';
 
-export const atomMiddleware: Middleware<{}, AtomicStoreState> = store => next => action => {
+const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => action => {
 	if (action.type === undefined || typeof action.type !== 'string' || !(action.type as string === setAtom.toString())) {
 		return next(action);
 	}
@@ -30,3 +30,5 @@ export const atomMiddleware: Middleware<{}, AtomicStoreState> = store => next =>
 
 	atom.set(payload.value, setAtomArgs, atomSetterGenerator(atom.key));
 }
+
+export const atomMiddlewares = [setAtomMiddleware]
