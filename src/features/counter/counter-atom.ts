@@ -1,5 +1,6 @@
 import { atom } from "../atoms/atom";
 import { derivedAtom } from "../atoms/derived-atom";
+import { SetOptions } from '../atoms/getter-setter-utils';
 
 export const counterAtom = atom({
     key: 'counter',
@@ -11,7 +12,7 @@ export const multipliedAtom = derivedAtom<number>({
     get: ({ get }) => {
         return get(counterAtom) * 2;
     },
-    set: (value, { set }) => {
+    set: (value: number, { set }: SetOptions) => {
         set(counterAtom, value / 2);
     }
 })

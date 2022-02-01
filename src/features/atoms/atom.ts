@@ -1,11 +1,11 @@
-import { AtomState } from "./atom-state";
+import { WritableAtomState } from "./atom-state";
 
 export type AtomInitialiser<T> = {
     key: string;
     default: T;
 }
 
-export function atom<T>(initialiser: AtomInitialiser<T>): AtomState<T> {
+export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtomState<T> {
     return {
         key: initialiser.key,
         get: initialiser.default,
