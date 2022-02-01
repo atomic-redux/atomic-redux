@@ -1,5 +1,5 @@
 import { Middleware, PayloadAction } from '@reduxjs/toolkit';
-import { AtomicStoreState, internalSet, setAtom, SetAtomPayload } from './atom-slice';
+import { AtomicStoreState, getAtomValueFromState, internalSet, setAtom, SetAtomPayload } from './atom-slice';
 import { AtomState, isWritableAtom } from './atom-state';
 
 const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => action => {
@@ -14,6 +14,10 @@ const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => act
 		throw new Error(`Attempted to write value ${payload.value} to read-only atom ${atom.key}`);
 	}
 
+	const getAtom = <T>(atom: AtomState<T>) => {
+		return getAtomValueFromState(store.getState(), atom);
+	}
+
 	const atomSetterGenerator = (atomKey: string) => (value: unknown) => {
 		store.dispatch(internalSet({ atomKey, value }))
 	}
@@ -26,7 +30,7 @@ const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => act
 		atomState.set(value, setAtomArgs, atomSetterGenerator(atomState.key));
 	}
 
-	const setAtomArgs = { set: setAtomValue };
+	const setAtomArgs = { get: getAtom, set: setAtomValue };
 
 	atom.set(payload.value, setAtomArgs, atomSetterGenerator(atom.key));
 }

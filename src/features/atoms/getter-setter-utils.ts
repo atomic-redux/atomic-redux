@@ -8,6 +8,7 @@ export type GetOptions = {
 }
 
 export type SetOptions = {
+    get: AtomGetter;
     set: AtomSetter;
 }
 
