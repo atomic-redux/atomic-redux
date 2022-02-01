@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AtomicStoreState, getAtomValueFromState, resetAtom, setAtom } from "../atom-slice";
-import { ReadonlyAtomState, WritableAtomState } from "../atom-state";
+import { AtomState, WritableAtomState } from "../atom-state";
 import { ValueOrSetter } from "../getter-setter-utils";
 
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
 
-export const useAtomicValue = <T>(atom: ReadonlyAtomState<T>): T => {
+export const useAtomicValue = <T>(atom: AtomState<T>): T => {
     return useAtomicSelector(state => getAtomValueFromState(state, atom));
 };
 
@@ -22,7 +22,7 @@ export const useSetAtomicState = <T>(atom: WritableAtomState<T>): ((value: Value
     }, [atom, dispatch, currentState])
 };
 
-export const useResetAtomicState = (atom: ReadonlyAtomState<any>): () => void => {
+export const useResetAtomicState = (atom: AtomState<any>): () => void => {
     const dispatch = useDispatch();
     return () => {
         dispatch(resetAtom(atom));

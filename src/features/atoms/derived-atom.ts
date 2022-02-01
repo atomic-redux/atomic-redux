@@ -1,4 +1,4 @@
-import { ReadonlyAtomState, WritableAtomState } from './atom-state';
+import { AtomState, WritableAtomState } from './atom-state';
 import { GetOptions, SetOptions } from './getter-setter-utils';
 
 export interface DerivedAtomInitialiser<T> {
@@ -10,9 +10,9 @@ export interface WritableDerivedAtomInitialiser<T> extends DerivedAtomInitialise
     set: (value: T, args: SetOptions) => void;
 }
 
-export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T>): ReadonlyAtomState<T>;
+export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T>): AtomState<T>;
 export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T>): WritableAtomState<T>;
-export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T> | WritableDerivedAtomInitialiser<T>): ReadonlyAtomState<T> | WritableAtomState<T> {
+export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T> | WritableDerivedAtomInitialiser<T>): AtomState<T> | WritableAtomState<T> {
     if (isWritableInitialiser(initialiser)) {
         return {
             key: initialiser.key,

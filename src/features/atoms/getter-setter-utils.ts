@@ -1,7 +1,7 @@
-import { ReadonlyAtomState } from "./atom-state";
+import { AtomState } from "./atom-state";
 
-export type AtomGetter = <T>(atom: ReadonlyAtomState<T>) => T;
-export type AtomSetter = <T>(atom: ReadonlyAtomState<T>, value: T) => void;
+export type AtomGetter = <T>(atom: AtomState<T>) => T;
+export type AtomSetter = <T>(atom: AtomState<T>, value: T) => void;
 
 export type GetOptions = {
     get: AtomGetter;

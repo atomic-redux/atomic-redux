@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
-import { isWritableAtom, ReadonlyAtomState, WritableAtomState } from "./atom-state";
+import { AtomState, isWritableAtom, WritableAtomState } from "./atom-state";
 import { getValueFromGetter } from "./getter-setter-utils";
 
 export type SliceState = {
@@ -13,7 +13,7 @@ const initialState: SliceState = {
 }
 
 type SetAtomPayload<T> = {
-    atom: ReadonlyAtomState<T>;
+    atom: AtomState<T>;
     value: T;
 }
 
@@ -30,7 +30,7 @@ export const atomsSlice = createSlice({
     name: 'atoms',
     initialState,
     reducers: {
-        resetAtom: (state, action: PayloadAction<ReadonlyAtomState<any>>) => {
+        resetAtom: (state, action: PayloadAction<AtomState<any>>) => {
             state.values[action.payload.key] = action.payload.get;
         }
     },
@@ -46,7 +46,7 @@ export const atomsSlice = createSlice({
                     state.values[atomKey] = value;
                 }
 
-                const setAtomValue = <T>(atomState: ReadonlyAtomState<T>, value: T) => {
+                const setAtomValue = <T>(atomState: AtomState<T>, value: T) => {
                     if (!isWritableAtom(atomState)) {
                         return;
                     }
@@ -61,12 +61,12 @@ export const atomsSlice = createSlice({
     }
 });
 
-export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: ReadonlyAtomState<T>): T => {
+export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: AtomState<T>): T => {
     const state = store.getState();
     return getAtomValueFromState(state, atom);
 }
 
-export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: ReadonlyAtomState<T>): T => {
+export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomState<T>): T => {
     if (!(atom.key in state.atoms.values)) {
         return getValueFromGetter(atom.get, atom => getAtomValueFromState(state, atom));
     }
