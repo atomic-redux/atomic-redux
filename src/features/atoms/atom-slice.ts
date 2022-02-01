@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
-import { AtomState, isWritableAtom, WritableAtomState } from "./atom-state";
+import { AtomState, WritableAtomState } from "./atom-state";
 import { getValueFromGetter } from "./getter-setter-utils";
 
 export type SliceState = {
@@ -12,7 +12,7 @@ const initialState: SliceState = {
     values: {}
 }
 
-type SetAtomPayload<T> = {
+export type SetAtomPayload<T> = {
     atom: AtomState<T>;
     value: T;
 }
@@ -25,39 +25,18 @@ export function setAtom<T>(atom: WritableAtomState<T>, value: T): PayloadAction<
     }
 }
 setAtom.type = setAtomActionName;
+setAtom.toString = () => setAtomActionName;
 
 export const atomsSlice = createSlice({
     name: 'atoms',
     initialState,
     reducers: {
+        internalSet: (state, action: PayloadAction<{ atomKey: string, value: any }>) => {
+            state.values[action.payload.atomKey] = action.payload.value;
+        },
         resetAtom: (state, action: PayloadAction<AtomState<any>>) => {
             state.values[action.payload.key] = action.payload.get;
         }
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(setAtom, (state, action) => {
-                const atom = action.payload.atom;
-                if (!isWritableAtom(atom)) {
-                    return;
-                }
-
-                const atomSetterGenerator = (atomKey: string) => (value: unknown) => {
-                    state.values[atomKey] = value;
-                }
-
-                const setAtomValue = <T>(atomState: AtomState<T>, value: T) => {
-                    if (!isWritableAtom(atomState)) {
-                        return;
-                    }
-
-                    atomState.set(value, setAtomArgs, atomSetterGenerator(atomState.key));
-                }
-
-                const setAtomArgs = { set: setAtomValue };
-
-                atom.set(action.payload.value, setAtomArgs, atomSetterGenerator(atom.key))
-            });
     }
 });
 
@@ -74,5 +53,5 @@ export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomStat
     return state.atoms.values[atom.key];
 }
 
-export const { resetAtom } = atomsSlice.actions;
+export const { internalSet, resetAtom } = atomsSlice.actions;
 export default atomsSlice.reducer;
