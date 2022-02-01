@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import styles from './Counter.module.css';
-import { useAtomicState, useAtomicValue } from '../atoms/hooks/use-atomic-state';
+import { useAtomicState } from '../atoms/hooks/use-atomic-state';
 import { counterAtom, multipliedAtom } from './counter-atom';
+import styles from './Counter.module.css';
 
 export function Counter() {
   const [count, setCount] = useAtomicState(counterAtom);
-  const multipliedCount = useAtomicValue(multipliedAtom);
+  const [multipliedCount, setMultipliedCount] = useAtomicState(multipliedAtom);
   const [incrementAmount, setIncrementAmount] = useState('2');
 
   const incrementValue = Number(incrementAmount) || 0;
@@ -16,7 +16,7 @@ export function Counter() {
         <button
           className={styles.button}
           aria-label="Decrement value"
-          onClick={() => setCount(count => count - 1)}
+          onClick={() => setCount(x => x - 1)}
         >
           -
         </button>
@@ -24,13 +24,27 @@ export function Counter() {
         <button
           className={styles.button}
           aria-label="Increment value"
-          onClick={() => setCount(count => count + 1)}
+          onClick={() => setCount(x => x + 1)}
         >
           +
         </button>
       </div>
       <div className={styles.row}>
+        <button
+          className={styles.button}
+          aria-label="Decrement value"
+          onClick={() => setMultipliedCount(x => x - 1)}
+        >
+          -
+        </button>
         <span className={styles.value}>x2: {multipliedCount}</span>
+        <button
+          className={styles.button}
+          aria-label="Increment value"
+          onClick={() => setMultipliedCount(x => x + 1)}
+        >
+          +
+        </button>
       </div>
       <div className={styles.row}>
         <input

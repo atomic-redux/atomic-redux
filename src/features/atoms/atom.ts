@@ -8,6 +8,9 @@ export type AtomInitialiser<T> = {
 export function atom<T>(initialiser: AtomInitialiser<T>): AtomState<T> {
     return {
         key: initialiser.key,
-        get: initialiser.default
+        get: initialiser.default,
+        set: (value, args, updateReduxState) => {
+            updateReduxState(value);
+        }
     }
 }

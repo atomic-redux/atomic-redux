@@ -35,9 +35,29 @@ export const atomsSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(setAtom, (state, action) => {
-            state.values[action.payload.atom.key] = action.payload.value;
-        })
+        builder
+            .addCase(setAtom, (state, action) => {
+                const atom = action.payload.atom;
+                if (!atom.set) {
+                    return;
+                }
+
+                const atomSetterGenerator = (atomKey: string) => (value: unknown) => {
+                    state.values[atomKey] = value;
+                }
+
+                const setAtomValue = <T>(atomState: AtomState<T>, value: T) => {
+                    if (!atomState.set) {
+                        return;
+                    }
+
+                    atomState.set(value, setAtomArgs, atomSetterGenerator(atomState.key));
+                }
+
+                const setAtomArgs = { set: setAtomValue };
+
+                atom.set(action.payload.value, setAtomArgs, atomSetterGenerator(atom.key))
+            })
     }
 });
 

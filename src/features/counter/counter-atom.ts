@@ -6,9 +6,12 @@ export const counterAtom = atom({
     default: 0
 });
 
-export const multipliedAtom = derivedAtom({
+export const multipliedAtom = derivedAtom<number>({
     key: 'multiplied-counter',
     get: ({ get }) => {
         return get(counterAtom) * 2;
+    },
+    set: (value, { set }) => {
+        set(counterAtom, value / 2);
     }
 })
