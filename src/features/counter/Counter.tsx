@@ -17,7 +17,7 @@ export function Counter() {
           <button
             className={styles.button}
             aria-label="Decrement value"
-            onClick={() => setCountA(x => x - 1)}
+            onClick={() => setCountA(x => (x ?? 0) - 1)}
           >
             -
           </button>
@@ -25,7 +25,7 @@ export function Counter() {
           <button
             className={styles.button}
             aria-label="Increment value"
-            onClick={() => setCountA(x => x + 1)}
+            onClick={() => setCountA(x => (x ?? 0) + 1)}
           >
             +
           </button>
@@ -34,7 +34,7 @@ export function Counter() {
           <button
             className={styles.button}
             aria-label="Decrement value"
-            onClick={() => setMultipliedCountA(x => x - 1)}
+            onClick={() => setMultipliedCountA(x => (x ?? 0) - 1)}
           >
             -
           </button>
@@ -42,7 +42,7 @@ export function Counter() {
           <button
             className={styles.button}
             aria-label="Increment value"
-            onClick={() => setMultipliedCountA(x => x + 1)}
+            onClick={() => setMultipliedCountA(x => (x ?? 0) + 1)}
           >
             +
           </button>
@@ -54,7 +54,7 @@ export function Counter() {
           <button
             className={styles.button}
             aria-label="Decrement value"
-            onClick={() => setCountB(x => x - 1)}
+            onClick={() => setCountB(x => (x ?? 0) - 1)}
           >
             -
           </button>
@@ -62,7 +62,7 @@ export function Counter() {
           <button
             className={styles.button}
             aria-label="Increment value"
-            onClick={() => setCountB(x => x + 1)}
+            onClick={() => setCountB(x => (x ?? 0) + 1)}
           >
             +
           </button>
@@ -77,7 +77,7 @@ export function Counter() {
           <button
             className={styles.button}
             aria-label="Decrement value"
-            onClick={() => setEquationResult(x => x - 1)}
+            onClick={() => setEquationResult(x => (x ?? 0) - 1)}
           >
             -
           </button>
@@ -85,7 +85,7 @@ export function Counter() {
           <button
             className={styles.button}
             aria-label="Increment value"
-            onClick={() => setEquationResult(x => x + 1)}
+            onClick={() => setEquationResult(x => (x ?? 0) + 1)}
           >
             +
           </button>

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
 import { AtomState, WritableAtomState } from "./atom-state";
-import { getValueFromGetter } from "./getter-setter-utils";
+import { AtomGetter } from './getter-setter-utils';
 
 export type SliceState = {
     values: Record<string, any>;
@@ -45,17 +45,31 @@ export const atomsSlice = createSlice({
     }
 });
 
-export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: AtomState<T>): T => {
+export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: AtomState<T>): T | undefined => {
     const state = store.getState();
     return getAtomValueFromState(state, atom);
 }
 
-export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomState<T>): T => {
+export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomState<T>): T | undefined => {
     if (!(atom.key in state.atoms.values)) {
-        return getValueFromGetter(atom.defaultOrGetter, atom => getAtomValueFromState(state, atom));
+        return getValueFromGetter(atom, state, atom => getAtomValueFromState(state, atom));
     }
 
     return state.atoms.values[atom.key];
+}
+
+const getValueFromGetter = <T>(atom: AtomState<T>, state: AtomicStoreState, get: AtomGetter): T | undefined => {
+    if (atom.defaultOrGetter instanceof Function) {
+        const result = atom.defaultOrGetter({ get });
+        return isPromise(result)
+            ? state.atoms.values[atom.key]
+            : result;
+    }
+    return atom.defaultOrGetter;
+}
+
+function isPromise(value: any): value is Promise<unknown> {
+    return typeof value.then === 'function';
 }
 
 export const { internalSet, internalDerivedSet, resetAtom } = atomsSlice.actions;
