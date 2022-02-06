@@ -58,14 +58,15 @@ export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(state: A
     return state.atoms.values[atom.key];
 }
 
-const getValueFromGetter = <T, U>(atom: AtomState<T, SyncOrAsyncValue<T>>, state: AtomicStoreState, get: AtomGetter): U extends AsyncAtomValue<T> ? T | undefined : T => {
+const getValueFromGetter = <T, U extends SyncOrAsyncValue<T>>(atom: AtomState<T, SyncOrAsyncValue<T>>, state: AtomicStoreState, get: AtomGetter): U extends AsyncAtomValue<T> ? T | undefined : T => {
     if (atom.defaultOrGetter instanceof Function) {
         const result = atom.defaultOrGetter({ get });
         return isPromise(result)
             ? state.atoms.values[atom.key]
             : result;
     }
-    return atom.defaultOrGetter;
+
+    return atom.defaultOrGetter as any;
 }
 
 function isPromise(value: any): value is Promise<unknown> {

@@ -1,18 +1,24 @@
 import { AtomState, AtomTypes, WritableAtomState } from './atom-state';
-import { AtomValue, GetOptions, SetOptions } from './getter-setter-utils';
+import { AsyncAtomValue, AtomValue, GetOptions, SetOptions } from './getter-setter-utils';
 
-export interface DerivedAtomInitialiser<T> {
+type GetTypeSync<T> = (args: GetOptions) => T;
+type GetTypeAsync<T> = (args: GetOptions) => Promise<T>;
+type GetType<T> = GetTypeSync<T> | GetTypeAsync<T>
+
+export interface DerivedAtomInitialiser<T, G extends GetType<T>> {
     key: string;
-    get: (args: GetOptions) => T;
+    get: G;
 }
 
-export interface WritableDerivedAtomInitialiser<T> extends DerivedAtomInitialiser<T> {
+export interface WritableDerivedAtomInitialiser<T, G extends GetType<T>> extends DerivedAtomInitialiser<T, G> {
     set: (value: T, args: SetOptions) => void;
 }
 
-export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T>): AtomState<T, AtomValue<T>>;
-export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T>): WritableAtomState<T, AtomValue<T>>;
-export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T> | WritableDerivedAtomInitialiser<T>): AtomState<T, AtomValue<T>> | WritableAtomState<T, AtomValue<T>> {
+type IsAsyncronous<T, G extends GetType<T>> = G extends GetTypeAsync<T> ? AsyncAtomValue<T> : AtomValue<T>
+
+export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G>): AtomState<T, IsAsyncronous<T, G>>;
+export function derivedAtom<T, G extends GetType<T>>(initialiser: WritableDerivedAtomInitialiser<T, G>): WritableAtomState<T, IsAsyncronous<T, G>>;
+export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G> | WritableDerivedAtomInitialiser<T, G>): AtomState<T, G> | WritableAtomState<T, G> {
     if (isWritableInitialiser(initialiser)) {
         return {
             type: AtomTypes.Derived,
@@ -28,6 +34,6 @@ export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T> | Writable
     }
 }
 
-function isWritableInitialiser<T>(initialiser: DerivedAtomInitialiser<T>): initialiser is WritableDerivedAtomInitialiser<T> {
-    return (initialiser as WritableDerivedAtomInitialiser<T>).set !== undefined;
+function isWritableInitialiser<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G>): initialiser is WritableDerivedAtomInitialiser<T, G> {
+    return (initialiser as WritableDerivedAtomInitialiser<T, G>).set !== undefined;
 }
