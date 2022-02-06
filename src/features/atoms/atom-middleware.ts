@@ -14,7 +14,7 @@ const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => act
 		throw new Error(`Attempted to write value ${payload.value} to read-only atom ${atom.key}`);
 	}
 
-	const getAtom = <T>(atom: AtomState<T, SyncOrAsyncValue<T>>) => {
+	const getAtom = <T, U extends SyncOrAsyncValue<T>>(atom: AtomState<T, U>) => {
 		return getAtomValueFromState(store.getState(), atom);
 	}
 

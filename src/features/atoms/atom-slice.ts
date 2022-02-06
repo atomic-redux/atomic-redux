@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
 import { AtomState, SyncOrAsyncValue, WritableAtomState } from "./atom-state";
-import { AtomGetter } from './getter-setter-utils';
+import { AsyncAtomValue, AtomGetter } from './getter-setter-utils';
 
 export type SliceState = {
     values: Record<string, any>;
@@ -50,7 +50,7 @@ export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: A
     return getAtomValueFromState(state, atom);
 }
 
-export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomState<T, SyncOrAsyncValue<T>>): T | undefined => {
+export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(state: AtomicStoreState, atom: AtomState<T, U>): U extends AsyncAtomValue<T> ? T | undefined : T => {
     if (!(atom.key in state.atoms.values)) {
         return getValueFromGetter(atom, state, atom => getAtomValueFromState(state, atom));
     }
@@ -58,7 +58,7 @@ export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomStat
     return state.atoms.values[atom.key];
 }
 
-const getValueFromGetter = <T>(atom: AtomState<T, SyncOrAsyncValue<T>>, state: AtomicStoreState, get: AtomGetter): T | undefined => {
+const getValueFromGetter = <T, U>(atom: AtomState<T, SyncOrAsyncValue<T>>, state: AtomicStoreState, get: AtomGetter): U extends AsyncAtomValue<T> ? T | undefined : T => {
     if (atom.defaultOrGetter instanceof Function) {
         const result = atom.defaultOrGetter({ get });
         return isPromise(result)

@@ -1,6 +1,6 @@
-import { AtomState, SyncOrAsyncValue } from "./atom-state";
+import { AtomState, SyncOrAsyncValue, WritableAtomState } from "./atom-state";
 
-export type AtomGetter = <T>(atom: AtomState<T, SyncOrAsyncValue<T>>) => T | undefined;
+export type AtomGetter = <T, U extends SyncOrAsyncValue<T>>(atom: AtomState<T, U> | WritableAtomState<T, U>) => U extends AsyncAtomValue<T> ? T | undefined : T;
 export type AtomSetter = <T>(atom: AtomState<T, SyncOrAsyncValue<T>>, value: T) => void;
 
 export type GetOptions = {
