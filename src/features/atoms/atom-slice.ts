@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
-import { AtomState, WritableAtomState } from "./atom-state";
+import { AtomState, SyncOrAsyncValue, WritableAtomState } from "./atom-state";
 import { AtomGetter } from './getter-setter-utils';
 
 export type SliceState = {
@@ -15,12 +15,12 @@ const initialState: SliceState = {
 }
 
 export type SetAtomPayload<T> = {
-    atom: AtomState<T>;
+    atom: AtomState<T, SyncOrAsyncValue<T>>;
     value: T;
 }
 
 const setAtomActionName = 'atoms/setAtom';
-export function setAtom<T>(atom: WritableAtomState<T>, value: T): PayloadAction<SetAtomPayload<T>> {
+export function setAtom<T>(atom: WritableAtomState<T, SyncOrAsyncValue<T>>, value: T): PayloadAction<SetAtomPayload<T>> {
     return {
         type: setAtomActionName,
         payload: { atom, value }
@@ -39,18 +39,18 @@ export const atomsSlice = createSlice({
         internalDerivedSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
             state.derivedValues[action.payload.atomKey] = action.payload.value;
         },
-        resetAtom: (state, action: PayloadAction<AtomState<unknown>>) => {
+        resetAtom: (state, action: PayloadAction<AtomState<unknown, SyncOrAsyncValue<unknown>>>) => {
             state.values[action.payload.key] = action.payload.defaultOrGetter;
         }
     }
 });
 
-export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: AtomState<T>): T | undefined => {
+export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: AtomState<T, SyncOrAsyncValue<T>>): T | undefined => {
     const state = store.getState();
     return getAtomValueFromState(state, atom);
 }
 
-export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomState<T>): T | undefined => {
+export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomState<T, SyncOrAsyncValue<T>>): T | undefined => {
     if (!(atom.key in state.atoms.values)) {
         return getValueFromGetter(atom, state, atom => getAtomValueFromState(state, atom));
     }
@@ -58,7 +58,7 @@ export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomStat
     return state.atoms.values[atom.key];
 }
 
-const getValueFromGetter = <T>(atom: AtomState<T>, state: AtomicStoreState, get: AtomGetter): T | undefined => {
+const getValueFromGetter = <T>(atom: AtomState<T, SyncOrAsyncValue<T>>, state: AtomicStoreState, get: AtomGetter): T | undefined => {
     if (atom.defaultOrGetter instanceof Function) {
         const result = atom.defaultOrGetter({ get });
         return isPromise(result)

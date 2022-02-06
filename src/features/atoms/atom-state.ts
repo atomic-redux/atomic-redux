@@ -1,20 +1,22 @@
-import { AtomValue, InternalAtomUpdateFunction } from "./getter-setter-utils";
+import { AsyncAtomValue, AtomValue, InternalAtomUpdateFunction } from "./getter-setter-utils";
 
 export enum AtomTypes {
     Atom,
     Derived
 }
 
-export interface AtomState<T> {
+export type SyncOrAsyncValue<T> = AtomValue<T> | AsyncAtomValue<T>;
+
+export interface AtomState<T, U extends SyncOrAsyncValue<T>> {
     key: string;
-    defaultOrGetter: AtomValue<T>;
+    defaultOrGetter: U;
     type: AtomTypes;
 }
 
-export interface WritableAtomState<T> extends AtomState<T> {
+export interface WritableAtomState<T, U extends SyncOrAsyncValue<T>> extends AtomState<T, U> {
     set: InternalAtomUpdateFunction<T>;
 }
 
-export function isWritableAtom<T>(atom: AtomState<T>): atom is WritableAtomState<T> {
-    return (atom as WritableAtomState<T>).set !== undefined;
+export function isWritableAtom<T, U extends SyncOrAsyncValue<T>>(atom: AtomState<T, U>): atom is WritableAtomState<T, U> {
+    return (atom as WritableAtomState<T, U>).set !== undefined;
 }
