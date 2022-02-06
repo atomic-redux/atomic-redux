@@ -1,4 +1,4 @@
-import { AtomState, WritableAtomState } from './atom-state';
+import { AtomState, AtomTypes, WritableAtomState } from './atom-state';
 import { GetOptions, SetOptions } from './getter-setter-utils';
 
 export interface DerivedAtomInitialiser<T> {
@@ -15,12 +15,14 @@ export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T>): 
 export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T> | WritableDerivedAtomInitialiser<T>): AtomState<T> | WritableAtomState<T> {
     if (isWritableInitialiser(initialiser)) {
         return {
+            type: AtomTypes.Derived,
             key: initialiser.key,
             defaultOrGetter: initialiser.get,
             set: initialiser.set
         }
     }
     return {
+        type: AtomTypes.Derived,
         key: initialiser.key,
         defaultOrGetter: initialiser.get,
     }

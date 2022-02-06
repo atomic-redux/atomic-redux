@@ -18,7 +18,7 @@ const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => act
 		return getAtomValueFromState(store.getState(), atom);
 	}
 
-	const atomSetterGenerator = (atomKey: string) => (value: unknown) => {
+	const reduxSetterGenerator = (atomKey: string) => (value: unknown) => {
 		store.dispatch(internalSet({ atomKey, value }))
 	}
 
@@ -27,12 +27,12 @@ const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => act
 			throw new Error(`Attempted to write value ${value} to read-only atom ${atomState.key}`);
 		}
 
-		atomState.set(value, setAtomArgs, atomSetterGenerator(atomState.key));
+		atomState.set(value, setAtomArgs, reduxSetterGenerator(atomState.key));
 	}
 
 	const setAtomArgs = { get: getAtom, set: setAtomValue };
 
-	atom.set(payload.value, setAtomArgs, atomSetterGenerator(atom.key));
+	atom.set(payload.value, setAtomArgs, reduxSetterGenerator(atom.key));
 }
 
 export const atomMiddlewares = [setAtomMiddleware]

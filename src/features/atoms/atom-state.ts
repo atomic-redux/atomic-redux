@@ -1,8 +1,14 @@
 import { AtomValue, InternalAtomUpdateFunction } from "./getter-setter-utils";
 
+export enum AtomTypes {
+    Atom,
+    Derived
+}
+
 export interface AtomState<T> {
     key: string;
     defaultOrGetter: AtomValue<T>;
+    type: AtomTypes;
 }
 
 export interface WritableAtomState<T> extends AtomState<T> {

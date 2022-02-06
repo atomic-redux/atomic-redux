@@ -2,19 +2,16 @@ import { createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
 import { AtomState, WritableAtomState } from "./atom-state";
 import { getValueFromGetter } from "./getter-setter-utils";
 
-type AtomRecordState<T> = {
-    value: T;
-    loading: boolean;
-}
-
 export type SliceState = {
-    values: Record<string, AtomRecordState<any>>;
+    values: Record<string, any>;
+    derivedValues: Record<string, any>;
 }
 
 export type AtomicStoreState = { atoms: SliceState };
 
 const initialState: SliceState = {
-    values: {}
+    values: {},
+    derivedValues: {}
 }
 
 export type SetAtomPayload<T> = {
@@ -37,10 +34,13 @@ export const atomsSlice = createSlice({
     initialState,
     reducers: {
         internalSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
-            state.values[action.payload.atomKey] = { value: action.payload.value, loading: false };
+            state.values[action.payload.atomKey] = action.payload.value;
+        },
+        internalDerivedSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
+            state.derivedValues[action.payload.atomKey] = action.payload.value;
         },
         resetAtom: (state, action: PayloadAction<AtomState<unknown>>) => {
-            state.values[action.payload.key] = { value: action.payload.defaultOrGetter, loading: false };
+            state.values[action.payload.key] = action.payload.defaultOrGetter;
         }
     }
 });
@@ -55,8 +55,8 @@ export const getAtomValueFromState = <T>(state: AtomicStoreState, atom: AtomStat
         return getValueFromGetter(atom.defaultOrGetter, atom => getAtomValueFromState(state, atom));
     }
 
-    return state.atoms.values[atom.key].value;
+    return state.atoms.values[atom.key];
 }
 
-export const { internalSet, resetAtom } = atomsSlice.actions;
+export const { internalSet, internalDerivedSet, resetAtom } = atomsSlice.actions;
 export default atomsSlice.reducer;
