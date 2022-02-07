@@ -1,5 +1,5 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
-import { atomMiddlewares } from '../features/atoms/atom-middleware';
+import { getAtomMiddleware } from '../features/atoms/atom-middleware';
 import atomsReducer from '../features/atoms/atom-slice';
 import counterReducer from '../features/counter/counterSlice';
 
@@ -8,7 +8,7 @@ export const store = configureStore({
     counter: counterReducer,
     atoms: atomsReducer
   },
-  middleware: [...atomMiddlewares]
+  middleware: [...getAtomMiddleware()]
 });
 
 export type AppDispatch = typeof store.dispatch;
