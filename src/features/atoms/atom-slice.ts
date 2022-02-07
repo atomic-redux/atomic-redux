@@ -62,7 +62,7 @@ const getValueFromGetter = <T, U extends SyncOrAsyncValue<T>>(atom: AtomState<T,
     if (atom.defaultOrGetter instanceof Function) {
         const result = atom.defaultOrGetter({ get });
         return isPromise(result)
-            ? state.atoms.values[atom.key]
+            ? state.atoms.derivedValues[atom.key]
             : result;
     }
 

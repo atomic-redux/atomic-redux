@@ -25,7 +25,7 @@ export const multipliedAtomA = derivedAtom({
 export const multipliedAtomB = derivedAtom({
     key: 'multiplied-counter-b',
     get: ({ get }) => {
-        return get(counterAtomB) * 2
+        return get(counterAtomB) * 2;
     }
 });
 
