@@ -14,10 +14,10 @@ export interface WritableDerivedAtomInitialiser<T, G extends GetType<T>> extends
     set: (value: T, args: SetOptions) => void;
 }
 
-type IsAsyncronous<T, G extends GetType<T>> = G extends GetTypeAsync<T> ? AsyncAtomValue<T> : AtomValue<T>
-
-export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G>): AtomState<T, IsAsyncronous<T, G>>;
-export function derivedAtom<T, G extends GetType<T>>(initialiser: WritableDerivedAtomInitialiser<T, G>): WritableAtomState<T, IsAsyncronous<T, G>>;
+export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T, GetTypeSync<T>>): AtomState<T, AtomValue<T>>;
+export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T, GetTypeAsync<T>>): AtomState<T, AsyncAtomValue<T>>;
+export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, GetTypeSync<T>>): WritableAtomState<T, AtomValue<T>>;
+export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, GetTypeAsync<T>>): WritableAtomState<T, AsyncAtomValue<T>>;
 export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G> | WritableDerivedAtomInitialiser<T, G>): AtomState<T, G> | WritableAtomState<T, G> {
     if (isWritableInitialiser(initialiser)) {
         return {
