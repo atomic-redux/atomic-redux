@@ -1,9 +1,9 @@
 import { AtomState, AtomTypes, WritableAtomState } from './atom-state';
 import { AsyncAtomValue, AtomValue, GetOptions, SetOptions } from './getter-setter-utils';
 
-type GetTypeSync<T> = (args: GetOptions) => T;
-type GetTypeAsync<T> = (args: GetOptions) => Promise<T>;
-type GetType<T> = GetTypeSync<T> | GetTypeAsync<T>
+type SyncGetType<T> = (args: GetOptions) => T;
+type AsyncGetType<T> = (args: GetOptions) => Promise<T>;
+type GetType<T> = SyncGetType<T> | AsyncGetType<T>
 
 export interface DerivedAtomInitialiser<T, G extends GetType<T>> {
     key: string;
@@ -14,10 +14,10 @@ export interface WritableDerivedAtomInitialiser<T, G extends GetType<T>> extends
     set: (value: T, args: SetOptions) => void;
 }
 
-export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T, GetTypeAsync<T>>): AtomState<T, AsyncAtomValue<T>>;
-export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T, GetTypeSync<T>>): AtomState<T, AtomValue<T>>;
-export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, GetTypeAsync<T>>): WritableAtomState<T, AsyncAtomValue<T>>;
-export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, GetTypeSync<T>>): WritableAtomState<T, AtomValue<T>>;
+export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T, AsyncGetType<T>>): AtomState<T, AsyncAtomValue<T>>;
+export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T, SyncGetType<T>>): AtomState<T, AtomValue<T>>;
+export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, AsyncGetType<T>>): WritableAtomState<T, AsyncAtomValue<T>>;
+export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, SyncGetType<T>>): WritableAtomState<T, AtomValue<T>>;
 export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G> | WritableDerivedAtomInitialiser<T, G>): AtomState<T, G> | WritableAtomState<T, G> {
     if (isWritableInitialiser(initialiser)) {
         return {
