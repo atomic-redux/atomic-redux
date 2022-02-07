@@ -32,11 +32,11 @@ export const multipliedAtomB = derivedAtom({
 export const equationAtom = derivedAtom({
     key: 'equation',
     get: ({ get }) => {
-        return get(multipliedAtomA) + get(counterAtomB) ?? 0;
+        return get(multipliedAtomA) + get(counterAtomB);
     },
     set: (value: number, { get, set }: SetOptions) => {
-        const delta = value - (get(equationAtom) ?? 0);
-        const b = get(counterAtomB) ?? 0;
+        const delta = value - get(equationAtom);
+        const b = get(counterAtomB);
         set(counterAtomB, b + delta);
     }
 })
