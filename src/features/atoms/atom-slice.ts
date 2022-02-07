@@ -1,17 +1,19 @@
-import { createSlice, PayloadAction, Store } from "@reduxjs/toolkit";
+import { createSlice, Dispatch, PayloadAction, Store } from "@reduxjs/toolkit";
 import { AtomState, SyncOrAsyncValue, WritableAtomState } from "./atom-state";
 import { AsyncAtomValue, AtomGetter } from './getter-setter-utils';
 
 export type SliceState = {
     values: Record<string, any>;
     derivedValues: Record<string, any>;
+    graph: Record<string, string[]>;
 }
 
 export type AtomicStoreState = { atoms: SliceState };
 
 const initialState: SliceState = {
     values: {},
-    derivedValues: {}
+    derivedValues: {},
+    graph: {}
 }
 
 export type SetAtomPayload<T> = {
@@ -39,20 +41,44 @@ export const atomsSlice = createSlice({
         internalDerivedSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
             state.derivedValues[action.payload.atomKey] = action.payload.value;
         },
+        internalAddGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
+            const fromAtomKey = action.payload.fromAtomKey;
+            const toAtomKey = action.payload.toAtomKey;
+
+            if (state.graph[fromAtomKey] === undefined) {
+                state.graph[fromAtomKey] = [];
+            }
+
+            if (!state.graph[fromAtomKey].includes(toAtomKey)) {
+                state.graph[fromAtomKey].push(toAtomKey);
+            }
+        },
         resetAtom: (state, action: PayloadAction<AtomState<unknown, SyncOrAsyncValue<unknown>>>) => {
             state.values[action.payload.key] = action.payload.defaultOrGetter;
         }
     }
 });
 
-export const getAtomValueFromStore = <T>(store: Store<AtomicStoreState>, atom: AtomState<T, SyncOrAsyncValue<T>>): T | undefined => {
+export const getAtomValueFromStore = <T, U extends SyncOrAsyncValue<T>>(store: Store<AtomicStoreState>, atom: AtomState<T, U>): U extends AsyncAtomValue<T> ? T | undefined : T => {
     const state = store.getState();
-    return getAtomValueFromState(state, atom);
+    const dispatch = store.dispatch;
+    return getAtomValueFromState(state, dispatch, atom);
 }
 
-export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(state: AtomicStoreState, atom: AtomState<T, U>): U extends AsyncAtomValue<T> ? T | undefined : T => {
+export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: AtomState<T, U>): U extends AsyncAtomValue<T> ? T | undefined : T => {
+    const atomGetter: AtomGetter = nextAtom => {
+        if (state.atoms.graph[nextAtom.key] === undefined || !state.atoms.graph[nextAtom.key].includes(atom.key)) {
+            dispatch(internalAddGraphConnection({
+                fromAtomKey: nextAtom.key,
+                toAtomKey: atom.key
+            }));
+        }
+
+        return getAtomValueFromState(state, dispatch, nextAtom);
+    }
+
     if (!(atom.key in state.atoms.values)) {
-        return getValueFromGetter(atom, state, atom => getAtomValueFromState(state, atom));
+        return getValueFromGetter(atom, state, atomGetter);
     }
 
     return state.atoms.values[atom.key];
@@ -73,5 +99,5 @@ function isPromise(value: any): value is Promise<unknown> {
     return typeof value.then === 'function';
 }
 
-export const { internalSet, internalDerivedSet, resetAtom } = atomsSlice.actions;
+export const { internalSet, internalDerivedSet, internalAddGraphConnection, resetAtom } = atomsSlice.actions;
 export default atomsSlice.reducer;

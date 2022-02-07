@@ -7,7 +7,8 @@ import { ValueOrSetter } from "../getter-setter-utils";
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
 
 export const useAtomicValue = <T>(atom: AtomState<T, SyncOrAsyncValue<T>>): T | undefined => {
-    return useAtomicSelector(state => getAtomValueFromState(state, atom));
+    const dispatch = useDispatch();
+    return useAtomicSelector(state => getAtomValueFromState(state, dispatch, atom));
 };
 
 export const useSetAtomicState = <T>(atom: WritableAtomState<T, SyncOrAsyncValue<T>>): ((value: ValueOrSetter<T>) => void) => {

@@ -15,7 +15,7 @@ const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => act
 	}
 
 	const getAtom = <T, U extends SyncOrAsyncValue<T>>(atom: AtomState<T, U>) => {
-		return getAtomValueFromState(store.getState(), atom);
+		return getAtomValueFromState(store.getState(), store.dispatch, atom);
 	}
 
 	const reduxSetterGenerator = (atomKey: string) => (value: unknown) => {
