@@ -1,14 +1,21 @@
-import { Middleware, PayloadAction } from '@reduxjs/toolkit';
-import { AtomicStoreState, getAtomValueFromState, internalSet, setAtom, SetAtomPayload } from './atom-slice';
+import { Dispatch, Middleware, MiddlewareAPI, PayloadAction } from '@reduxjs/toolkit';
+import { AtomicStoreState, getAtomValueFromState, internalAddNodeToGraph, internalInitialiseAtom, internalSet, setAtom, SetAtomPayload } from './atom-slice';
 import { AtomState, isWritableAtom, SyncOrAsyncValue } from './atom-state';
 
+type Atoms = Record<string, AtomState<unknown, SyncOrAsyncValue<unknown>>>;
+
 export const getAtomMiddleware = () => {
-	const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => action => {
-		if (action.type === undefined || typeof action.type !== 'string' || !(action.type as string === setAtom.toString())) {
-			return next(action);
+	const handleInitialiseAtomAction = (store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>, action: PayloadAction<AtomState<unknown, SyncOrAsyncValue<unknown>>>, atoms: Atoms) => {
+		const atom = action.payload;
+		if (!(atom.key in atoms)) {
+			atoms[atom.key] = atom;
 		}
 
-		const payload = (action as PayloadAction<SetAtomPayload<unknown>>).payload;
+		store.dispatch(internalAddNodeToGraph(atom.key));
+	}
+
+	const handleSetAtomAction = (store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>, action: PayloadAction<SetAtomPayload<unknown>>) => {
+		const payload = action.payload;
 		const atom = payload.atom;
 
 		if (!isWritableAtom(atom)) {
@@ -34,6 +41,21 @@ export const getAtomMiddleware = () => {
 		const setAtomArgs = { get: getAtom, set: setAtomValue };
 
 		atom.set(payload.value, setAtomArgs, reduxSetterGenerator(atom.key));
+	}
+
+	const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => {
+		let atoms: Atoms = {};
+		return action => {
+			if (action.type === internalInitialiseAtom.toString()) {
+				return handleInitialiseAtomAction(store, action, atoms);
+			}
+
+			if (action.type === setAtom.toString()) {
+				return handleSetAtomAction(store, action)
+			}
+
+			return next(action);
+		}
 	}
 
 	return [setAtomMiddleware];

@@ -10,7 +10,7 @@ export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtomState<T, A
     return {
         type: AtomTypes.Atom,
         key: initialiser.key,
-        defaultOrGetter: initialiser.default,
+        defaultOrGetter: () => initialiser.default,
         set: (value, args, updateReduxState) => {
             updateReduxState(value);
         }

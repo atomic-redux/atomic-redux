@@ -1,4 +1,4 @@
-import { createSlice, Dispatch, PayloadAction, Store } from "@reduxjs/toolkit";
+import { createAction, createSlice, Dispatch, PayloadAction, Store } from "@reduxjs/toolkit";
 import { AtomState, SyncOrAsyncValue, WritableAtomState } from "./atom-state";
 import { AsyncAtomValue, AtomGetter } from './getter-setter-utils';
 
@@ -21,6 +21,8 @@ export type SetAtomPayload<T> = {
     value: T;
 }
 
+export const internalInitialiseAtom = createAction<AtomState<unknown, SyncOrAsyncValue<unknown>>>('atoms/internalInitialiseAtom');
+
 const setAtomActionName = 'atoms/setAtom';
 export function setAtom<T>(atom: WritableAtomState<T, SyncOrAsyncValue<T>>, value: T): PayloadAction<SetAtomPayload<T>> {
     return {
@@ -38,8 +40,12 @@ export const atomsSlice = createSlice({
         internalSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
             state.values[action.payload.atomKey] = action.payload.value;
         },
-        internalDerivedSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
-            state.derivedValues[action.payload.atomKey] = action.payload.value;
+        internalAddNodeToGraph: (state, action: PayloadAction<string>) => {
+            if (state.graph[action.payload] !== undefined) {
+                return;
+            }
+
+            state.graph[action.payload] = [];
         },
         internalAddGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
             const fromAtomKey = action.payload.fromAtomKey;
@@ -68,8 +74,13 @@ export const getAtomValueFromStore = <T, U extends SyncOrAsyncValue<T>>(store: S
 }
 
 export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: AtomState<T, U>): GetAtomResult<T, U> => {
+    if (state.atoms.graph[atom.key] === undefined) {
+        dispatch(internalInitialiseAtom(atom));
+    }
+
     const atomGetter: AtomGetter = nextAtom => {
         if (state.atoms.graph[nextAtom.key] === undefined || !state.atoms.graph[nextAtom.key].includes(atom.key)) {
+            dispatch(internalInitialiseAtom(nextAtom));
             dispatch(internalAddGraphConnection({
                 fromAtomKey: nextAtom.key,
                 toAtomKey: atom.key
@@ -101,5 +112,5 @@ function isPromise(value: any): value is Promise<unknown> {
     return typeof value.then === 'function';
 }
 
-export const { internalSet, internalDerivedSet, internalAddGraphConnection, resetAtom } = atomsSlice.actions;
+export const { internalSet, internalAddNodeToGraph, internalAddGraphConnection, resetAtom } = atomsSlice.actions;
 export default atomsSlice.reducer;
