@@ -15,16 +15,17 @@ const addAtomToGraph = (store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>, a
         }));
 
         const result = previousAtom.get({ get: atomGetter }, storeState);
-        const value = isPromise(result)
-            ? storeState.atoms.values[previousAtom.key]
-            : result;
+        const value = fallbackPromise(result, previousAtom.key, storeState);
 
         return value as GetAtomResult<T, U>;
     }
 
+    const storeState = store.getState();
+    const result = atom.get({ get: atomGetter }, storeState);
+
     store.dispatch(internalSet({
         atomKey: atom.key,
-        value: atom.get({ get: atomGetter }, store.getState())
+        value: fallbackPromise(result, atom.key, storeState)
     }));
 }
 
@@ -52,7 +53,10 @@ const handleSetAtomAction = (store: MiddlewareAPI<Dispatch<any>, AtomicStoreStat
     }
 
     const reduxSetterGenerator = (atomKey: string) => (value: unknown) => {
-        store.dispatch(internalSet({ atomKey, value }))
+        store.dispatch(internalSet({
+            atomKey,
+            value: fallbackPromise(value, atomKey, store.getState())
+        }))
         updateGraphFromAtom(atoms[atomKey], atoms, store);
     }
 
@@ -76,18 +80,19 @@ const updateGraphFromAtom = (atom: AtomState<unknown, SyncOrAsyncValue<unknown>>
 
     const atomGetter: AtomGetter = <T, U extends SyncOrAsyncValue<T>>(previousAtom: AtomState<T, U>): GetAtomResult<T, U> => {
         const result = previousAtom.get({ get: atomGetter }, storeState);
-        const value = isPromise(result)
-            ? storeState.atoms.values[previousAtom.key]
-            : result;
+        const value = fallbackPromise(result, previousAtom.key, storeState);
 
         return value as GetAtomResult<T, U>;
     }
 
     for (const dependerKey of dependerKeys) {
         const depender = atoms[dependerKey];
+
+        const dependerValue = depender.get({ get: atomGetter }, storeState);
+
         store.dispatch(internalSet({
             atomKey: depender.key,
-            value: depender.get({ get: atomGetter }, storeState)
+            value: fallbackPromise(dependerValue, depender.key, storeState)
         }));
         updateGraphFromAtom(depender, atoms, store);
     }
@@ -110,6 +115,12 @@ export const getAtomMiddleware = () => {
     }
 
     return setAtomMiddleware;
+}
+
+function fallbackPromise(value: unknown, atomKey: string, state: AtomicStoreState): unknown {
+    return isPromise(value)
+        ? state.atoms.values[atomKey]
+        : value;
 }
 
 function isPromise(value: any): value is Promise<unknown> {
