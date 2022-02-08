@@ -9,7 +9,7 @@ export type SyncOrAsyncValue<T> = AtomValue<T> | AsyncAtomValue<T>;
 
 export interface AtomState<T, U extends SyncOrAsyncValue<T>> {
     key: string;
-    defaultOrGetter: U;
+    get: U;
     type: AtomTypes;
 }
 

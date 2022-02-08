@@ -8,7 +8,7 @@ export const store = configureStore({
     counter: counterReducer,
     atoms: atomsReducer
   },
-  middleware: [...getAtomMiddleware()]
+  middleware: [getAtomMiddleware()]
 });
 
 export type AppDispatch = typeof store.dispatch;

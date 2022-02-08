@@ -23,14 +23,14 @@ export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomIni
         return {
             type: AtomTypes.Derived,
             key: initialiser.key,
-            defaultOrGetter: initialiser.get,
+            get: initialiser.get,
             set: initialiser.set
         }
     }
     return {
         type: AtomTypes.Derived,
         key: initialiser.key,
-        defaultOrGetter: initialiser.get,
+        get: initialiser.get,
     }
 }
 
