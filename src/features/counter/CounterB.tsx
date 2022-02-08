@@ -8,7 +8,7 @@ export function CounterB() {
 
     return (
         <>
-            <div className={styles.row}>A</div>
+            <div className={styles.row}>B</div>
             <div className={styles.row}>
                 <button
                     className={styles.button}
