@@ -38,4 +38,44 @@ export const equationAtom = derivedAtom({
         const delta = value - get(equationAtom);
         set(counterAtomB, b => b + delta);
     }
+});
+
+interface Person {
+    name: string;
+    age: number;
+}
+
+export const peopleAtom = atom<Person[]>({
+    key: 'people',
+    default: [
+        {
+            name: 'Bob',
+            age: 25
+        },
+        {
+            name: 'Bill',
+            age: 42
+        },
+        {
+            name: 'Blake',
+            age: 92
+        }
+    ]
+})
+
+export const personAtom = (id: number) => derivedAtom({
+    key: `person-${id}`,
+    get: ({ get }) => {
+        const people = get(peopleAtom);
+        return people[
+            id < 0
+                ? people.length - Math.abs(id % people.length) - 1
+                : id % people.length
+        ];
+    },
+    set: (value: Person, { get, set }: SetOptions) => {
+        set(peopleAtom, people => {
+            people[id] = value;
+        });
+    }
 })

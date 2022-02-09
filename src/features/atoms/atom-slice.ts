@@ -71,7 +71,7 @@ export const getAtomValueFromStore = <T, U extends SyncOrAsyncValue<T>>(store: S
 
 export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: AtomState<T, U>): GetAtomResult<T, U> => {
     if (state.atoms.graph[atom.key] === undefined) {
-        dispatch(internalInitialiseAtom(atom));
+        return dispatch(internalInitialiseAtom(atom)) as unknown as GetAtomResult<T, U>;
     }
 
     return state.atoms.values[atom.key] as GetAtomResult<T, U>;

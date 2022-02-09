@@ -7,38 +7,40 @@ import { AtomGetter, GetAtomResult, SetOptions, ValueOrSetter } from './getter-s
 type AtomMiddlewareStore = MiddlewareAPI<Dispatch<any>, AtomicStoreState>;
 type Atoms = Record<string, AtomState<unknown, SyncOrAsyncValue<unknown>>>;
 
-function createAtomGetter(currentAtom: AtomState<unknown, SyncOrAsyncValue<unknown>>, atoms: Atoms, store: AtomMiddlewareStore) {
+function createInitialisationAtomGetter(currentAtom: AtomState<unknown, SyncOrAsyncValue<unknown>>, atoms: Atoms, store: AtomMiddlewareStore) {
     return <T, U extends SyncOrAsyncValue<T>>(previousAtom: AtomState<T, U>): GetAtomResult<T, U> => {
         store.dispatch(internalAddGraphConnection({
             fromAtomKey: previousAtom.key,
             toAtomKey: currentAtom.key
         }));
 
-        const result = previousAtom.get({ get: createAtomGetter(previousAtom, atoms, store) }, store.getState());
-        const value = handlePossiblePromise(result, previousAtom.key, atoms, store);
-
-        return value as GetAtomResult<T, U>;
+        return addAtomToGraph(store, previousAtom, atoms) as GetAtomResult<T, U>;
     }
 }
 
-const addAtomToGraph = (store: AtomMiddlewareStore, atom: AtomState<unknown, SyncOrAsyncValue<unknown>>, atoms: Atoms): void => {
-    const result = atom.get({ get: createAtomGetter(atom, atoms, store) }, store.getState());
-
-    store.dispatch(internalSet({
-        atomKey: atom.key,
-        value: handlePossiblePromise(result, atom.key, atoms, store)
-    }));
-}
-
-const handleInitialiseAtomAction = (store: AtomMiddlewareStore, action: PayloadAction<AtomState<unknown, SyncOrAsyncValue<unknown>>>, atoms: Atoms): void => {
-    const atom = action.payload;
+const addAtomToGraph = (store: AtomMiddlewareStore, atom: AtomState<unknown, SyncOrAsyncValue<unknown>>, atoms: Atoms): unknown => {
     if (!(atom.key in atoms)) {
         atoms[atom.key] = atom;
     }
 
-    addAtomToGraph(store, atom, atoms);
+    const result = atom.get({ get: createInitialisationAtomGetter(atom, atoms, store) }, store.getState());
+    const value = handlePossiblePromise(result, atom.key, atoms, store);
 
+    store.dispatch(internalSet({
+        atomKey: atom.key,
+        value
+    }));
+
+    return value;
+}
+
+const handleInitialiseAtomAction = (store: AtomMiddlewareStore, action: PayloadAction<AtomState<unknown, SyncOrAsyncValue<unknown>>>, atoms: Atoms): unknown => {
+    const atom = action.payload;
+
+    const value = addAtomToGraph(store, atom, atoms);
     store.dispatch(internalAddNodeToGraph(atom.key));
+
+    return value;
 }
 
 const handleSetAtomAction = (store: AtomMiddlewareStore, action: PayloadAction<SetAtomPayload<unknown>>, atoms: Atoms): void => {
