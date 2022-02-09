@@ -13,7 +13,7 @@ export function CounterB() {
                 <button
                     className={styles.button}
                     aria-label="Decrement value"
-                    onClick={() => setCountB(x => (x ?? 0) - 1)}
+                    onClick={() => setCountB(x => x - 1)}
                 >
                     -
                 </button>
@@ -21,7 +21,7 @@ export function CounterB() {
                 <button
                     className={styles.button}
                     aria-label="Increment value"
-                    onClick={() => setCountB(x => (x ?? 0) + 1)}
+                    onClick={() => setCountB(x => x + 1)}
                 >
                     +
                 </button>

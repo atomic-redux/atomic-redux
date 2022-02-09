@@ -36,7 +36,6 @@ export const equationAtom = derivedAtom({
     },
     set: (value: number, { get, set }: SetOptions) => {
         const delta = value - get(equationAtom);
-        const b = get(counterAtomB);
-        set(counterAtomB, b + delta);
+        set(counterAtomB, b => b + delta);
     }
 })

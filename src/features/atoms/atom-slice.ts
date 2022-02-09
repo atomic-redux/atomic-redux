@@ -1,6 +1,6 @@
 import { createAction, createSlice, Dispatch, PayloadAction, Store } from "@reduxjs/toolkit";
 import { AtomState, SyncOrAsyncValue, WritableAtomState } from "./atom-state";
-import { GetAtomResult } from './getter-setter-utils';
+import { GetAtomResult, ValueOrSetter } from './getter-setter-utils';
 
 export type SliceState = {
     values: Record<string, unknown>;
@@ -16,13 +16,13 @@ const initialState: SliceState = {
 
 export type SetAtomPayload<T> = {
     atom: AtomState<T, SyncOrAsyncValue<T>>;
-    value: T;
+    value: ValueOrSetter<T>;
 }
 
 export const internalInitialiseAtom = createAction<AtomState<unknown, SyncOrAsyncValue<unknown>>>('atoms/internalInitialiseAtom');
 
 const setAtomActionName = 'atoms/setAtom';
-export function setAtom<T>(atom: WritableAtomState<T, SyncOrAsyncValue<T>>, value: T): PayloadAction<SetAtomPayload<T>> {
+export function setAtom<T>(atom: WritableAtomState<T, SyncOrAsyncValue<T>>, value: ValueOrSetter<T>): PayloadAction<SetAtomPayload<T>> {
     return {
         type: setAtomActionName,
         payload: { atom, value }

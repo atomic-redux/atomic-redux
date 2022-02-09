@@ -11,7 +11,7 @@ export function CounterC() {
             <button
                 className={styles.button}
                 aria-label="Decrement value"
-                onClick={() => setEquationResult(x => (x ?? 0) - 1)}
+                onClick={() => setEquationResult(x => x - 1)}
             >
                 -
             </button>
@@ -19,7 +19,7 @@ export function CounterC() {
             <button
                 className={styles.button}
                 aria-label="Increment value"
-                onClick={() => setEquationResult(x => (x ?? 0) + 1)}
+                onClick={() => setEquationResult(x => x + 1)}
             >
                 +
             </button>
