@@ -11,7 +11,7 @@ export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtomState<T, A
         type: AtomTypes.Atom,
         key: initialiser.key,
         get: (_, state) => state.atoms.values[initialiser.key] as T | undefined ?? initialiser.default,
-        set: (value, args, updateReduxState) => {
+        set: (args, value, updateReduxState) => {
             updateReduxState(value);
         }
     }

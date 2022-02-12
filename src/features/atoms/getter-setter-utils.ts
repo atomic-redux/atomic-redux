@@ -18,6 +18,6 @@ export type SetOptions = {
 export type AtomValue<T> = (args: GetOptions, state: AtomicStoreState) => T;
 export type AsyncAtomValue<T> = (args: GetOptions, state: AtomicStoreState) => Promise<T>;
 export type AtomUpdateFunction<T> = (value: T, args: SetOptions) => void;
-export type InternalAtomUpdateFunction<T> = (value: T, args: SetOptions, setReduxState: (value: T) => void) => void;
+export type InternalAtomUpdateFunction<T> = (args: SetOptions, value: T, setReduxState: (value: T) => void) => void;
 
 export type ValueOrSetter<T> = T | ((state: Draft<T>) => void);

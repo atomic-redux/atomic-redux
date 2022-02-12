@@ -11,7 +11,7 @@ export interface DerivedAtomInitialiser<T, G extends GetType<T>> {
 }
 
 export interface WritableDerivedAtomInitialiser<T, G extends GetType<T>> extends DerivedAtomInitialiser<T, G> {
-    set: (value: T, args: SetOptions) => void;
+    set: (args: SetOptions, value: T) => void;
 }
 
 export function derivedAtom<T>(initialiser: DerivedAtomInitialiser<T, AsyncGetType<T>>): AtomState<T, AsyncAtomValue<T>>;

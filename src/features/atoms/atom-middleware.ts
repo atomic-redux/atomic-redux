@@ -79,13 +79,13 @@ const reduxSetterGenerator = (atomKey: string, store: AtomMiddlewareStore, atoms
 
 const setAtomWithProduce = <T>(atom: WritableAtomState<T, SyncOrAsyncValue<T>>, atoms: Atoms, setAtomArgs: SetOptions, valueOrSetter: ValueOrSetter<T>, store: AtomMiddlewareStore) => {
     if (!(valueOrSetter instanceof Function)) {
-        atom.set(valueOrSetter, setAtomArgs, reduxSetterGenerator(atom.key, store, atoms));
+        atom.set(setAtomArgs, valueOrSetter, reduxSetterGenerator(atom.key, store, atoms));
         return;
     }
 
     const currentValue = getAtomValueFromState(store.getState(), store.dispatch, atom) as T;
     const newValue = produce(currentValue, valueOrSetter as (draft: Function) => void);
-    atom.set(newValue, setAtomArgs, reduxSetterGenerator(atom.key, store, atoms));
+    atom.set(setAtomArgs, newValue, reduxSetterGenerator(atom.key, store, atoms));
 }
 
 const updateGraphFromAtom = (atom: AtomState<unknown, SyncOrAsyncValue<unknown>>, atoms: Atoms, store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>): void => {
