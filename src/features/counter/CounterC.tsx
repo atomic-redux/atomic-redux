@@ -1,9 +1,10 @@
-import { useAtomicState } from '../atoms/hooks/use-atomic-state';
+import { useAtomicState, useResetAtomicState } from '../atoms/hooks/use-atomic-state';
 import { equationAtom } from './counter-atom';
 import styles from './Counter.module.css';
 
 export function CounterC() {
     const [equationResult, setEquationResult] = useAtomicState(equationAtom);
+    const resetEquation = useResetAtomicState(equationAtom);
 
     return (<>
         <div className={styles.row}>A*2 + B</div>
@@ -23,6 +24,9 @@ export function CounterC() {
             >
                 +
             </button>
+        </div>
+        <div className={styles.row}>
+            <button className={styles.button} onClick={resetEquation}>Reset</button>
         </div>
     </>);
 }

@@ -1,5 +1,6 @@
 import { atom } from "../atoms/atom";
 import { derivedAtom } from "../atoms/derived-atom";
+import { DefaultValue } from '../atoms/getter-setter-utils';
 
 export const counterAtomA = atom({
     key: 'counter-a',
@@ -16,7 +17,11 @@ export const multipliedAtomA = derivedAtom({
     get: ({ get }) => {
         return get(counterAtomA) * 2;
     },
-    set: ({ set }, value: number) => {
+    set: ({ set, reset }, value: number | DefaultValue) => {
+        if (value instanceof DefaultValue) {
+            reset(counterAtomA);
+            return;
+        }
         set(counterAtomA, value / 2);
     }
 });
@@ -33,7 +38,12 @@ export const equationAtom = derivedAtom({
     get: ({ get }) => {
         return get(multipliedAtomA) + get(counterAtomB);
     },
-    set: ({ get, set }, value: number) => {
+    set: ({ get, set, reset }, value: number | DefaultValue) => {
+        if (value instanceof DefaultValue) {
+            reset(multipliedAtomA);
+            reset(counterAtomB);
+            return;
+        }
         const delta = value - get(equationAtom);
         set(counterAtomB, b => b + delta);
     }
@@ -72,7 +82,12 @@ export const personAtom = (id: number) => derivedAtom({
                 : id % people.length
         ];
     },
-    set: ({ get, set }, value: Person) => {
+    set: ({ set, reset }, value: Person | DefaultValue) => {
+        if (value instanceof DefaultValue) {
+            reset(peopleAtom);
+            return;
+        }
+
         set(peopleAtom, people => {
             people[id] = value;
         });

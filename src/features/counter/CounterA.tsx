@@ -1,10 +1,11 @@
-import { useAtomicState } from '../atoms/hooks/use-atomic-state';
+import { useAtomicState, useResetAtomicState } from '../atoms/hooks/use-atomic-state';
 import { counterAtomA, multipliedAtomA } from './counter-atom';
 import styles from './Counter.module.css';
 
 export function CounterA() {
     const [countA, setCountA] = useAtomicState(counterAtomA);
     const [multipliedCountA, setMultipliedCountA] = useAtomicState(multipliedAtomA);
+    const resetA = useResetAtomicState(counterAtomA);
 
     return (<>
         <div className={styles.row}>A</div>
@@ -41,6 +42,9 @@ export function CounterA() {
             >
                 +
             </button>
+        </div>
+        <div className={styles.row}>
+            <button className={styles.button} onClick={resetA}>Reset</button>
         </div>
     </>);
 }

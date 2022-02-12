@@ -38,6 +38,9 @@ export const atomsSlice = createSlice({
         internalSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
             state.values[action.payload.atomKey] = action.payload.value;
         },
+        internalDelete: (state, action: PayloadAction<string>) => {
+            delete state.values[action.payload];
+        },
         internalAddNodeToGraph: (state, action: PayloadAction<string>) => {
             if (state.graph[action.payload] !== undefined) {
                 return;
@@ -56,9 +59,6 @@ export const atomsSlice = createSlice({
             if (!state.graph[fromAtomKey].includes(toAtomKey)) {
                 state.graph[fromAtomKey].push(toAtomKey);
             }
-        },
-        resetAtom: (state, action: PayloadAction<AtomState<unknown, SyncOrAsyncValue<unknown>>>) => {
-            state.values[action.payload.key] = action.payload.get;
         }
     }
 });
@@ -77,5 +77,5 @@ export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(state: A
     return state.atoms.values[atom.key] as GetAtomResult<T, U>;
 }
 
-export const { internalSet, internalAddNodeToGraph, internalAddGraphConnection, resetAtom } = atomsSlice.actions;
+export const { internalSet, internalDelete, internalAddNodeToGraph, internalAddGraphConnection } = atomsSlice.actions;
 export default atomsSlice.reducer;

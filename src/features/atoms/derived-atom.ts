@@ -1,5 +1,5 @@
 import { AtomState, AtomTypes, WritableAtomState } from './atom-state';
-import { AsyncAtomValue, AtomValue, GetOptions, SetOptions } from './getter-setter-utils';
+import { AsyncAtomValue, AtomValue, DefaultValue, GetOptions, SetOptions } from './getter-setter-utils';
 
 type SyncGetType<T> = (args: GetOptions) => T;
 type AsyncGetType<T> = (args: GetOptions) => Promise<T>;
@@ -11,7 +11,7 @@ interface BaseDerivedAtomInitialiser<T, G extends GetType<T>> {
 }
 
 interface WritableDerivedAtomInitialiser<T, G extends GetType<T>> extends BaseDerivedAtomInitialiser<T, G> {
-    set: (args: SetOptions, value: T) => void;
+    set: (args: SetOptions, value: T | DefaultValue) => void;
 }
 
 type DerivedAtomInitialiser<T, G extends GetType<T>> = BaseDerivedAtomInitialiser<T, G> | WritableDerivedAtomInitialiser<T, G>;
