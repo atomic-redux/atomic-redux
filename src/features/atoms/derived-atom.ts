@@ -16,8 +16,10 @@ interface WritableDerivedAtomInitialiser<T, G extends GetType<T>> extends BaseDe
 
 type DerivedAtomInitialiser<T, G extends GetType<T>> = BaseDerivedAtomInitialiser<T, G> | WritableDerivedAtomInitialiser<T, G>;
 
-export function derivedAtom<T, G extends GetType<T>>(initialiser: WritableDerivedAtomInitialiser<T, G>): WritableAtomState<T, G extends AsyncGetType<T> ? AsyncAtomValue<T> : AtomValue<T>>;
-export function derivedAtom<T, G extends GetType<T>>(initialiser: BaseDerivedAtomInitialiser<T, G>): AtomState<T, G extends AsyncGetType<T> ? AsyncAtomValue<T> : AtomValue<T>>;
+export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, AsyncGetType<T>>): WritableAtomState<T, AsyncAtomValue<T>>;
+export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, SyncGetType<T>>): WritableAtomState<T, AtomValue<T>>;
+export function derivedAtom<T>(initialiser: BaseDerivedAtomInitialiser<T, AsyncGetType<T>>): AtomState<T, AsyncAtomValue<T>>;
+export function derivedAtom<T>(initialiser: BaseDerivedAtomInitialiser<T, SyncGetType<T>>): AtomState<T, AtomValue<T>>;
 export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G>): AtomState<T, G> | WritableAtomState<T, G> {
     if (isWritableInitialiser(initialiser)) {
         return {
