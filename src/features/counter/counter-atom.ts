@@ -12,12 +12,12 @@ export const counterAtomB = atom({
     default: 0
 });
 
-export const multipliedAtomA = derivedAtom({
+export const multipliedAtomA = derivedAtom<number>({
     key: 'multiplied-counter-a',
     get: ({ get }) => {
         return get(counterAtomA) * 2;
     },
-    set: ({ set, reset }, value: number | DefaultValue) => {
+    set: ({ set, reset }, value) => {
         if (value instanceof DefaultValue) {
             reset(counterAtomA);
             return;
@@ -33,12 +33,12 @@ export const multipliedAtomB = derivedAtom({
     }
 });
 
-export const equationAtom = derivedAtom({
+export const equationAtom = derivedAtom<number>({
     key: 'equation',
     get: ({ get }) => {
         return get(multipliedAtomA) + get(counterAtomB);
     },
-    set: ({ get, set, reset }, value: number | DefaultValue) => {
+    set: ({ get, set, reset }, value) => {
         if (value instanceof DefaultValue) {
             reset(multipliedAtomA);
             reset(counterAtomB);
@@ -72,7 +72,7 @@ export const peopleAtom = atom<Person[]>({
     ]
 })
 
-export const personAtom = (id: number) => derivedAtom({
+export const personAtom = (id: number) => derivedAtom<Person>({
     key: `person-${id}`,
     get: ({ get }) => {
         const people = get(peopleAtom);
@@ -82,7 +82,7 @@ export const personAtom = (id: number) => derivedAtom({
                 : id % people.length
         ];
     },
-    set: ({ set, reset }, value: Person | DefaultValue) => {
+    set: ({ set, reset }, value) => {
         if (value instanceof DefaultValue) {
             reset(peopleAtom);
             return;
