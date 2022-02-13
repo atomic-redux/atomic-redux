@@ -7,7 +7,10 @@ import { AsyncAtomValue, AtomValue, DefaultValue, ValueOrSetter } from "../gette
 
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
 
-export const useAtomicValue = <T>(atom: AtomState<T, SyncOrAsyncValue<T>>): Immutable<T> | undefined => {
+export function useAtomicValue<T>(atom: AtomState<T, AsyncAtomValue<T>>): Immutable<T> | undefined;
+export function useAtomicValue<T>(atom: AtomState<T, AtomValue<T>>): Immutable<T>;
+export function useAtomicValue<T>(atom: AtomState<T, SyncOrAsyncValue<T>>): Immutable<T> | undefined;
+export function useAtomicValue<T>(atom: AtomState<T, SyncOrAsyncValue<T>>): Immutable<T> | undefined {
     const dispatch = useDispatch();
     return useAtomicSelector(state => getAtomValueFromState(state, dispatch, atom));
 };
