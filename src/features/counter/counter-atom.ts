@@ -28,7 +28,8 @@ export const multipliedAtomA = derivedAtom<number>({
 
 export const multipliedAtomB = derivedAtom({
     key: 'multiplied-counter-b',
-    get: ({ get }) => {
+    get: async ({ get }) => {
+        await new Promise(r => setTimeout(r, 1000));
         return get(counterAtomB) * 2;
     }
 });

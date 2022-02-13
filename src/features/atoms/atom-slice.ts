@@ -1,16 +1,22 @@
 import { createAction, createSlice, Dispatch, PayloadAction, Store } from "@reduxjs/toolkit";
 import { AtomState, SyncOrAsyncValue, WritableAtomState } from "./atom-state";
-import { GetAtomResult, ValueOrSetter } from './getter-setter-utils';
+import { GetAtomResult, LoadingAtom, ValueOrSetter } from './getter-setter-utils';
+import { SafeRecord } from './util-types';
+
+type InternalAtomState = {
+    value: unknown,
+    loading: boolean
+}
 
 export type SliceState = {
-    values: Record<string, unknown>;
-    graph: Record<string, string[]>;
+    states: SafeRecord<string, InternalAtomState>;
+    graph: SafeRecord<string, string[]>;
 }
 
 export type AtomicStoreState = { atoms: SliceState };
 
 const initialState: SliceState = {
-    values: {},
+    states: {},
     graph: {}
 }
 
@@ -36,10 +42,25 @@ export const atomsSlice = createSlice({
     initialState,
     reducers: {
         internalSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
-            state.values[action.payload.atomKey] = action.payload.value;
+            const currentState = state.states[action.payload.atomKey];
+            if (currentState !== undefined) {
+                currentState.value = action.payload.value;
+                return;
+            }
+
+            state.states[action.payload.atomKey] = {
+                value: action.payload.value,
+                loading: false
+            };
         },
         internalDelete: (state, action: PayloadAction<string>) => {
-            delete state.values[action.payload];
+            delete state.states[action.payload];
+        },
+        internalSetLoading: (state, action: PayloadAction<{ atomKey: string, loading: boolean }>) => {
+            const currentState = state.states[action.payload.atomKey];
+            if (currentState !== undefined) {
+                currentState.loading = action.payload.loading;
+            }
         },
         internalAddNodeToGraph: (state, action: PayloadAction<string>) => {
             if (state.graph[action.payload] !== undefined) {
@@ -56,8 +77,8 @@ export const atomsSlice = createSlice({
                 state.graph[fromAtomKey] = [];
             }
 
-            if (!state.graph[fromAtomKey].includes(toAtomKey)) {
-                state.graph[fromAtomKey].push(toAtomKey);
+            if (!state.graph[fromAtomKey]?.includes(toAtomKey)) {
+                state.graph[fromAtomKey]?.push(toAtomKey);
             }
         }
     }
@@ -74,8 +95,17 @@ export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(state: A
         return dispatch(internalInitialiseAtom(atom)) as unknown as GetAtomResult<T, U>;
     }
 
-    return state.atoms.values[atom.key] as GetAtomResult<T, U>;
+    const atomState = state.atoms.states[atom.key];
+    const result = atomState !== undefined
+        ? atomState.value as T
+        : new LoadingAtom();
+    return result as GetAtomResult<T, U>;
 }
 
-export const { internalSet, internalDelete, internalAddNodeToGraph, internalAddGraphConnection } = atomsSlice.actions;
+export const isAtomUpdating = <T>(state: AtomicStoreState, atom: AtomState<T, SyncOrAsyncValue<T>>): boolean => {
+    const atomState = state.atoms.states[atom.key];
+    return atomState !== undefined && atomState.loading;
+}
+
+export const { internalSet, internalDelete, internalSetLoading, internalAddNodeToGraph, internalAddGraphConnection } = atomsSlice.actions;
 export default atomsSlice.reducer;

@@ -34,7 +34,7 @@ export function CounterA() {
             >
                 -
             </button>
-            <span className={styles.value}>x2: {multipliedCountA}</span>
+            <span className={styles.value}>x2:{multipliedCountA}</span>
             <button
                 className={styles.button}
                 aria-label="Increment value"

@@ -34,7 +34,7 @@ export function Person() {
             >
                 -
             </button>
-            <span className={styles.value}>Age: {person.age}</span>
+            <span className={styles.value}>Age:{person.age}</span>
             <button
                 className={styles.button}
                 aria-label="Increment age"

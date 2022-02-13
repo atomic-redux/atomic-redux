@@ -38,6 +38,11 @@
   font-family: "Courier New", Courier, monospace;
 }
 
+.small {
+  font-size: 20px;
+  font-family: "Courier New", Courier;
+}
+
 .button {
   appearance: none;
   background: none;

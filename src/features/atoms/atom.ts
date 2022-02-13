@@ -10,7 +10,12 @@ export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtomState<T, A
     return {
         type: AtomTypes.Atom,
         key: initialiser.key,
-        get: (_, state) => state.atoms.values[initialiser.key] as T | undefined ?? initialiser.default,
+        get: (_, state) => {
+            const atomState = state.atoms.states[initialiser.key];
+            return atomState !== undefined
+                ? atomState.value as T
+                : initialiser.default;
+        },
         set: (args, value, setAtomValue) => {
             if (value instanceof DefaultValue) {
                 setAtomValue(initialiser.default);

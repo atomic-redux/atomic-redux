@@ -1,10 +1,13 @@
-import { useAtomicState, useAtomicValue } from '../atoms/hooks/use-atomic-state';
+import { SyncLoader } from 'react-spinners';
+import { LoadingAtom } from '../atoms/getter-setter-utils';
+import { useAtomicState, useAtomicValue, useIsAtomUpdating } from '../atoms/hooks/use-atomic-state';
 import { counterAtomB, multipliedAtomB } from './counter-atom';
 import styles from './Counter.module.css';
 
 export function CounterB() {
     const [countB, setCountB] = useAtomicState(counterAtomB);
     const multipliedCountB = useAtomicValue(multipliedAtomB);
+    const bUpdating = useIsAtomUpdating(multipliedAtomB);
 
     return (
         <>
@@ -27,7 +30,10 @@ export function CounterB() {
                 </button>
             </div>
             <div className={styles.row}>
-                <span className={styles.value}>x2: {multipliedCountB}</span>
+                {multipliedCountB instanceof LoadingAtom || bUpdating
+                    ? <SyncLoader />
+                    : <span className={styles.value}>x2<span className={styles.small}>(async)</span>:{multipliedCountB}</span>
+                }
             </div>
         </>
     );
