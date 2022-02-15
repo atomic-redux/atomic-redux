@@ -1,4 +1,4 @@
-import { AtomTypes, WritableAtomState } from "./atom-state";
+import { WritableAtom } from "./atom-types";
 import { AtomValue, DefaultValue } from './getter-setter-utils';
 
 export type AtomInitialiser<T> = {
@@ -6,9 +6,8 @@ export type AtomInitialiser<T> = {
     default: T;
 }
 
-export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtomState<T, AtomValue<T>> {
+export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtom<T, AtomValue<T>> {
     return {
-        type: AtomTypes.Atom,
         key: initialiser.key,
         get: (_, state) => {
             const atomState = state.atoms.states[initialiser.key];
@@ -16,7 +15,7 @@ export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtomState<T, A
                 ? atomState.value as T
                 : initialiser.default;
         },
-        set: (args, value, setAtomValue) => {
+        set: (_, value, setAtomValue) => {
             if (value instanceof DefaultValue) {
                 setAtomValue(initialiser.default);
                 return;

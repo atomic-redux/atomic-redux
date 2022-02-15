@@ -1,4 +1,4 @@
-import { AtomState, AtomTypes, WritableAtomState } from './atom-state';
+import { Atom, WritableAtom } from './atom-types';
 import { AsyncAtomValue, AtomValue, DefaultValue, GetOptions, SetOptions } from './getter-setter-utils';
 
 type SyncGetType<T> = (args: GetOptions) => T;
@@ -16,21 +16,19 @@ interface WritableDerivedAtomInitialiser<T, G extends GetType<T>> extends BaseDe
 
 type DerivedAtomInitialiser<T, G extends GetType<T>> = BaseDerivedAtomInitialiser<T, G> | WritableDerivedAtomInitialiser<T, G>;
 
-export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, AsyncGetType<T>>): WritableAtomState<T, AsyncAtomValue<T>>;
-export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, SyncGetType<T>>): WritableAtomState<T, AtomValue<T>>;
-export function derivedAtom<T>(initialiser: BaseDerivedAtomInitialiser<T, AsyncGetType<T>>): AtomState<T, AsyncAtomValue<T>>;
-export function derivedAtom<T>(initialiser: BaseDerivedAtomInitialiser<T, SyncGetType<T>>): AtomState<T, AtomValue<T>>;
-export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G>): AtomState<T, G> | WritableAtomState<T, G> {
+export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, AsyncGetType<T>>): WritableAtom<T, AsyncAtomValue<T>>;
+export function derivedAtom<T>(initialiser: WritableDerivedAtomInitialiser<T, SyncGetType<T>>): WritableAtom<T, AtomValue<T>>;
+export function derivedAtom<T>(initialiser: BaseDerivedAtomInitialiser<T, AsyncGetType<T>>): Atom<T, AsyncAtomValue<T>>;
+export function derivedAtom<T>(initialiser: BaseDerivedAtomInitialiser<T, SyncGetType<T>>): Atom<T, AtomValue<T>>;
+export function derivedAtom<T, G extends GetType<T>>(initialiser: DerivedAtomInitialiser<T, G>): Atom<T, G> | WritableAtom<T, G> {
     if (isWritableInitialiser(initialiser)) {
         return {
-            type: AtomTypes.Derived,
             key: initialiser.key,
             get: initialiser.get,
             set: initialiser.set
         }
     }
     return {
-        type: AtomTypes.Derived,
         key: initialiser.key,
         get: initialiser.get,
     }

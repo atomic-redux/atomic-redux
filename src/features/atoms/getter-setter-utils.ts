@@ -1,11 +1,11 @@
 import { Draft, Immutable } from 'immer';
 import { AtomicStoreState } from './atom-slice';
-import { AtomState, SyncOrAsyncValue, WritableAtomState } from "./atom-state";
+import { Atom, SyncOrAsyncValue, WritableAtom } from "./atom-types";
 
 export type GetAtomResult<T, U extends SyncOrAsyncValue<T>> = U extends AsyncAtomValue<T> ? Immutable<T> | LoadingAtom : Immutable<T>;
-export type AtomGetter = <T, U extends SyncOrAsyncValue<T>>(atom: AtomState<T, U> | WritableAtomState<T, U>) => GetAtomResult<T, U>;
-export type AtomSetter = <T>(atom: WritableAtomState<T, SyncOrAsyncValue<T>>, value: ValueOrSetter<T>) => void;
-export type ResetAtom = <T>(atom: WritableAtomState<T, SyncOrAsyncValue<T>>) => void;
+export type AtomGetter = <T, U extends SyncOrAsyncValue<T>>(atom: Atom<T, U> | WritableAtom<T, U>) => GetAtomResult<T, U>;
+export type AtomSetter = <T>(atom: WritableAtom<T, SyncOrAsyncValue<T>>, value: ValueOrSetter<T>) => void;
+export type ResetAtom = <T>(atom: WritableAtom<T, SyncOrAsyncValue<T>>) => void;
 
 export type GetOptions = {
     get: AtomGetter;
