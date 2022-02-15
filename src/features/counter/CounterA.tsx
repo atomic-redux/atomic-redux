@@ -1,4 +1,4 @@
-import { useAtomicState, useResetAtomicState } from '../atoms/hooks/use-atomic-state';
+import { useAtomicState, useResetAtomicState } from '../atoms/hooks/atomic-hooks';
 import { counterAtomA, multipliedAtomA } from './counter-atom';
 import styles from './Counter.module.css';
 

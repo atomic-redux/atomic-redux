@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAtomicState } from '../atoms/hooks/use-atomic-state';
+import { useAtomicState } from '../atoms/hooks/atomic-hooks';
 import { personAtom } from './counter-atom';
 import styles from './Counter.module.css';
 
