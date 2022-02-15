@@ -1,6 +1,6 @@
 import { createAction, createSlice, Dispatch, PayloadAction, Store } from "@reduxjs/toolkit";
 import { Atom, SyncOrAsyncValue, WritableAtom } from "./atom-types";
-import { GetAtomResult, LoadingAtom, ValueOrSetter } from './getter-setter-utils';
+import { AsyncAtomValue, AtomValue, GetAtomResult, LoadingAtom, ValueOrSetter } from './getter-setter-utils';
 import { SafeRecord } from './util-types';
 
 type InternalAtomState = {
@@ -81,7 +81,9 @@ export const atomsSlice = createSlice({
     }
 });
 
-export const getAtomValueFromStore = <T, U extends SyncOrAsyncValue<T>>(store: Store<AtomicStoreState>, atom: Atom<T, U>): GetAtomResult<T, U> => {
+export function getAtomValueFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, AsyncAtomValue<T>>): GetAtomResult<T, AsyncAtomValue<T>>;
+export function getAtomValueFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, AtomValue<T>>): GetAtomResult<T, AtomValue<T>>;
+export function getAtomValueFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, SyncOrAsyncValue<T>>): GetAtomResult<T, SyncOrAsyncValue<T>> {
     const state = store.getState();
     const dispatch = store.dispatch;
     return getAtomValueFromState(state, dispatch, atom);

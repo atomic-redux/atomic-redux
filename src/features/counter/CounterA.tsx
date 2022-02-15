@@ -29,7 +29,7 @@ export function CounterA() {
         <div className={styles.row}>
             <button
                 className={styles.button}
-                aria-label="Decrement value"
+                aria-label="Decrement multiplied value"
                 onClick={() => setMultipliedCountA(x => x - 1)}
             >
                 -
@@ -37,7 +37,7 @@ export function CounterA() {
             <span className={styles.value}>x2:{multipliedCountA}</span>
             <button
                 className={styles.button}
-                aria-label="Increment value"
+                aria-label="Increment multiplied value"
                 onClick={() => setMultipliedCountA(x => x + 1)}
             >
                 +
