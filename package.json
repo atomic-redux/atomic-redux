@@ -20,9 +20,9 @@
     "type": "git",
     "url": "git+https://github.com/matt-winfield/atomic-redux-state.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["Redux", "State Management", "TypeScript"],
+  "author": "Matthew Winfield",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/matt-winfield/atomic-redux-state/issues"
   },
