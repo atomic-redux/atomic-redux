@@ -45,7 +45,7 @@ describe('atom', () => {
             const testState = createMockState({
                 key: testKey,
                 value: stateValue
-            })
+            });
 
             const result = testAtom.get({} as GetOptions, testState);
             expect(result).toBe(stateValue);
@@ -110,4 +110,3 @@ describe('atom', () => {
         });
     });
 });
-

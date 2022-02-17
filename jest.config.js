@@ -4,7 +4,8 @@ module.exports = {
     testEnvironment: 'node',
     collectCoverage: true,
     collectCoverageFrom: [
-        "src/**/*",
-        "!*/__test-files__/**/*"
+        'src/**/*',
+        '!**/index.ts',
+        '!*/__test-files__/**/*'
     ]
 };

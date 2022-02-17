@@ -1,4 +1,4 @@
-import { AsyncAtomValue, AtomValue, InternalAtomUpdateFunction } from "./getter-setter-utils";
+import { AsyncAtomValue, AtomValue, InternalAtomUpdateFunction } from './getter-setter-utils';
 
 export type SyncOrAsyncValue<T> = AtomValue<T> | AsyncAtomValue<T>;
 

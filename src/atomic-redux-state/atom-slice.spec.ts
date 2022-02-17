@@ -18,4 +18,4 @@ describe('getAtomValueFromStore', () => {
 
         expect(value).toBe(testValue);
     });
-})
+});

@@ -14,22 +14,22 @@ export function createTestStore(): Store<AtomicStoreState> {
             atoms: atomsReducer
         }),
         middleware: [getAtomMiddleware()]
-    })
+    });
 }
 
 export function createMockState(...atomStates: MockState[]): AtomicStoreState {
-    let state: AtomicStoreState = {
+    const state: AtomicStoreState = {
         atoms: {
             graph: {},
             states: {}
         }
-    }
+    };
 
     for (const atomState of atomStates) {
         state.atoms.states[atomState.key] = {
             value: atomState.value,
             loading: atomState.loading ?? false
-        }
+        };
     }
 
     return state;

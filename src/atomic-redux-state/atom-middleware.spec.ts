@@ -23,7 +23,7 @@ describe('atom-middleware', () => {
 
             expect(actionHandler).toBeInstanceOf(Function);
             expect(actionHandler.length).toBe(1);
-        })
+        });
     });
 
     describe('action handler', () => {
@@ -68,20 +68,16 @@ describe('atom-middleware', () => {
             const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom({
                 key: secondAtomKey,
-                get: ({ get }) => {
-                    return get(firstAtom);
-                }
+                get: ({ get }) => get(firstAtom)
             });
 
             const thirdAtomKey = 'third-atom';
             const thirdAtom = derivedAtom({
                 key: thirdAtomKey,
-                get: ({ get }) => {
-                    return get(secondAtom);
-                }
-            })
+                get: ({ get }) => get(secondAtom)
+            });
 
-            getStateMock.mockReturnValue(createMockState())
+            getStateMock.mockReturnValue(createMockState());
 
             const initialiseFirstAtomAction = internalInitialiseAtom(firstAtom);
             const initialiseSecondAtomAction = internalInitialiseAtom(secondAtom);
@@ -118,20 +114,16 @@ describe('atom-middleware', () => {
             const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom({
                 key: secondAtomKey,
-                get: ({ get }) => {
-                    return get(firstAtom);
-                }
+                get: ({ get }) => get(firstAtom)
             });
 
             const thirdAtomKey = 'third-atom';
             const thirdAtom = derivedAtom({
                 key: thirdAtomKey,
-                get: ({ get }) => {
-                    return get(secondAtom);
-                }
-            })
+                get: ({ get }) => get(secondAtom)
+            });
 
-            getStateMock.mockReturnValue(createMockState())
+            getStateMock.mockReturnValue(createMockState());
 
             const initialiseFirstAtomAction = internalInitialiseAtom(firstAtom);
             const initialiseSecondAtomAction = internalInitialiseAtom(secondAtom);
@@ -169,20 +161,16 @@ describe('atom-middleware', () => {
             const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom({
                 key: secondAtomKey,
-                get: ({ get }) => {
-                    return get(firstAtom) * 2;
-                }
+                get: ({ get }) => get(firstAtom) * 2
             });
 
             const thirdAtomKey = 'third-atom';
             const thirdAtom = derivedAtom({
                 key: thirdAtomKey,
-                get: ({ get }) => {
-                    return get(secondAtom) * 2;
-                }
+                get: ({ get }) => get(secondAtom) * 2
             });
 
-            getStateMock.mockReturnValue(createMockState())
+            getStateMock.mockReturnValue(createMockState());
 
             const initialiseFirstAtomAction = internalInitialiseAtom(firstAtom);
             const initialiseSecondAtomAction = internalInitialiseAtom(secondAtom);
@@ -214,7 +202,7 @@ describe('atom-middleware', () => {
                 default: defaultValue
             });
 
-            getStateMock.mockReturnValue(createMockState())
+            getStateMock.mockReturnValue(createMockState());
 
             const action = internalInitialiseAtom(testAtom);
 
@@ -236,7 +224,7 @@ describe('atom-middleware', () => {
             getStateMock.mockReturnValue(createMockState({
                 key: testAtomKey,
                 value: testAtomValue
-            }))
+            }));
 
             const action = internalInitialiseAtom(testAtom);
 
@@ -249,14 +237,12 @@ describe('atom-middleware', () => {
             const store = createTestStore();
 
             const testValue = 10;
-            const promise = new Promise<number>(resolve => { resolve(testValue) });
+            const promise = new Promise<number>(resolve => { resolve(testValue); });
 
             const testAtomKey = 'test-atom';
             const testAtom = derivedAtom({
                 key: testAtomKey,
-                get: async () => {
-                    return await promise;
-                }
+                get: async () => promise
             });
             store.dispatch(internalInitialiseAtom(testAtom));
 
@@ -279,15 +265,15 @@ describe('atom-middleware', () => {
             const testValue = 10;
             const testAtom = derivedAtom({
                 key: testAtomKey,
-                get: () => { return 0; }
+                get: () => 0
             });
 
             /// @ts-ignore testAtom is readonly, intentionally testing invalid input
             const action = setAtom(testAtom, testValue);
 
             expect(() => {
-                actionHandler(action)
-            }).toThrowError(`Attempted to write value ${testValue} to read-only atom ${testAtomKey}`)
+                actionHandler(action);
+            }).toThrowError(`Attempted to write value ${testValue} to read-only atom ${testAtomKey}`);
         });
 
         it('should set atom value in state', () => {
@@ -312,7 +298,7 @@ describe('atom-middleware', () => {
         });
 
         it('should set the atom value based on the current state when a callback is provided', () => {
-            const store = createTestStore()
+            const store = createTestStore();
 
             const testAtomKey = 'test-atom';
             const testAtom = atom({
@@ -331,7 +317,7 @@ describe('atom-middleware', () => {
         });
 
         it('should set the atom value based on mutation in immer callback', () => {
-            const store = createTestStore()
+            const store = createTestStore();
 
             const testAtomKey = 'test-atom';
             const testAtom = atom({
@@ -371,17 +357,13 @@ describe('atom-middleware', () => {
             const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom({
                 key: secondAtomKey,
-                get: ({ get }) => {
-                    return get(firstAtom) * 2;
-                }
+                get: ({ get }) => get(firstAtom) * 2
             });
 
             const thirdAtomKey = 'third-atom';
             const thirdAtom = derivedAtom({
                 key: thirdAtomKey,
-                get: ({ get }) => {
-                    return get(secondAtom) * 2;
-                }
+                get: ({ get }) => get(secondAtom) * 2
             });
 
             store.dispatch(internalInitialiseAtom(firstAtom));
@@ -416,9 +398,7 @@ describe('atom-middleware', () => {
             const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom<number>({
                 key: secondAtomKey,
-                get: ({ get }) => {
-                    return get(firstAtom) * 2;
-                },
+                get: ({ get }) => get(firstAtom) * 2,
                 set: ({ set, reset }, value) => {
                     if (value instanceof DefaultValue) {
                         reset(firstAtom);
@@ -456,11 +436,9 @@ describe('atom-middleware', () => {
             const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom<number>({
                 key: secondAtomKey,
-                get: ({ get }) => {
-                    return get(firstAtom) * 2;
-                },
+                get: ({ get }) => get(firstAtom) * 2,
                 set: ({ reset }) => {
-                    reset(firstAtom)
+                    reset(firstAtom);
                 }
             });
 
@@ -496,9 +474,7 @@ describe('atom-middleware', () => {
             const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom<number>({
                 key: secondAtomKey,
-                get: ({ get }) => {
-                    return get(firstAtom) * 2;
-                },
+                get: ({ get }) => get(firstAtom) * 2,
                 set: ({ get, set }) => {
                     const value = get(otherAtom);
                     set(firstAtom, value);
@@ -522,19 +498,19 @@ describe('atom-middleware', () => {
 
             const startValue = 1;
             const newValue = 10;
-            let promise = new Promise<number>(resolve => { resolve(startValue) });
+            let promise = new Promise<number>(resolve => { resolve(startValue); });
 
             const parentAtom = atom({
                 key: 'parent-atom',
                 default: 0
-            })
+            });
 
             const asyncAtomKey = 'async-atom';
             const asyncAtom = derivedAtom({
                 key: asyncAtomKey,
                 get: async ({ get }) => {
                     get(parentAtom);
-                    return await promise;
+                    return promise;
                 }
             });
 
@@ -545,7 +521,7 @@ describe('atom-middleware', () => {
             expect(store.getState().atoms.states[asyncAtomKey]?.loading).toBe(false);
             expect(store.getState().atoms.states[asyncAtomKey]?.value).toBe(startValue);
 
-            promise = new Promise<number>(resolve => { resolve(newValue) });
+            promise = new Promise<number>(resolve => { resolve(newValue); });
             store.dispatch(setAtom(parentAtom, 1));
 
             expect(store.getState().atoms.states[asyncAtomKey]).toBeDefined();
@@ -558,4 +534,4 @@ describe('atom-middleware', () => {
             expect(store.getState().atoms.states[asyncAtomKey]?.value).toBe(newValue);
         });
     });
-})
+});

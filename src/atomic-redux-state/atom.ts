@@ -1,4 +1,4 @@
-import { WritableAtom } from "./atom-types";
+import { WritableAtom } from './atom-types';
 import { AtomValue, DefaultValue } from './getter-setter-utils';
 
 export type AtomInitialiser<T> = {
@@ -23,5 +23,5 @@ export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtom<T, AtomVa
 
             setAtomValue(value);
         }
-    }
+    };
 }

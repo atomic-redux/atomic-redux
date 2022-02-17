@@ -1,0 +1,56 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "jest": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "airbnb"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": "latest",
+        "sourceType": "script"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "comma-dangle": ["error", "never"],
+        "indent": ["error", 4],
+        "max-len": ["error", 120],
+        "arrow-parens": ["error", "as-needed"],
+        "import/extensions": ["warn", "never"],
+        "no-restricted-syntax": "off",
+        "no-continue": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "no-redeclare": "off",
+        "@typescript-eslint/no-redeclare": ["error"],
+        "import/prefer-default-export": "off",
+        "import/no-default-export": "warn",
+        "prefer-destructuring": "off",
+        "no-param-reassign": "off",
+        "object-curly-newline": "off",
+        "no-use-before-define": "off",
+        "implicit-arrow-linebreak": "off",
+        "linebreak-style": "off"
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                    ".ts",
+                    ".tsx"
+                ]
+            }
+        }
+    }
+}
