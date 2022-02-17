@@ -12,7 +12,7 @@
     "build": "tsc",
     "lint": "eslint src/**",
     "lint-fix": "eslint --fix src/**",
-    "prepare": "yarn lint-fix && jest && yarn build",
+    "prepack": "yarn lint-fix && jest && yarn build",
     "preversion": "jest",
     "postversion": "git push && git push --tags"
   },
