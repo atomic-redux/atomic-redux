@@ -9,4 +9,5 @@ export {
 export type { AtomicStoreState, SetAtomPayload } from './atomic-redux-state/atom-slice';
 export type { Atom, WritableAtom } from './atomic-redux-state/atom-types';
 export { derivedAtom } from './atomic-redux-state/derived-atom';
-export type { DefaultValue, LoadingAtom } from './atomic-redux-state/getter-setter-utils';
+export type { AtomUpdateCallback, DefaultValue, LoadingAtom } from './atomic-redux-state/getter-setter-utils';
+

@@ -32,4 +32,5 @@ export type InternalAtomUpdateFunction<T> = (
     setAtomValue: (newValue: T) => void)
     => void;
 
-export type ValueOrSetter<T> = T | ((state: Draft<T>) => void);
+export type AtomUpdateCallback<T> = ((state: Draft<T>) => void);
+export type ValueOrSetter<T> = T | AtomUpdateCallback<T>;
