@@ -1,4 +1,4 @@
-import { useAtomicState, useResetAtomicState } from '../atoms/hooks/atomic-hooks';
+import { useAtomicState, useResetAtomicState } from 'atomic-redux-state-react';
 import { equationAtom } from './counter-atom';
 import styles from './Counter.module.css';
 

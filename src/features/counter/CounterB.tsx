@@ -1,6 +1,6 @@
+import { LoadingAtom } from 'atomic-redux-state';
+import { useAtomicState, useAtomicValue, useIsAtomUpdating } from 'atomic-redux-state-react';
 import { SyncLoader } from 'react-spinners';
-import { LoadingAtom } from '../atoms/getter-setter-utils';
-import { useAtomicState, useAtomicValue, useIsAtomUpdating } from '../atoms/hooks/atomic-hooks';
 import { counterAtomB, multipliedAtomB } from './counter-atom';
 import styles from './Counter.module.css';
 

@@ -1,6 +1,4 @@
-import { atom } from "../atoms/atom";
-import { derivedAtom } from "../atoms/derived-atom";
-import { DefaultValue } from '../atoms/getter-setter-utils';
+import { atom, DefaultValue, derivedAtom } from 'atomic-redux-state';
 
 export const counterAtomA = atom({
     key: 'counter-a',

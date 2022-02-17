@@ -1,6 +1,5 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
-import { getAtomMiddleware } from '../features/atoms/atom-middleware';
-import atomsReducer from '../features/atoms/atom-slice';
+import { atomsReducer, getAtomMiddleware } from 'atomic-redux-state';
 import counterReducer from '../features/counter/counterSlice';
 
 export const store = configureStore({

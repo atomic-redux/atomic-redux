@@ -1,10 +1,10 @@
 import { fireEvent, screen } from '@testing-library/dom';
 import { render } from '@testing-library/react';
+import { getAtomValueFromStore } from 'atomic-redux-state';
 import { Provider } from 'react-redux';
-import { getAtomValueFromStore } from '../atoms/atom-slice';
-import { createTestStore } from '../atoms/tests/test-utils';
 import { counterAtomA, multipliedAtomA } from './counter-atom';
 import { CounterA } from './CounterA';
+import { createTestStore } from './test-utils';
 
 describe('CounterA', () => {
     it('should increment counter A when + clicked', () => {
