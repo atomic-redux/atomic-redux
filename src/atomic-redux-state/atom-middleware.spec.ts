@@ -286,7 +286,6 @@ describe('atom-middleware', () => {
                 default: 0
             });
 
-            store.dispatch(internalInitialiseAtom(testAtom));
             const action = setAtom(testAtom, testValue);
 
             store.dispatch(action);
@@ -305,7 +304,6 @@ describe('atom-middleware', () => {
                 key: testAtomKey,
                 default: 2
             });
-            store.dispatch(internalInitialiseAtom(testAtom));
 
             const action = setAtom(testAtom, value => value + 1);
             store.dispatch(action);
@@ -327,7 +325,6 @@ describe('atom-middleware', () => {
                     b: 10
                 }
             });
-            store.dispatch(internalInitialiseAtom(testAtom));
 
             const action = setAtom(testAtom, value => {
                 value.a = 'test';
@@ -366,8 +363,6 @@ describe('atom-middleware', () => {
                 get: ({ get }) => get(secondAtom) * 2
             });
 
-            store.dispatch(internalInitialiseAtom(firstAtom));
-            store.dispatch(internalInitialiseAtom(secondAtom));
             store.dispatch(internalInitialiseAtom(thirdAtom));
 
             const action = setAtom(firstAtom, testValue);

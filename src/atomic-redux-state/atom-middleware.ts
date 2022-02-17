@@ -98,7 +98,7 @@ const handleSetAtomAction = (
     };
 
     const resetAtom = <T>(nextAtom: WritableAtom<T, SyncOrAsyncValue<T>>) => {
-        nextAtom.set(setAtomArgs, new DefaultValue(), reduxSetterGenerator(nextAtom.key, store, atoms, promises));
+        nextAtom.set(setAtomArgs, new DefaultValue(), reduxSetterGenerator(nextAtom, store, atoms, promises));
     };
 
     const setAtomArgs = { get: getAtom, set: setAtomValue, reset: resetAtom };
@@ -108,19 +108,14 @@ const handleSetAtomAction = (
 };
 
 const reduxSetterGenerator = (
-    atomKey: string,
+    atom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     store: AtomMiddlewareStore,
     atoms: Atoms,
     promises: Promise<unknown>[]
 ) => <T>(value: T) => {
-    const atom = atoms[atomKey];
-    if (atom === undefined) {
-        return;
-    }
-
     store.dispatch(internalSet({
-        atomKey,
-        value: handlePossiblePromise(value, atomKey, atoms, store, promises)
+        atomKey: atom.key,
+        value: handlePossiblePromise(value, atom.key, atoms, store, promises)
     }));
 
     updateGraphFromAtom(atom, atoms, store, promises);
@@ -135,13 +130,13 @@ const setAtomWithProduce = <T>(
     promises: Promise<unknown>[]
 ) => {
     if (!(valueOrSetter instanceof Function)) {
-        atom.set(setAtomArgs, valueOrSetter, reduxSetterGenerator(atom.key, store, atoms, promises));
+        atom.set(setAtomArgs, valueOrSetter, reduxSetterGenerator(atom, store, atoms, promises));
         return;
     }
 
     const currentValue = getAtomValueFromState(store.getState(), store.dispatch, atom) as T;
     const newValue = produce(currentValue, valueOrSetter);
-    atom.set(setAtomArgs, newValue, reduxSetterGenerator(atom.key, store, atoms, promises));
+    atom.set(setAtomArgs, newValue, reduxSetterGenerator(atom, store, atoms, promises));
 };
 
 const updateGraphFromAtom = (
