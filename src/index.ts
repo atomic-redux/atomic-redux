@@ -1,1 +1,7 @@
-export { useAtomicState, useAtomicValue, useIsAtomUpdating, useSetAtomicState } from './hooks/atomic-hooks';
+export {
+    useAtomicState,
+    useAtomicValue,
+    useIsAtomUpdating,
+    useResetAtomicState,
+    useSetAtomicState
+} from './hooks/atomic-hooks';
