@@ -1,6 +1,6 @@
 import { combineReducers, configureStore, Store } from '@reduxjs/toolkit';
-import { getAtomMiddleware } from '../atom-middleware';
-import atomsReducer, { AtomicStoreState } from '../atom-slice';
+import { getAtomMiddleware } from '../atomic-redux-state/atom-middleware';
+import atomsReducer, { AtomicStoreState } from '../atomic-redux-state/atom-slice';
 
 type MockState = {
     key: string,

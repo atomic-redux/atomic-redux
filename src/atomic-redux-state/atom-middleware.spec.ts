@@ -1,9 +1,9 @@
+import { createMockState, createTestStore } from '../__test-files__/test-utils';
 import { atom } from './atom';
 import { getAtomMiddleware } from './atom-middleware';
 import { internalInitialiseAtom, setAtom } from './atom-slice';
 import { derivedAtom } from './derived-atom';
 import { DefaultValue } from './getter-setter-utils';
-import { createMockState, createTestStore } from './__test-files__/test-utils';
 
 describe('atom-middleware', () => {
     const dispatchMock = jest.fn();

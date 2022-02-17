@@ -1,6 +1,6 @@
+import { createMockState } from '../__test-files__/test-utils';
 import { atom } from './atom';
 import { DefaultValue, GetOptions, SetOptions } from './getter-setter-utils';
-import { createMockState } from './__test-files__/test-utils';
 
 describe('atom', () => {
     it('should return atom with specified key', () => {
