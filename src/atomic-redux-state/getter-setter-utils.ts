@@ -7,11 +7,14 @@ export type GetAtomResult<T, U extends SyncOrAsyncValue<T>> =
     U extends AsyncAtomValue<T> ? Immutable<T> | LoadingAtom : Immutable<T>;
 export type AtomGetter =
     <T, U extends SyncOrAsyncValue<T>>(atom: Atom<T, U> | WritableAtom<T, U>) => GetAtomResult<T, U>;
+export type AsyncAtomGetter =
+    <T, U extends SyncOrAsyncValue<T>>(atom: Atom<T, U> | WritableAtom<T, U>) => Promise<T>;
 export type AtomSetter = <T>(atom: WritableAtom<T, SyncOrAsyncValue<T>>, value: ValueOrSetter<T>) => void;
 export type ResetAtom = <T>(atom: WritableAtom<T, SyncOrAsyncValue<T>>) => void;
 
 export type GetOptions = {
     get: AtomGetter;
+    getAsync: AsyncAtomGetter;
 }
 
 export type SetOptions = {

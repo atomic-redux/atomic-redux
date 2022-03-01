@@ -12,17 +12,26 @@ import {
     SetAtomPayload
 } from './atom-slice';
 import { Atom, isWritableAtom, SyncOrAsyncValue, WritableAtom } from './atom-types';
-import { AtomGetter, DefaultValue, GetAtomResult, LoadingAtom, SetOptions, ValueOrSetter } from './getter-setter-utils';
+import {
+    AsyncAtomGetter,
+    AtomGetter,
+    DefaultValue,
+    GetAtomResult,
+    LoadingAtom,
+    SetOptions,
+    ValueOrSetter
+} from './getter-setter-utils';
 import { SafeRecord } from './util-types';
 
 type AtomMiddlewareStore = MiddlewareAPI<Dispatch<any>, AtomicStoreState>;
 type Atoms = SafeRecord<string, Atom<unknown, SyncOrAsyncValue<unknown>>>;
+type AtomPromises = SafeRecord<string, Promise<unknown>[]>;
 
 function createInitialisationAtomGetter(
     currentAtom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     atoms: Atoms,
     store: AtomMiddlewareStore,
-    promises: Promise<unknown>[]
+    promises: AtomPromises
 ) {
     return <T, U extends SyncOrAsyncValue<T>>(previousAtom: Atom<T, U>): GetAtomResult<T, U> => {
         store.dispatch(internalAddGraphConnection({
@@ -34,18 +43,35 @@ function createInitialisationAtomGetter(
     };
 }
 
+function createAsyncInitialisationAtomGetter(
+    currentAtom: Atom<unknown, SyncOrAsyncValue<unknown>>,
+    atoms: Atoms,
+    store: AtomMiddlewareStore,
+    promises: AtomPromises
+) {
+    return <T, U extends SyncOrAsyncValue<T>>(previousAtom: Atom<T, U>): Promise<T> => {
+        store.dispatch(internalAddGraphConnection({
+            fromAtomKey: previousAtom.key,
+            toAtomKey: currentAtom.key
+        }));
+
+        return addAtomToGraphAsync(store, previousAtom, atoms, promises);
+    };
+}
+
 const addAtomToGraph = <T>(
     store: AtomMiddlewareStore,
     atom: Atom<T, SyncOrAsyncValue<T>>,
     atoms: Atoms,
-    promises: Promise<unknown>[]
+    promises: AtomPromises
 ): T | LoadingAtom => {
     if (!(atom.key in atoms)) {
         atoms[atom.key] = atom;
     }
 
     const result = atom.get({
-        get: createInitialisationAtomGetter(atom, atoms, store, promises)
+        get: createInitialisationAtomGetter(atom, atoms, store, promises),
+        getAsync: createAsyncInitialisationAtomGetter(atom, atoms, store, promises)
     }, store.getState());
     const value = handlePossiblePromise(result, atom.key, atoms, store, promises);
 
@@ -59,11 +85,32 @@ const addAtomToGraph = <T>(
     return value;
 };
 
+const addAtomToGraphAsync = <T>(
+    store: AtomMiddlewareStore,
+    atom: Atom<T, SyncOrAsyncValue<T>>,
+    atoms: Atoms,
+    promises: AtomPromises
+): Promise<T> => {
+    if (!(atom.key in atoms)) {
+        atoms[atom.key] = atom;
+    }
+
+    const result = atom.get({
+        get: createInitialisationAtomGetter(atom, atoms, store, promises),
+        getAsync: createAsyncInitialisationAtomGetter(atom, atoms, store, promises)
+    }, store.getState());
+
+    const promise = Promise.resolve(result);
+    handlePromise(promise, atom.key, atoms, store, promises);
+
+    return promise;
+};
+
 const handleInitialiseAtomAction = <T>(
     store: AtomMiddlewareStore,
     action: PayloadAction<Atom<T, SyncOrAsyncValue<T>>>,
     atoms: Atoms,
-    promises: Promise<unknown>[]
+    promises: AtomPromises
 ): T | LoadingAtom => {
     const atom = action.payload;
 
@@ -77,7 +124,7 @@ const handleSetAtomAction = (
     store: AtomMiddlewareStore,
     action: PayloadAction<SetAtomPayload<unknown>>,
     atoms: Atoms,
-    promises: Promise<unknown>[]
+    promises: AtomPromises
 ): void => {
     const payload = action.payload;
     const atom = payload.atom;
@@ -111,7 +158,7 @@ const reduxSetterGenerator = (
     atom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     store: AtomMiddlewareStore,
     atoms: Atoms,
-    promises: Promise<unknown>[]
+    promises: AtomPromises
 ) => <T>(value: T) => {
     store.dispatch(internalSet({
         atomKey: atom.key,
@@ -127,7 +174,7 @@ const setAtomWithProduce = <T>(
     setAtomArgs: SetOptions,
     valueOrSetter: ValueOrSetter<T>,
     store: AtomMiddlewareStore,
-    promises: Promise<unknown>[]
+    promises: AtomPromises
 ) => {
     if (!(valueOrSetter instanceof Function)) {
         atom.set(setAtomArgs, valueOrSetter, reduxSetterGenerator(atom, store, atoms, promises));
@@ -143,7 +190,7 @@ const updateGraphFromAtom = (
     atom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     atoms: Atoms,
     store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>,
-    promises: Promise<unknown>[]
+    promises: AtomPromises
 ): void => {
     const storeState = store.getState();
     const dependerKeys = storeState.atoms.graph[atom.key];
@@ -152,10 +199,17 @@ const updateGraphFromAtom = (
         return;
     }
 
+    const asyncAtomGetter: AsyncAtomGetter = <T, U extends SyncOrAsyncValue<T>>(
+        previousAtom: Atom<T, U>
+    ): Promise<T> => {
+        const result = previousAtom.get({ get: atomGetter, getAsync: asyncAtomGetter }, storeState);
+        return Promise.resolve(result);
+    };
+
     const atomGetter: AtomGetter = <T, U extends SyncOrAsyncValue<T>>(
         previousAtom: Atom<T, U>
     ): GetAtomResult<T, U> => {
-        const result = previousAtom.get({ get: atomGetter }, storeState);
+        const result = previousAtom.get({ get: atomGetter, getAsync: asyncAtomGetter }, storeState);
         const value = handlePossiblePromise(result, previousAtom.key, atoms, store, promises);
 
         return value as GetAtomResult<T, U>;
@@ -167,7 +221,7 @@ const updateGraphFromAtom = (
             continue;
         }
 
-        const dependerValue = depender.get({ get: atomGetter }, storeState);
+        const dependerValue = depender.get({ get: atomGetter, getAsync: asyncAtomGetter }, storeState);
 
         store.dispatch(internalSet({
             atomKey: depender.key,
@@ -180,7 +234,7 @@ const updateGraphFromAtom = (
 export const getAtomMiddleware = () => {
     const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => {
         const atoms: Atoms = {};
-        const promises: Promise<unknown>[] = [];
+        const promises: AtomPromises = {};
 
         return action => {
             if (action.type === internalInitialiseAtom.toString()) {
@@ -203,38 +257,55 @@ function handlePossiblePromise<T>(
     atomKey: string,
     atoms: Atoms,
     store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>,
-    promises: Promise<unknown>[]
+    promises: AtomPromises
 ): T | LoadingAtom {
     if (!isPromise(valueOrPromise)) {
         return valueOrPromise;
     }
 
     const promise = valueOrPromise;
-    promises.push(promise);
-
-    promise.then(value => {
-        const atom = atoms[atomKey];
-        if (atom === undefined) {
-            return;
-        }
-
-        removeFromArray(promises, promise);
-        store.dispatch(internalSet({ atomKey, value }));
-
-        if (promises.length < 1) {
-            store.dispatch(internalSetLoading({ atomKey, loading: false }));
-        }
-
-        updateGraphFromAtom(atom, atoms, store, promises);
-    });
+    handlePromise(promise, atomKey, atoms, store, promises);
 
     const atomState = store.getState().atoms.states[atomKey];
     if (atomState === undefined) {
         return new LoadingAtom();
     }
 
-    store.dispatch(internalSetLoading({ atomKey, loading: true }));
     return atomState.value as T;
+}
+
+async function handlePromise<T>(
+    promise: Promise<T>,
+    atomKey: string,
+    atoms: Atoms,
+    store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>,
+    promises: AtomPromises
+): Promise<T> {
+    const atom = atoms[atomKey];
+    if (!(atomKey in promises)) {
+        promises[atomKey] = [];
+    }
+    promises[atomKey]!.push(promise);
+
+    const atomState = store.getState().atoms.states[atomKey];
+    if (atomState !== undefined) {
+        store.dispatch(internalSetLoading({ atomKey, loading: true }));
+    }
+
+    const value = await promise;
+
+    removeFromArray(promises[atomKey]!, promise);
+    store.dispatch(internalSet({ atomKey, value }));
+
+    if (promises[atomKey]!.length < 1) {
+        store.dispatch(internalSetLoading({ atomKey, loading: false }));
+    }
+
+    if (atom === undefined) {
+        return value;
+    }
+    updateGraphFromAtom(atom, atoms, store, promises);
+    return value;
 }
 
 function isPromise(value: any): value is Promise<unknown> {

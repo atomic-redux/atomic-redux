@@ -2,7 +2,7 @@
 
 import { createTestStore } from '../__test-files__/test-utils';
 import { atom } from './atom';
-import { getAtomValueFromStore } from './atom-slice';
+import { getAtomValueFromState, getAtomValueFromStore } from './atom-slice';
 
 describe('getAtomValueFromStore', () => {
     it('should get atom value from store', () => {
@@ -16,6 +16,19 @@ describe('getAtomValueFromStore', () => {
 
         const value = getAtomValueFromStore(store, testAtom);
 
+        expect(value).toBe(testValue);
+    });
+
+    it('should get atom value from state', () => {
+        const store = createTestStore();
+
+        const testValue = 10;
+        const testAtom = atom({
+            key: 'test-atom',
+            default: testValue
+        });
+
+        const value = getAtomValueFromState(store.getState(), store.dispatch, testAtom);
         expect(value).toBe(testValue);
     });
 });
