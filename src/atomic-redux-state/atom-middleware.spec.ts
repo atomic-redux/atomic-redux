@@ -284,6 +284,34 @@ describe('atom-middleware', () => {
             expect(store.getState().atoms.states[testAtomKey]?.loading).toBe(false);
             expect(store.getState().atoms.states[testAtomKey]?.value).toBe(testValue);
         });
+
+        it('should execute and await async get when getAsync called on atom that has not initialised', async () => {
+            const store = createTestStore();
+
+            const testValue = 10;
+            const promise = new Promise<number>(resolve => { resolve(testValue); });
+
+            const baseAtom = derivedAtom({
+                key: 'base-atom',
+                get: async () => promise
+            });
+
+            const testAtomKey = 'test-atom';
+            const testAtom = derivedAtom({
+                key: testAtomKey,
+                get: async ({ getAsync }) => getAsync(baseAtom)
+            });
+            store.dispatch(internalInitialiseAtom(testAtom));
+
+            expect(store.getState().atoms.states[testAtomKey]).toBeUndefined();
+
+            await promise;
+            await new Promise(process.nextTick);
+
+            expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
+            expect(store.getState().atoms.states[testAtomKey]?.loading).toBe(false);
+            expect(store.getState().atoms.states[testAtomKey]?.value).toBe(testValue);
+        });
     });
 
     describe('setAtom', () => {

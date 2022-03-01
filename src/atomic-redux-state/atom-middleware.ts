@@ -100,10 +100,12 @@ const addAtomToGraphAsync = <T>(
         getAsync: createAsyncInitialisationAtomGetter(atom, atoms, store, promises)
     }, store.getState());
 
-    const promise = Promise.resolve(result);
-    handlePromise(promise, atom.key, atoms, store, promises);
+    const atomState = store.getState().atoms.states[atom.key];
 
-    return promise;
+    const promise = Promise.resolve(result);
+    return atomState !== undefined
+        ? Promise.resolve(atomState.value as T)
+        : handlePromise(promise, atom.key, atoms, store, promises);
 };
 
 const handleInitialiseAtomAction = <T>(
@@ -202,6 +204,11 @@ const updateGraphFromAtom = (
     const asyncAtomGetter: AsyncAtomGetter = <T, U extends SyncOrAsyncValue<T>>(
         previousAtom: Atom<T, U>
     ): Promise<T> => {
+        const atomState = storeState.atoms.states[previousAtom.key];
+        if (atomState !== undefined) {
+            return Promise.resolve(atomState.value as T);
+        }
+
         const result = previousAtom.get({ get: atomGetter, getAsync: asyncAtomGetter }, storeState);
         return Promise.resolve(result);
     };
