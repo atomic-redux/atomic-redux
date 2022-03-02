@@ -75,6 +75,10 @@ export const atomsSlice = createSlice({
             const fromAtomKey = action.payload.fromAtomKey;
             const toAtomKey = action.payload.toAtomKey;
 
+            if (fromAtomKey === toAtomKey) {
+                return;
+            }
+
             if (state.graph[fromAtomKey] === undefined) {
                 state.graph[fromAtomKey] = [];
             }

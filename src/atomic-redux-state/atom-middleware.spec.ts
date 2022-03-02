@@ -585,5 +585,68 @@ describe('atom-middleware', () => {
             expect(store.getState().atoms.states[asyncAtomKey]?.loading).toBe(false);
             expect(store.getState().atoms.states[asyncAtomKey]?.value).toBe(newValue);
         });
+
+        it('should update dependency graph when atom set', () => {
+            const store = createTestStore();
+
+            const activeIndexesAtom = atom({
+                key: 'active-indexes',
+                default: [0, 1]
+            });
+
+            const data = [1, 2, 3, 4];
+            const dataPointAtom = (index: number) => derivedAtom({
+                key: `data-point-${index}`,
+                get: () => data[index]
+            });
+
+            const sumAtom = derivedAtom({
+                key: 'sum',
+                get: ({ get }) => {
+                    const activeIndexes = get(activeIndexesAtom);
+                    let sum = 0;
+                    for (const index of activeIndexes) {
+                        sum += get(dataPointAtom(index));
+                    }
+                    return sum;
+                }
+            });
+
+            store.dispatch(internalInitialiseAtom(sumAtom));
+
+            const graph = store.getState().atoms.graph;
+
+            expect(graph[activeIndexesAtom.key]).toBeDefined();
+            expect(graph[activeIndexesAtom.key]!.length).toBe(1);
+            expect(graph[activeIndexesAtom.key]).toEqual(expect.arrayContaining([sumAtom.key]));
+
+            expect(graph['data-point-0']).toBeDefined();
+            expect(graph['data-point-0']!.length).toBe(1);
+            expect(graph['data-point-0']).toEqual(expect.arrayContaining([sumAtom.key]));
+
+            expect(graph['data-point-1']).toBeDefined();
+            expect(graph['data-point-1']!.length).toBe(1);
+            expect(graph['data-point-1']).toEqual(expect.arrayContaining([sumAtom.key]));
+
+            expect(graph['data-point-2']).toBeUndefined();
+            expect(graph['data-point-3']).toBeUndefined();
+
+            // Act
+            store.dispatch(setAtom(activeIndexesAtom, [2, 3]));
+
+            const updatedGraph = store.getState().atoms.graph;
+
+            expect(updatedGraph[activeIndexesAtom.key]).toBeDefined();
+            expect(updatedGraph[activeIndexesAtom.key]!.length).toBe(1);
+            expect(updatedGraph[activeIndexesAtom.key]).toEqual(expect.arrayContaining([sumAtom.key]));
+
+            expect(updatedGraph['data-point-2']).toBeDefined();
+            expect(updatedGraph['data-point-2']!.length).toBe(1);
+            expect(updatedGraph['data-point-2']).toEqual(expect.arrayContaining([sumAtom.key]));
+
+            expect(updatedGraph['data-point-3']).toBeDefined();
+            expect(updatedGraph['data-point-3']!.length).toBe(1);
+            expect(updatedGraph['data-point-3']).toEqual(expect.arrayContaining([sumAtom.key]));
+        });
     });
 });
