@@ -6,6 +6,8 @@ import {
     internalAddGraphConnection,
     internalAddNodeToGraph,
     internalInitialiseAtom,
+    internalRemoveGraphConnection,
+    internalResetGraphNodeDependencies,
     internalSet,
     internalSetLoading,
     setAtom,
@@ -106,6 +108,21 @@ const getAtomValueAsync = <T>(
         : handlePromise(promise, atom.key, atoms, store, promises);
 };
 
+const removeStaleGraphConnections = (
+    store: AtomMiddlewareStore,
+    atomKey: string,
+    dependenciesBeforeUpdate: string[],
+    dependenciesAfterUpdate: string[]
+): void => {
+    const staleDependencies = dependenciesBeforeUpdate.filter(d => !dependenciesAfterUpdate.includes(d));
+    for (const staleDependency of staleDependencies) {
+        store.dispatch(internalRemoveGraphConnection({
+            fromAtomKey: staleDependency,
+            toAtomKey: atomKey
+        }));
+    }
+};
+
 const handleInitialiseAtomAction = <T>(
     store: AtomMiddlewareStore,
     action: PayloadAction<Atom<T, SyncOrAsyncValue<T>>>,
@@ -189,7 +206,7 @@ const setAtomWithProduce = <T>(
 const updateGraphFromAtom = (
     atom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     atoms: Atoms,
-    store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>,
+    store: AtomMiddlewareStore,
     promises: AtomPromises
 ): void => {
     const storeState = store.getState();
@@ -205,6 +222,9 @@ const updateGraphFromAtom = (
             continue;
         }
 
+        const dependenciesBeforeUpdate = store.getState().atoms.graph.dependencies[dependerKey];
+        store.dispatch(internalResetGraphNodeDependencies(dependerKey));
+
         const dependerValue = depender.get({
             get: createAtomGetter(depender, atoms, store, promises),
             getAsync: createAsyncAtomGetter(depender, atoms, store, promises)
@@ -214,6 +234,12 @@ const updateGraphFromAtom = (
             atomKey: depender.key,
             value: handlePossiblePromise(dependerValue, depender.key, atoms, store, promises)
         }));
+
+        const dependenciesAfterUpdate = store.getState().atoms.graph.dependencies[dependerKey];
+        if (dependenciesBeforeUpdate !== undefined && dependenciesAfterUpdate !== undefined) {
+            removeStaleGraphConnections(store, dependerKey, dependenciesBeforeUpdate, dependenciesAfterUpdate);
+        }
+
         updateGraphFromAtom(depender, atoms, store, promises);
     }
 };
@@ -243,7 +269,7 @@ function handlePossiblePromise<T>(
     valueOrPromise: T | Promise<T>,
     atomKey: string,
     atoms: Atoms,
-    store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>,
+    store: AtomMiddlewareStore,
     promises: AtomPromises
 ): T | LoadingAtom {
     if (!isPromise(valueOrPromise)) {
@@ -265,7 +291,7 @@ async function handlePromise<T>(
     promise: Promise<T>,
     atomKey: string,
     atoms: Atoms,
-    store: MiddlewareAPI<Dispatch<any>, AtomicStoreState>,
+    store: AtomMiddlewareStore,
     promises: AtomPromises
 ): Promise<T> {
     const atom = atoms[atomKey];

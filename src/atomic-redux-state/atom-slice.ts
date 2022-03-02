@@ -102,6 +102,16 @@ export const atomsSlice = createSlice({
             if (!state.graph.dependencies[toAtomKey]?.includes(fromAtomKey)) {
                 state.graph.dependencies[toAtomKey]?.push(fromAtomKey);
             }
+        },
+        internalResetGraphNodeDependencies: (state, action: PayloadAction<string>) => {
+            state.graph.dependencies[action.payload] = [];
+        },
+        internalRemoveGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
+            const fromAtomKey = action.payload.fromAtomKey;
+            const toAtomKey = action.payload.toAtomKey;
+
+            state.graph.dependants[fromAtomKey] = state.graph.dependants[fromAtomKey]?.filter(d => d !== toAtomKey);
+            state.graph.dependencies[toAtomKey] = state.graph.dependencies[toAtomKey]?.filter(d => d !== fromAtomKey);
         }
     }
 });
@@ -142,6 +152,8 @@ export const {
     internalSet,
     internalSetLoading,
     internalAddNodeToGraph,
-    internalAddGraphConnection
+    internalAddGraphConnection,
+    internalResetGraphNodeDependencies,
+    internalRemoveGraphConnection
 } = atomsSlice.actions;
 export default atomsSlice.reducer;

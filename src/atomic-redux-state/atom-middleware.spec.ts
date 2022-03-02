@@ -649,6 +649,9 @@ describe('atom-middleware', () => {
             expect(updatedGraph[activeIndexesAtom.key]!.length).toBe(1);
             expect(updatedGraph[activeIndexesAtom.key]).toEqual(expect.arrayContaining([sumAtom.key]));
 
+            expect(updatedGraph['data-point-0']).toHaveLength(0);
+            expect(updatedGraph['data-point-1']).toHaveLength(0);
+
             expect(updatedGraph['data-point-2']).toBeDefined();
             expect(updatedGraph['data-point-2']!.length).toBe(1);
             expect(updatedGraph['data-point-2']).toEqual(expect.arrayContaining([sumAtom.key]));
