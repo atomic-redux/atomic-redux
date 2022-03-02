@@ -25,7 +25,10 @@ describe('atom', () => {
             const result = testAtom.get({} as GetOptions, {
                 atoms: {
                     states: {},
-                    graph: {}
+                    graph: {
+                        dependencies: {},
+                        dependants: {}
+                    }
                 }
             });
 

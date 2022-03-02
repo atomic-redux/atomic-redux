@@ -53,27 +53,25 @@ describe('atom-middleware', () => {
             store.dispatch(action);
 
             const graph = store.getState().atoms.graph;
-            expect(graph[testAtomKey]).toBeDefined();
+            expect(graph.dependants[testAtomKey]).toBeDefined();
+            expect(graph.dependencies[testAtomKey]).toBeDefined();
         });
 
         it('should set atom dependencies in graph when initialised in order', () => {
             const store = createTestStore();
 
-            const firstAtomKey = 'first-atom';
             const firstAtom = atom({
-                key: firstAtomKey,
+                key: 'first-atom',
                 default: 0
             });
 
-            const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom({
-                key: secondAtomKey,
+                key: 'second-atom',
                 get: ({ get }) => get(firstAtom)
             });
 
-            const thirdAtomKey = 'third-atom';
             const thirdAtom = derivedAtom({
-                key: thirdAtomKey,
+                key: 'third-atom',
                 get: ({ get }) => get(secondAtom)
             });
 
@@ -89,37 +87,41 @@ describe('atom-middleware', () => {
 
             const graph = store.getState().atoms.graph;
 
-            expect(graph[firstAtomKey]).toBeDefined();
-            expect(graph[secondAtomKey]).toBeDefined();
-            expect(graph[thirdAtomKey]).toBeDefined();
+            expect(graph.dependants[firstAtom.key]).toBeDefined();
+            expect(graph.dependants[secondAtom.key]).toBeDefined();
+            expect(graph.dependants[thirdAtom.key]).toBeDefined();
+            expect(graph.dependencies[firstAtom.key]).toBeDefined();
+            expect(graph.dependencies[secondAtom.key]).toBeDefined();
+            expect(graph.dependencies[thirdAtom.key]).toBeDefined();
 
-            expect(graph[firstAtomKey]).toContain(secondAtomKey);
-            expect(graph[firstAtomKey]?.length).toBe(1);
+            expect(graph.dependants[firstAtom.key]).toContain(secondAtom.key);
+            expect(graph.dependants[firstAtom.key]).toHaveLength(1);
+            expect(graph.dependencies[firstAtom.key]).toHaveLength(0);
 
-            expect(graph[secondAtomKey]).toContain(thirdAtomKey);
-            expect(graph[secondAtomKey]?.length).toBe(1);
+            expect(graph.dependants[secondAtom.key]).toContain(thirdAtom.key);
+            expect(graph.dependants[secondAtom.key]).toHaveLength(1);
+            expect(graph.dependencies[secondAtom.key]).toContain(firstAtom.key);
 
-            expect(graph[thirdAtomKey]?.length).toBe(0);
+            expect(graph.dependants[thirdAtom.key]).toHaveLength(0);
+            expect(graph.dependencies[thirdAtom.key]).toContain(secondAtom.key);
+            expect(graph.dependencies[thirdAtom.key]).toHaveLength(1);
         });
 
         it('should set atom dependencies in graph when added out of order', () => {
             const store = createTestStore();
 
-            const firstAtomKey = 'first-atom';
             const firstAtom = atom({
-                key: firstAtomKey,
+                key: 'first-atom',
                 default: 0
             });
 
-            const secondAtomKey = 'second-atom';
             const secondAtom = derivedAtom({
-                key: secondAtomKey,
+                key: 'second-atom',
                 get: ({ get }) => get(firstAtom)
             });
 
-            const thirdAtomKey = 'third-atom';
             const thirdAtom = derivedAtom({
-                key: thirdAtomKey,
+                key: 'third-atom',
                 get: ({ get }) => get(secondAtom)
             });
 
@@ -135,17 +137,24 @@ describe('atom-middleware', () => {
 
             const graph = store.getState().atoms.graph;
 
-            expect(graph[firstAtomKey]).toBeDefined();
-            expect(graph[secondAtomKey]).toBeDefined();
-            expect(graph[thirdAtomKey]).toBeDefined();
+            expect(graph.dependants[firstAtom.key]).toBeDefined();
+            expect(graph.dependants[secondAtom.key]).toBeDefined();
+            expect(graph.dependants[thirdAtom.key]).toBeDefined();
+            expect(graph.dependencies[firstAtom.key]).toBeDefined();
+            expect(graph.dependencies[secondAtom.key]).toBeDefined();
+            expect(graph.dependencies[thirdAtom.key]).toBeDefined();
 
-            expect(graph[firstAtomKey]).toContain(secondAtomKey);
-            expect(graph[firstAtomKey]?.length).toBe(1);
+            expect(graph.dependants[firstAtom.key]).toContain(secondAtom.key);
+            expect(graph.dependants[firstAtom.key]).toHaveLength(1);
+            expect(graph.dependencies[firstAtom.key]).toHaveLength(0);
 
-            expect(graph[secondAtomKey]).toContain(thirdAtomKey);
-            expect(graph[secondAtomKey]?.length).toBe(1);
+            expect(graph.dependants[secondAtom.key]).toContain(thirdAtom.key);
+            expect(graph.dependants[secondAtom.key]).toHaveLength(1);
+            expect(graph.dependencies[secondAtom.key]).toContain(firstAtom.key);
 
-            expect(graph[thirdAtomKey]?.length).toBe(0);
+            expect(graph.dependants[thirdAtom.key]).toHaveLength(0);
+            expect(graph.dependencies[thirdAtom.key]).toContain(secondAtom.key);
+            expect(graph.dependencies[thirdAtom.key]).toHaveLength(1);
         });
 
         it('should set dependant atom values', () => {
@@ -614,7 +623,7 @@ describe('atom-middleware', () => {
 
             store.dispatch(internalInitialiseAtom(sumAtom));
 
-            const graph = store.getState().atoms.graph;
+            const graph = store.getState().atoms.graph.dependants;
 
             expect(graph[activeIndexesAtom.key]).toBeDefined();
             expect(graph[activeIndexesAtom.key]!.length).toBe(1);
@@ -634,7 +643,7 @@ describe('atom-middleware', () => {
             // Act
             store.dispatch(setAtom(activeIndexesAtom, [2, 3]));
 
-            const updatedGraph = store.getState().atoms.graph;
+            const updatedGraph = store.getState().atoms.graph.dependants;
 
             expect(updatedGraph[activeIndexesAtom.key]).toBeDefined();
             expect(updatedGraph[activeIndexesAtom.key]!.length).toBe(1);

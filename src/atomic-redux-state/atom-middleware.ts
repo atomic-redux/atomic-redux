@@ -193,7 +193,7 @@ const updateGraphFromAtom = (
     promises: AtomPromises
 ): void => {
     const storeState = store.getState();
-    const dependerKeys = storeState.atoms.graph[atom.key];
+    const dependerKeys = storeState.atoms.graph.dependants[atom.key];
 
     if (dependerKeys === undefined) {
         return;

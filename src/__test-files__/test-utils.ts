@@ -20,7 +20,10 @@ export function createTestStore(): Store<AtomicStoreState> {
 export function createMockState(...atomStates: MockState[]): AtomicStoreState {
     const state: AtomicStoreState = {
         atoms: {
-            graph: {},
+            graph: {
+                dependencies: {},
+                dependants: {}
+            },
             states: {}
         }
     };

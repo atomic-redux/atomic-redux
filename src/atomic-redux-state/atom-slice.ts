@@ -10,14 +10,20 @@ type InternalAtomState = {
 
 export type SliceState = {
     states: SafeRecord<string, InternalAtomState>;
-    graph: SafeRecord<string, string[]>;
+    graph: {
+        dependencies: SafeRecord<string, string[]>;
+        dependants: SafeRecord<string, string[]>;
+    }
 }
 
 export type AtomicStoreState = { atoms: SliceState };
 
 const initialState: SliceState = {
     states: {},
-    graph: {}
+    graph: {
+        dependencies: {},
+        dependants: {}
+    }
 };
 
 export type SetAtomPayload<T> = {
@@ -65,11 +71,13 @@ export const atomsSlice = createSlice({
             }
         },
         internalAddNodeToGraph: (state, action: PayloadAction<string>) => {
-            if (state.graph[action.payload] !== undefined) {
-                return;
+            if (state.graph.dependants[action.payload] === undefined) {
+                state.graph.dependants[action.payload] = [];
             }
 
-            state.graph[action.payload] = [];
+            if (state.graph.dependencies[action.payload] === undefined) {
+                state.graph.dependencies[action.payload] = [];
+            }
         },
         internalAddGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
             const fromAtomKey = action.payload.fromAtomKey;
@@ -79,12 +87,20 @@ export const atomsSlice = createSlice({
                 return;
             }
 
-            if (state.graph[fromAtomKey] === undefined) {
-                state.graph[fromAtomKey] = [];
+            if (state.graph.dependants[fromAtomKey] === undefined) {
+                state.graph.dependants[fromAtomKey] = [];
             }
 
-            if (!state.graph[fromAtomKey]?.includes(toAtomKey)) {
-                state.graph[fromAtomKey]?.push(toAtomKey);
+            if (state.graph.dependencies[toAtomKey] === undefined) {
+                state.graph.dependencies[toAtomKey] = [];
+            }
+
+            if (!state.graph.dependants[fromAtomKey]?.includes(toAtomKey)) {
+                state.graph.dependants[fromAtomKey]?.push(toAtomKey);
+            }
+
+            if (!state.graph.dependencies[toAtomKey]?.includes(fromAtomKey)) {
+                state.graph.dependencies[toAtomKey]?.push(fromAtomKey);
             }
         }
     }
@@ -106,7 +122,7 @@ export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(
     dispatch: Dispatch<any>,
     atom: Atom<T, U>
 ): GetAtomResult<T, U> => {
-    if (state.atoms.graph[atom.key] === undefined) {
+    if (state.atoms.graph.dependencies[atom.key] === undefined) {
         return dispatch(internalInitialiseAtom(atom)) as unknown as GetAtomResult<T, U>;
     }
 
