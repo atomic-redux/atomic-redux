@@ -69,6 +69,11 @@ const getAtomValue = <T>(
         atoms[atom.key] = atom;
     }
 
+    const atomState = store.getState().atoms.states[atom.key];
+    if (atomState !== undefined) {
+        return atomState.value as T;
+    }
+
     const result = atom.get({
         get: createAtomGetter(atom, atoms, store, promises),
         getAsync: createAsyncAtomGetter(atom, atoms, store, promises)
@@ -95,17 +100,18 @@ const getAtomValueAsync = <T>(
         atoms[atom.key] = atom;
     }
 
+    const atomState = store.getState().atoms.states[atom.key];
+    if (atomState !== undefined) {
+        return Promise.resolve(atomState.value as T);
+    }
+
     const result = atom.get({
         get: createAtomGetter(atom, atoms, store, promises),
         getAsync: createAsyncAtomGetter(atom, atoms, store, promises)
     }, store.getState());
 
-    const atomState = store.getState().atoms.states[atom.key];
-
     const promise = Promise.resolve(result);
-    return atomState !== undefined
-        ? Promise.resolve(atomState.value as T)
-        : handlePromise(promise, atom.key, atoms, store, promises);
+    return handlePromise(promise, atom.key, atoms, store, promises);
 };
 
 const removeStaleGraphConnections = (
