@@ -3,12 +3,15 @@
 import { createTestStore } from '../__test-files__/test-utils';
 import { atom } from './atom';
 import {
+    getAtomValueFromState,
     initialiseAtomFromState,
     initialiseAtomFromStore,
     internalInitialiseAtom,
     internalSetLoading,
     isAtomUpdating
 } from './atom-slice';
+import { derivedAtom } from './derived-atom';
+import { LoadingAtom } from './getter-setter-utils';
 
 describe('getAtomValueFromStore', () => {
     it('should get atom value from store', () => {
@@ -26,7 +29,7 @@ describe('getAtomValueFromStore', () => {
     });
 });
 
-describe('getAtomValueFromState', () => {
+describe('initialiseAtomFromState', () => {
     it('should get atom value from state when not initialised', () => {
         const store = createTestStore();
 
@@ -52,6 +55,109 @@ describe('getAtomValueFromState', () => {
         store.dispatch(internalInitialiseAtom(testAtom));
 
         const value = initialiseAtomFromState(store.getState(), store.dispatch, testAtom);
+        expect(value).toBe(testValue);
+    });
+});
+
+describe('getAtomValueFromState', () => {
+    it('should get atom value from state when not initialised', () => {
+        const store = createTestStore();
+
+        const testValue = 10;
+        const testAtom = atom({
+            key: 'test-atom',
+            default: testValue
+        });
+
+        const value = getAtomValueFromState(store.getState(), testAtom);
+        expect(value).toBe(testValue);
+    });
+
+    it('should get atom value from state when initialised', () => {
+        const store = createTestStore();
+
+        const testValue = 10;
+        const testAtom = atom({
+            key: 'test-atom',
+            default: testValue
+        });
+
+        store.dispatch(internalInitialiseAtom(testAtom));
+
+        const value = getAtomValueFromState(store.getState(), testAtom);
+        expect(value).toBe(testValue);
+    });
+
+    it('should get derived atom value from state when not initialised', () => {
+        const store = createTestStore();
+
+        const testValue = 10;
+        const baseAtom = atom({
+            key: 'base-atom',
+            default: testValue
+        });
+
+        const testAtom = derivedAtom({
+            key: 'test-atom',
+            get: ({ get }) => {
+                const value = get(baseAtom);
+                return value * 2;
+            }
+        });
+
+        const value = getAtomValueFromState(store.getState(), testAtom);
+        expect(value).toBe(testValue * 2);
+    });
+
+    it('should return LoadingAtom while awaiting promise', async () => {
+        const store = createTestStore();
+
+        const testValue = 10;
+        const baseAtom = derivedAtom({
+            key: 'base-atom',
+            get: async () => {
+                await new Promise(r => { setTimeout(r, 100); });
+                return testValue;
+            }
+        });
+
+        const testAtom = derivedAtom({
+            key: 'test-atom',
+            get: async ({ getAsync }) => {
+                const value = await getAsync(baseAtom);
+                return value * 2;
+            }
+        });
+
+        const value = getAtomValueFromState(store.getState(), testAtom);
+        expect(value).toBeInstanceOf(LoadingAtom);
+    });
+
+    it('should return async value if already initialised with value', async () => {
+        const store = createTestStore();
+
+        const testValue = 10;
+        const promise = new Promise<number>(resolve => { resolve(testValue); });
+
+        const baseAtom = derivedAtom({
+            key: 'base-atom',
+            get: () => promise
+        });
+
+        const testAtom = derivedAtom({
+            key: 'test-atom',
+            get: async ({ getAsync }) => {
+                const value = await getAsync(baseAtom);
+                return value;
+            }
+        });
+
+        store.dispatch(internalInitialiseAtom(testAtom));
+
+        await promise;
+        await new Promise(process.nextTick);
+
+        const value = getAtomValueFromState(store.getState(), testAtom);
         expect(value).toBe(testValue);
     });
 });

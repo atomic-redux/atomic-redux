@@ -21,7 +21,7 @@ import {
     SetOptions,
     ValueOrSetter
 } from './getter-setter-utils';
-import { SafeRecord } from './util-types';
+import { isPromise, SafeRecord } from './util-types';
 
 type AtomMiddlewareStore = MiddlewareAPI<Dispatch<any>, AtomicStoreState>;
 type Atoms = SafeRecord<string, Atom<unknown, SyncOrAsyncValue<unknown>>>;
@@ -319,10 +319,6 @@ async function handlePromise<T>(
     }
     updateGraphFromAtom(atom, atoms, store, promises);
     return value;
-}
-
-function isPromise(value: any): value is Promise<unknown> {
-    return typeof value.then === 'function';
 }
 
 function removeFromArray<T>(array: T[], value: T): void {
