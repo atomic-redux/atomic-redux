@@ -3,8 +3,8 @@
 import { createTestStore } from '../__test-files__/test-utils';
 import { atom } from './atom';
 import {
-    getAtomValueFromState,
-    getAtomValueFromStore,
+    initialiseAtomFromState,
+    initialiseAtomFromStore,
     internalInitialiseAtom,
     internalSetLoading,
     isAtomUpdating
@@ -20,7 +20,7 @@ describe('getAtomValueFromStore', () => {
             default: testValue
         });
 
-        const value = getAtomValueFromStore(store, testAtom);
+        const value = initialiseAtomFromStore(store, testAtom);
 
         expect(value).toBe(testValue);
     });
@@ -36,7 +36,7 @@ describe('getAtomValueFromState', () => {
             default: testValue
         });
 
-        const value = getAtomValueFromState(store.getState(), store.dispatch, testAtom);
+        const value = initialiseAtomFromState(store.getState(), store.dispatch, testAtom);
         expect(value).toBe(testValue);
     });
 
@@ -51,7 +51,7 @@ describe('getAtomValueFromState', () => {
 
         store.dispatch(internalInitialiseAtom(testAtom));
 
-        const value = getAtomValueFromState(store.getState(), store.dispatch, testAtom);
+        const value = initialiseAtomFromState(store.getState(), store.dispatch, testAtom);
         expect(value).toBe(testValue);
     });
 });

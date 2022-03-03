@@ -2,7 +2,7 @@ import { Dispatch, Middleware, MiddlewareAPI, PayloadAction } from '@reduxjs/too
 import produce from 'immer';
 import {
     AtomicStoreState,
-    getAtomValueFromState,
+    initialiseAtomFromState,
     internalAddGraphConnection,
     internalAddNodeToGraph,
     internalInitialiseAtom,
@@ -198,7 +198,7 @@ const setAtomWithProduce = <T>(
         return;
     }
 
-    const currentValue = getAtomValueFromState(store.getState(), store.dispatch, atom) as T;
+    const currentValue = initialiseAtomFromState(store.getState(), store.dispatch, atom);
     const newValue = produce(currentValue, valueOrSetter);
     atom.set(setAtomArgs, newValue, reduxSetterGenerator(atom, store, atoms, promises));
 };

@@ -3,7 +3,8 @@ export { getAtomMiddleware } from './atomic-redux-state/atom-middleware';
 export {
     default as atomsReducer,
     getAtomValueFromState,
-    getAtomValueFromStore,
+    initialiseAtomFromState,
+    initialiseAtomFromStore,
     isAtomUpdating,
     setAtom
 } from './atomic-redux-state/atom-slice';

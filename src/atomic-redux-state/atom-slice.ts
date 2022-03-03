@@ -1,4 +1,5 @@
 import { createAction, createSlice, Dispatch, PayloadAction, Store } from '@reduxjs/toolkit';
+import { Immutable } from 'immer';
 import { Atom, SyncOrAsyncValue, WritableAtom } from './atom-types';
 import { AsyncAtomValue, AtomValue, GetAtomResult, LoadingAtom, ValueOrSetter } from './getter-setter-utils';
 import { SafeRecord } from './util-types';
@@ -117,25 +118,41 @@ export const atomsSlice = createSlice({
 });
 
 // eslint-disable-next-line max-len
-export function getAtomValueFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, AsyncAtomValue<T>>): GetAtomResult<T, AsyncAtomValue<T>>;
+export function initialiseAtomFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, AsyncAtomValue<T>>): GetAtomResult<T, AsyncAtomValue<T>>;
 // eslint-disable-next-line max-len
-export function getAtomValueFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, AtomValue<T>>): GetAtomResult<T, AtomValue<T>>;
+export function initialiseAtomFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, AtomValue<T>>): GetAtomResult<T, AtomValue<T>>;
 // eslint-disable-next-line max-len
-export function getAtomValueFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, SyncOrAsyncValue<T>>): GetAtomResult<T, SyncOrAsyncValue<T>> {
+export function initialiseAtomFromStore<T>(store: Store<AtomicStoreState>, atom: Atom<T, SyncOrAsyncValue<T>>): GetAtomResult<T, SyncOrAsyncValue<T>> {
     const state = store.getState();
     const dispatch = store.dispatch;
-    return getAtomValueFromState(state, dispatch, atom);
+    return initialiseAtomFromState(state, dispatch, atom);
+}
+
+// eslint-disable-next-line max-len
+export function initialiseAtomFromState<T>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: Atom<T, AsyncAtomValue<T>>): GetAtomResult<T, AsyncAtomValue<T>>;
+// eslint-disable-next-line max-len
+export function initialiseAtomFromState<T>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: Atom<T, AtomValue<T>>): GetAtomResult<T, AtomValue<T>>;
+// eslint-disable-next-line max-len
+export function initialiseAtomFromState<T>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom
+export function initialiseAtomFromState<T>(
+    state: AtomicStoreState,
+    dispatch: Dispatch<any>,
+    atom: Atom<T, SyncOrAsyncValue<T>>
+): Immutable<T> | LoadingAtom {
+    if (state.atoms.graph.dependencies[atom.key] === undefined) {
+        return dispatch(internalInitialiseAtom(atom)) as unknown as Immutable<T> | LoadingAtom;
+    }
+
+    const atomState = state.atoms.states[atom.key];
+    return atomState !== undefined
+        ? atomState.value as T
+        : new LoadingAtom();
 }
 
 export const getAtomValueFromState = <T, U extends SyncOrAsyncValue<T>>(
     state: AtomicStoreState,
-    dispatch: Dispatch<any>,
     atom: Atom<T, U>
 ): GetAtomResult<T, U> => {
-    if (state.atoms.graph.dependencies[atom.key] === undefined) {
-        return dispatch(internalInitialiseAtom(atom)) as unknown as GetAtomResult<T, U>;
-    }
-
     const atomState = state.atoms.states[atom.key];
     const result = atomState !== undefined
         ? atomState.value as T
