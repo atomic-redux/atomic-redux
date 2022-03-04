@@ -162,6 +162,107 @@ describe('atom-middleware', () => {
             expect(store.getState().atoms.states[testAtomKey]?.loading).toBe(false);
             expect(store.getState().atoms.states[testAtomKey]?.value).toBe(testValue);
         });
+
+        it('should throw an error when derived atoms form an immediate cycle', () => {
+            const store = createTestStore();
+
+            const firstAtom = derivedAtom({
+                key: 'first-atom',
+                get: ({ get }) => {
+                    get(secondAtom);
+                    return 1;
+                }
+            });
+
+            const secondAtom = derivedAtom({
+                key: 'second-atom',
+                get: ({ get }) => {
+                    get(firstAtom);
+                    return 2;
+                }
+            });
+
+            expect(() => {
+                store.dispatch(internalInitialiseAtom(secondAtom));
+            }).toThrowError(/.*Atom dependency loop detected: first-atom -> second-atom -> first-atom.*/);
+        });
+
+        it('should throw an error when derived atoms form an indirect cycle', () => {
+            const store = createTestStore();
+
+            const firstAtom = derivedAtom({
+                key: 'first-atom',
+                get: ({ get }) => {
+                    get(fourthAtom);
+                    return 1;
+                }
+            });
+
+            const secondAtom = derivedAtom({
+                key: 'second-atom',
+                get: ({ get }) => {
+                    get(firstAtom);
+                    return 2;
+                }
+            });
+
+            const thirdAtom = derivedAtom({
+                key: 'third-atom',
+                get: ({ get }) => {
+                    get(secondAtom);
+                    return 2;
+                }
+            });
+
+            const fourthAtom = derivedAtom({
+                key: 'fourth-atom',
+                get: ({ get }) => {
+                    get(thirdAtom);
+                    return 2;
+                }
+            });
+
+            expect(() => {
+                store.dispatch(internalInitialiseAtom(firstAtom));
+            // eslint-disable-next-line max-len
+            }).toThrowError(/.*Atom dependency loop detected: fourth-atom -> third-atom -> second-atom -> first-atom -> fourth-atom.*/);
+        });
+
+        it('should throw an error when a derived atom with multiple dependencies creates a dependency loop', () => {
+            const store = createTestStore();
+
+            const firstAtom = atom({
+                key: 'first-atom',
+                default: 1
+            });
+
+            const secondAtom = derivedAtom({
+                key: 'second-atom',
+                get: ({ get }) => {
+                    get(firstAtom);
+                    get(thirdAtom);
+                    return 2;
+                }
+            });
+
+            const thirdAtom = derivedAtom({
+                key: 'third-atom',
+                get: ({ get }) => {
+                    get(secondAtom);
+                    return 2;
+                }
+            });
+
+            const fourthAtom = derivedAtom({
+                key: 'fourth-atom',
+                get: ({ get }) => get(thirdAtom)
+            });
+
+            expect(() => {
+                store.dispatch(internalInitialiseAtom(fourthAtom));
+            // eslint-disable-next-line max-len
+            }).toThrowError(/.*Atom dependency loop detected: third-atom -> second-atom -> third-atom.*/);
+        });
     });
 
     describe('setAtom', () => {

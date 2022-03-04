@@ -37,7 +37,8 @@ function createAtomGetter(
     atoms: Atoms,
     store: MainStore,
     middlewareStore: MiddlewareStore,
-    promises: AtomPromises
+    promises: AtomPromises,
+    atomStack: string[]
 ) {
     return <T, U extends SyncOrAsyncValue<T>>(previousAtom: Atom<T, U>): GetAtomResult<T, U> => {
         middlewareStore.dispatch(internalAddGraphConnection({
@@ -45,7 +46,19 @@ function createAtomGetter(
             toAtomKey: currentAtom.key
         }));
 
-        return getAtomValue(store, middlewareStore, previousAtom, atoms, promises) as GetAtomResult<T, U>;
+        atomStack.push(previousAtom.key);
+        checkForDependencyLoop(atomStack);
+        const value = getAtomValue(
+            store,
+            middlewareStore,
+            previousAtom,
+            atoms,
+            promises,
+            atomStack
+        ) as GetAtomResult<T, U>;
+        atomStack.pop();
+
+        return value;
     };
 }
 
@@ -54,7 +67,8 @@ function createAsyncAtomGetter(
     atoms: Atoms,
     store: MainStore,
     middlewareStore: MiddlewareStore,
-    promises: AtomPromises
+    promises: AtomPromises,
+    atomStack: string[]
 ) {
     return <T, U extends SyncOrAsyncValue<T>>(previousAtom: Atom<T, U>): Promise<T> => {
         middlewareStore.dispatch(internalAddGraphConnection({
@@ -62,16 +76,33 @@ function createAsyncAtomGetter(
             toAtomKey: currentAtom.key
         }));
 
-        return getAtomValueAsync(store, middlewareStore, previousAtom, atoms, promises);
+        atomStack.push(previousAtom.key);
+        checkForDependencyLoop(atomStack);
+        const value = getAtomValueAsync(store, middlewareStore, previousAtom, atoms, promises, atomStack);
+        atomStack.pop();
+
+        return value;
     };
 }
+
+const checkForDependencyLoop = (atomStack: string[]): void => {
+    if ((new Set(atomStack)).size === atomStack.length) {
+        return;
+    }
+
+    const formattedStack = atomStack.join(' -> ');
+
+    // eslint-disable-next-line no-console
+    throw new Error(`Atom dependency loop detected: ${formattedStack}`);
+};
 
 const getAtomValue = <T>(
     store: MainStore,
     middlewareStore: MiddlewareStore,
     atom: Atom<T, SyncOrAsyncValue<T>>,
     atoms: Atoms,
-    promises: AtomPromises
+    promises: AtomPromises,
+    atomStack: string[]
 ): T | LoadingAtom => {
     if (!(atom.key in atoms)) {
         atoms[atom.key] = atom;
@@ -83,8 +114,8 @@ const getAtomValue = <T>(
     }
 
     const result = atom.get({
-        get: createAtomGetter(atom, atoms, store, middlewareStore, promises),
-        getAsync: createAsyncAtomGetter(atom, atoms, store, middlewareStore, promises)
+        get: createAtomGetter(atom, atoms, store, middlewareStore, promises, atomStack),
+        getAsync: createAsyncAtomGetter(atom, atoms, store, middlewareStore, promises, atomStack)
     }, store.getState());
     const value = handlePossiblePromise(result, atom.key, atoms, store, middlewareStore, promises);
 
@@ -103,7 +134,8 @@ const getAtomValueAsync = <T>(
     middlewareStore: MiddlewareStore,
     atom: Atom<T, SyncOrAsyncValue<T>>,
     atoms: Atoms,
-    promises: AtomPromises
+    promises: AtomPromises,
+    atomStack: string[]
 ): Promise<T> => {
     if (!(atom.key in atoms)) {
         atoms[atom.key] = atom;
@@ -115,8 +147,8 @@ const getAtomValueAsync = <T>(
     }
 
     const result = atom.get({
-        get: createAtomGetter(atom, atoms, store, middlewareStore, promises),
-        getAsync: createAsyncAtomGetter(atom, atoms, store, middlewareStore, promises)
+        get: createAtomGetter(atom, atoms, store, middlewareStore, promises, atomStack),
+        getAsync: createAsyncAtomGetter(atom, atoms, store, middlewareStore, promises, atomStack)
     }, store.getState());
 
     const promise = Promise.resolve(result);
@@ -146,7 +178,7 @@ const handleInitialiseAtomAction = <T>(
     promises: AtomPromises
 ): void => {
     const atom = action.payload;
-    getAtomValue(store, middlewareStore, atom, atoms, promises);
+    getAtomValue(store, middlewareStore, atom, atoms, promises, []);
     middlewareStore.dispatch(internalAddNodeToGraph(atom.key));
 };
 
@@ -181,7 +213,7 @@ const handleSetAtomAction = (
     };
 
     const setAtomArgs = {
-        get: createAtomGetter(atom, atoms, store, middlewareStore, promises),
+        get: createAtomGetter(atom, atoms, store, middlewareStore, promises, []),
         set: setAtomValue,
         reset: resetAtom
     };
@@ -247,8 +279,8 @@ const updateGraphFromAtom = (
         middlewareStore.dispatch(internalResetGraphNodeDependencies(dependerKey));
 
         const dependerValue = depender.get({
-            get: createAtomGetter(depender, atoms, store, middlewareStore, promises),
-            getAsync: createAsyncAtomGetter(depender, atoms, store, middlewareStore, promises)
+            get: createAtomGetter(depender, atoms, store, middlewareStore, promises, []),
+            getAsync: createAsyncAtomGetter(depender, atoms, store, middlewareStore, promises, [])
         }, storeState);
 
         store.dispatch(internalSet({
