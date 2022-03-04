@@ -1,6 +1,6 @@
 import { fireEvent, screen } from '@testing-library/dom';
 import { render } from '@testing-library/react';
-import { getAtomValueFromStore } from 'atomic-redux-state';
+import { getAtomValueFromState } from 'atomic-redux-state';
 import { Provider } from 'react-redux';
 import { counterAtomA, multipliedAtomA } from './counter-atom';
 import { CounterA } from './CounterA';
@@ -16,12 +16,12 @@ describe('CounterA', () => {
             </Provider>
         )
 
-        const previousValue = getAtomValueFromStore(store, counterAtomA);
+        const previousValue = getAtomValueFromState(store.getState(), counterAtomA);
 
         const button = screen.getByLabelText('Increment value');
         fireEvent.click(button);
 
-        const value = getAtomValueFromStore(store, counterAtomA);
+        const value = getAtomValueFromState(store.getState(), counterAtomA);
 
         expect(value).toBe(previousValue + 1);
     });
@@ -35,12 +35,12 @@ describe('CounterA', () => {
             </Provider>
         )
 
-        const previousValue = getAtomValueFromStore(store, counterAtomA);
+        const previousValue = getAtomValueFromState(store.getState(), counterAtomA);
 
         const button = screen.getByLabelText('Decrement value');
         fireEvent.click(button);
 
-        const value = getAtomValueFromStore(store, counterAtomA);
+        const value = getAtomValueFromState(store.getState(), counterAtomA);
 
         expect(value).toBe(previousValue - 1);
     });
@@ -54,12 +54,12 @@ describe('CounterA', () => {
             </Provider>
         )
 
-        const previousValue = getAtomValueFromStore(store, multipliedAtomA);
+        const previousValue = getAtomValueFromState(store.getState(), multipliedAtomA);
 
         const button = screen.getByLabelText('Increment multiplied value');
         fireEvent.click(button);
 
-        const value = getAtomValueFromStore(store, multipliedAtomA);
+        const value = getAtomValueFromState(store.getState(), multipliedAtomA);
 
         expect(value).toBe(previousValue + 1);
     });
@@ -73,12 +73,12 @@ describe('CounterA', () => {
             </Provider>
         )
 
-        const previousValue = getAtomValueFromStore(store, multipliedAtomA);
+        const previousValue = getAtomValueFromState(store.getState(), multipliedAtomA);
 
         const button = screen.getByLabelText('Decrement multiplied value');
         fireEvent.click(button);
 
-        const value = getAtomValueFromStore(store, multipliedAtomA);
+        const value = getAtomValueFromState(store.getState(), multipliedAtomA);
 
         expect(value).toBe(previousValue - 1);
     });
