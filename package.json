@@ -10,8 +10,8 @@
   "scripts": {
     "test": "jest --watch",
     "build": "tsc",
-    "lint": "eslint src/**",
-    "lint-fix": "eslint --fix src/**",
+    "lint": "eslint \"src/**\"",
+    "lint-fix": "eslint --fix \"src/**\"",
     "prepack": "yarn lint-fix && jest && yarn build",
     "preversion": "jest",
     "postversion": "git push && git push --tags"
