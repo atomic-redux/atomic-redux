@@ -2,7 +2,7 @@ import { createAction, createSlice, Dispatch, PayloadAction, Store } from '@redu
 import { Immutable } from 'immer';
 import { Atom, SyncOrAsyncValue, WritableAtom } from './atom-types';
 import { AsyncAtomValue, AtomValue, GetAtomResult, LoadingAtom, ValueOrSetter } from './getter-setter-utils';
-import { isPromise, SafeRecord } from './util-types';
+import { checkForDependencyLoop, isPromise, SafeRecord } from './utils';
 
 type InternalAtomState = {
     value: unknown,
@@ -92,31 +92,40 @@ export function initialiseAtomFromState<T>(
     return getAtomValueFromState(state, atom);
 }
 
-function getAtomValue<T>(atom: Atom<T, AsyncAtomValue<T>>, state: AtomicStoreState): Promise<T>;
-function getAtomValue<T>(atom: Atom<T, AtomValue<T>>, state: AtomicStoreState): T;
-function getAtomValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>, state: AtomicStoreState): T | Promise<T>;
-function getAtomValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>, state: AtomicStoreState): T | Promise<T> {
-    return atom.get({
+function getAtomValue<T>(atom: Atom<T, AsyncAtomValue<T>>, state: AtomicStoreState, atomStack: string[]): Promise<T>;
+function getAtomValue<T>(atom: Atom<T, AtomValue<T>>, state: AtomicStoreState, atomStack: string[]): T;
+// eslint-disable-next-line max-len
+function getAtomValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>, state: AtomicStoreState, atomStack: string[]): T | Promise<T>;
+// eslint-disable-next-line max-len
+function getAtomValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>, state: AtomicStoreState, atomStack: string[]): T | Promise<T> {
+    atomStack.push(atom.key);
+    checkForDependencyLoop(atomStack);
+
+    const value = atom.get({
         get: <U, V extends SyncOrAsyncValue<U>>(nextAtom: Atom<U, V>) =>
-            (getAtomValueFromState(state, nextAtom) as GetAtomResult<U, V>),
-        getAsync: nextAtom => Promise.resolve(getAtomValue(nextAtom, state))
+            (getAtomValueFromState(state, nextAtom, atomStack) as GetAtomResult<U, V>),
+        getAsync: nextAtom => Promise.resolve(getAtomValue(nextAtom, state, atomStack))
     }, state);
+
+    atomStack.pop();
+    return value;
 }
 
 // eslint-disable-next-line max-len
-export function getAtomValueFromState<T, U extends AsyncAtomValue<T>>(state: AtomicStoreState, atom: Atom<T, U>): T | LoadingAtom;
+export function getAtomValueFromState<T, U extends AsyncAtomValue<T>>(state: AtomicStoreState, atom: Atom<T, U>, atomStack?: string[]): T | LoadingAtom;
 // eslint-disable-next-line max-len
-export function getAtomValueFromState<T, U extends AtomValue<T>>(state: AtomicStoreState, atom: Atom<T, U>): T;
+export function getAtomValueFromState<T, U extends AtomValue<T>>(state: AtomicStoreState, atom: Atom<T, U>, atomStack?: string[]): T;
 // eslint-disable-next-line max-len
-export function getAtomValueFromState<T, U extends SyncOrAsyncValue<T>>(state: AtomicStoreState, atom: Atom<T, U>): T | LoadingAtom;
-export function getAtomValueFromState <T, U extends SyncOrAsyncValue<T>>(
+export function getAtomValueFromState<T, U extends SyncOrAsyncValue<T>>(state: AtomicStoreState, atom: Atom<T, U>, atomStack?: string[]): T | LoadingAtom;
+export function getAtomValueFromState<T, U extends SyncOrAsyncValue<T>>(
     state: AtomicStoreState,
-    atom: Atom<T, U>
+    atom: Atom<T, U>,
+    atomStack: string[] = []
 ): T | LoadingAtom {
     const atomState = state.atoms.states[atom.key];
     const result = atomState !== undefined
         ? atomState.value as T
-        : getAtomValue(atom, state);
+        : getAtomValue(atom, state, atomStack);
 
     return isPromise(result)
         ? new LoadingAtom()

@@ -160,6 +160,46 @@ describe('getAtomValueFromState', () => {
         const value = getAtomValueFromState(store.getState(), testAtom);
         expect(value).toBe(testValue);
     });
+
+    it('should throw an error when atom depends on itself', () => {
+        const store = createTestStore();
+
+        const testAtom = derivedAtom({
+            key: 'test-atom',
+            get: ({ get }) => {
+                get(testAtom);
+                return 1;
+            }
+        });
+
+        expect(() => {
+            getAtomValueFromState(store.getState(), testAtom);
+        }).toThrowError(/.*Atom dependency loop detected: test-atom -> test-atom.*/);
+    });
+
+    it('should throw an error when derived atoms create a dependency loop', () => {
+        const store = createTestStore();
+
+        const firstAtom = derivedAtom({
+            key: 'first-atom',
+            get: ({ get }) => {
+                get(secondAtom);
+                return 1;
+            }
+        });
+
+        const secondAtom = derivedAtom({
+            key: 'second-atom',
+            get: ({ get }) => {
+                get(firstAtom);
+                return 1;
+            }
+        });
+
+        expect(() => {
+            getAtomValueFromState(store.getState(), firstAtom);
+        }).toThrowError(/.*Atom dependency loop detected: first-atom -> second-atom -> first-atom.*/);
+    });
 });
 
 describe('isAtomUpdating', () => {

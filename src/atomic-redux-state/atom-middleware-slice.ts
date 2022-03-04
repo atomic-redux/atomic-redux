@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SafeRecord } from './util-types';
+import { SafeRecord } from './utils';
 
 export type AtomMiddlewareSliceState = {
     graph: {

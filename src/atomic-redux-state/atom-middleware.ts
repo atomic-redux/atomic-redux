@@ -25,7 +25,7 @@ import {
     SetOptions,
     ValueOrSetter
 } from './getter-setter-utils';
-import { isPromise, SafeRecord } from './util-types';
+import { checkForDependencyLoop, isPromise, SafeRecord } from './utils';
 
 type MainStore = MiddlewareAPI<Dispatch<any>, AtomicStoreState>;
 type MiddlewareStore = MiddlewareAPI<Dispatch<any>, AtomMiddlewareSliceState>;
@@ -84,17 +84,6 @@ function createAsyncAtomGetter(
         return value;
     };
 }
-
-const checkForDependencyLoop = (atomStack: string[]): void => {
-    if ((new Set(atomStack)).size === atomStack.length) {
-        return;
-    }
-
-    const formattedStack = atomStack.join(' -> ');
-
-    // eslint-disable-next-line no-console
-    throw new Error(`Atom dependency loop detected: ${formattedStack}`);
-};
 
 const getAtomValue = <T>(
     store: MainStore,
