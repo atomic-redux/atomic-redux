@@ -11,20 +11,12 @@ type InternalAtomState = {
 
 export type SliceState = {
     states: SafeRecord<string, InternalAtomState>;
-    graph: {
-        dependencies: SafeRecord<string, string[]>;
-        dependants: SafeRecord<string, string[]>;
-    }
 }
 
 export type AtomicStoreState = { atoms: SliceState };
 
 const initialState: SliceState = {
-    states: {},
-    graph: {
-        dependencies: {},
-        dependants: {}
-    }
+    states: {}
 };
 
 export type SetAtomPayload<T> = {
@@ -70,49 +62,6 @@ export const atomsSlice = createSlice({
             if (currentState !== undefined) {
                 currentState.loading = action.payload.loading;
             }
-        },
-        internalAddNodeToGraph: (state, action: PayloadAction<string>) => {
-            if (state.graph.dependants[action.payload] === undefined) {
-                state.graph.dependants[action.payload] = [];
-            }
-
-            if (state.graph.dependencies[action.payload] === undefined) {
-                state.graph.dependencies[action.payload] = [];
-            }
-        },
-        internalAddGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
-            const fromAtomKey = action.payload.fromAtomKey;
-            const toAtomKey = action.payload.toAtomKey;
-
-            if (fromAtomKey === toAtomKey) {
-                return;
-            }
-
-            if (state.graph.dependants[fromAtomKey] === undefined) {
-                state.graph.dependants[fromAtomKey] = [];
-            }
-
-            if (state.graph.dependencies[toAtomKey] === undefined) {
-                state.graph.dependencies[toAtomKey] = [];
-            }
-
-            if (!state.graph.dependants[fromAtomKey]?.includes(toAtomKey)) {
-                state.graph.dependants[fromAtomKey]?.push(toAtomKey);
-            }
-
-            if (!state.graph.dependencies[toAtomKey]?.includes(fromAtomKey)) {
-                state.graph.dependencies[toAtomKey]?.push(fromAtomKey);
-            }
-        },
-        internalResetGraphNodeDependencies: (state, action: PayloadAction<string>) => {
-            state.graph.dependencies[action.payload] = [];
-        },
-        internalRemoveGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
-            const fromAtomKey = action.payload.fromAtomKey;
-            const toAtomKey = action.payload.toAtomKey;
-
-            state.graph.dependants[fromAtomKey] = state.graph.dependants[fromAtomKey]?.filter(d => d !== toAtomKey);
-            state.graph.dependencies[toAtomKey] = state.graph.dependencies[toAtomKey]?.filter(d => d !== fromAtomKey);
         }
     }
 });
@@ -181,10 +130,6 @@ export const isAtomUpdating = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrA
 
 export const {
     internalSet,
-    internalSetLoading,
-    internalAddNodeToGraph,
-    internalAddGraphConnection,
-    internalResetGraphNodeDependencies,
-    internalRemoveGraphConnection
+    internalSetLoading
 } = atomsSlice.actions;
 export default atomsSlice.reducer;

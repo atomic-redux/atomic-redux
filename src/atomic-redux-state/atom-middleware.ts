@@ -1,13 +1,17 @@
-import { Dispatch, Middleware, MiddlewareAPI, PayloadAction } from '@reduxjs/toolkit';
+import { configureStore, Dispatch, Middleware, MiddlewareAPI, PayloadAction } from '@reduxjs/toolkit';
 import produce from 'immer';
+import {
+    atomMiddlewareReducer,
+    AtomMiddlewareSliceState,
+    internalAddGraphConnection,
+    internalAddNodeToGraph,
+    internalRemoveGraphConnection,
+    internalResetGraphNodeDependencies
+} from './atom-middleware-slice';
 import {
     AtomicStoreState,
     initialiseAtomFromState,
-    internalAddGraphConnection,
-    internalAddNodeToGraph,
     internalInitialiseAtom,
-    internalRemoveGraphConnection,
-    internalResetGraphNodeDependencies,
     internalSet,
     internalSetLoading,
     setAtom,
@@ -23,44 +27,48 @@ import {
 } from './getter-setter-utils';
 import { isPromise, SafeRecord } from './util-types';
 
-type AtomMiddlewareStore = MiddlewareAPI<Dispatch<any>, AtomicStoreState>;
+type MainStore = MiddlewareAPI<Dispatch<any>, AtomicStoreState>;
+type MiddlewareStore = MiddlewareAPI<Dispatch<any>, AtomMiddlewareSliceState>;
 type Atoms = SafeRecord<string, Atom<unknown, SyncOrAsyncValue<unknown>>>;
 type AtomPromises = SafeRecord<string, Promise<unknown>[]>;
 
 function createAtomGetter(
     currentAtom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     atoms: Atoms,
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     promises: AtomPromises
 ) {
     return <T, U extends SyncOrAsyncValue<T>>(previousAtom: Atom<T, U>): GetAtomResult<T, U> => {
-        store.dispatch(internalAddGraphConnection({
+        middlewareStore.dispatch(internalAddGraphConnection({
             fromAtomKey: previousAtom.key,
             toAtomKey: currentAtom.key
         }));
 
-        return getAtomValue(store, previousAtom, atoms, promises) as GetAtomResult<T, U>;
+        return getAtomValue(store, middlewareStore, previousAtom, atoms, promises) as GetAtomResult<T, U>;
     };
 }
 
 function createAsyncAtomGetter(
     currentAtom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     atoms: Atoms,
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     promises: AtomPromises
 ) {
     return <T, U extends SyncOrAsyncValue<T>>(previousAtom: Atom<T, U>): Promise<T> => {
-        store.dispatch(internalAddGraphConnection({
+        middlewareStore.dispatch(internalAddGraphConnection({
             fromAtomKey: previousAtom.key,
             toAtomKey: currentAtom.key
         }));
 
-        return getAtomValueAsync(store, previousAtom, atoms, promises);
+        return getAtomValueAsync(store, middlewareStore, previousAtom, atoms, promises);
     };
 }
 
 const getAtomValue = <T>(
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     atom: Atom<T, SyncOrAsyncValue<T>>,
     atoms: Atoms,
     promises: AtomPromises
@@ -75,10 +83,10 @@ const getAtomValue = <T>(
     }
 
     const result = atom.get({
-        get: createAtomGetter(atom, atoms, store, promises),
-        getAsync: createAsyncAtomGetter(atom, atoms, store, promises)
+        get: createAtomGetter(atom, atoms, store, middlewareStore, promises),
+        getAsync: createAsyncAtomGetter(atom, atoms, store, middlewareStore, promises)
     }, store.getState());
-    const value = handlePossiblePromise(result, atom.key, atoms, store, promises);
+    const value = handlePossiblePromise(result, atom.key, atoms, store, middlewareStore, promises);
 
     if (!(value instanceof LoadingAtom)) {
         store.dispatch(internalSet({
@@ -91,7 +99,8 @@ const getAtomValue = <T>(
 };
 
 const getAtomValueAsync = <T>(
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     atom: Atom<T, SyncOrAsyncValue<T>>,
     atoms: Atoms,
     promises: AtomPromises
@@ -106,23 +115,23 @@ const getAtomValueAsync = <T>(
     }
 
     const result = atom.get({
-        get: createAtomGetter(atom, atoms, store, promises),
-        getAsync: createAsyncAtomGetter(atom, atoms, store, promises)
+        get: createAtomGetter(atom, atoms, store, middlewareStore, promises),
+        getAsync: createAsyncAtomGetter(atom, atoms, store, middlewareStore, promises)
     }, store.getState());
 
     const promise = Promise.resolve(result);
-    return handlePromise(promise, atom.key, atoms, store, promises);
+    return handlePromise(promise, atom.key, atoms, store, middlewareStore, promises);
 };
 
 const removeStaleGraphConnections = (
-    store: AtomMiddlewareStore,
+    middlewareStore: MiddlewareStore,
     atomKey: string,
     dependenciesBeforeUpdate: string[],
     dependenciesAfterUpdate: string[]
 ): void => {
     const staleDependencies = dependenciesBeforeUpdate.filter(d => !dependenciesAfterUpdate.includes(d));
     for (const staleDependency of staleDependencies) {
-        store.dispatch(internalRemoveGraphConnection({
+        middlewareStore.dispatch(internalRemoveGraphConnection({
             fromAtomKey: staleDependency,
             toAtomKey: atomKey
         }));
@@ -130,18 +139,20 @@ const removeStaleGraphConnections = (
 };
 
 const handleInitialiseAtomAction = <T>(
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     action: PayloadAction<Atom<T, SyncOrAsyncValue<T>>>,
     atoms: Atoms,
     promises: AtomPromises
 ): void => {
     const atom = action.payload;
-    getAtomValue(store, atom, atoms, promises);
-    store.dispatch(internalAddNodeToGraph(atom.key));
+    getAtomValue(store, middlewareStore, atom, atoms, promises);
+    middlewareStore.dispatch(internalAddNodeToGraph(atom.key));
 };
 
 const handleSetAtomAction = (
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     action: PayloadAction<SetAtomPayload<unknown>>,
     atoms: Atoms,
     promises: AtomPromises
@@ -158,34 +169,39 @@ const handleSetAtomAction = (
             throw new Error(`Attempted to write value ${value} to read-only atom ${nextAtom.key}`);
         }
 
-        setAtomWithProduce(nextAtom, atoms, setAtomArgs, value, store, promises);
+        setAtomWithProduce(nextAtom, atoms, setAtomArgs, value, store, middlewareStore, promises);
     };
 
     const resetAtom = <T>(nextAtom: WritableAtom<T, SyncOrAsyncValue<T>>) => {
-        nextAtom.set(setAtomArgs, new DefaultValue(), reduxSetterGenerator(nextAtom, store, atoms, promises));
+        nextAtom.set(
+            setAtomArgs,
+            new DefaultValue(),
+            reduxSetterGenerator(nextAtom, store, middlewareStore, atoms, promises)
+        );
     };
 
     const setAtomArgs = {
-        get: createAtomGetter(atom, atoms, store, promises),
+        get: createAtomGetter(atom, atoms, store, middlewareStore, promises),
         set: setAtomValue,
         reset: resetAtom
     };
 
-    setAtomWithProduce(atom, atoms, setAtomArgs, payload.value, store, promises);
+    setAtomWithProduce(atom, atoms, setAtomArgs, payload.value, store, middlewareStore, promises);
 };
 
 const reduxSetterGenerator = (
     atom: Atom<unknown, SyncOrAsyncValue<unknown>>,
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     atoms: Atoms,
     promises: AtomPromises
 ) => <T>(value: T) => {
     store.dispatch(internalSet({
         atomKey: atom.key,
-        value: handlePossiblePromise(value, atom.key, atoms, store, promises)
+        value: handlePossiblePromise(value, atom.key, atoms, store, middlewareStore, promises)
     }));
 
-    updateGraphFromAtom(atom, atoms, store, promises);
+    updateGraphFromAtom(atom, atoms, store, middlewareStore, promises);
 };
 
 const setAtomWithProduce = <T>(
@@ -193,27 +209,29 @@ const setAtomWithProduce = <T>(
     atoms: Atoms,
     setAtomArgs: SetOptions,
     valueOrSetter: ValueOrSetter<T>,
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     promises: AtomPromises
 ) => {
     if (!(valueOrSetter instanceof Function)) {
-        atom.set(setAtomArgs, valueOrSetter, reduxSetterGenerator(atom, store, atoms, promises));
+        atom.set(setAtomArgs, valueOrSetter, reduxSetterGenerator(atom, store, middlewareStore, atoms, promises));
         return;
     }
 
     const currentValue = initialiseAtomFromState(store.getState(), store.dispatch, atom);
     const newValue = produce(currentValue, valueOrSetter);
-    atom.set(setAtomArgs, newValue, reduxSetterGenerator(atom, store, atoms, promises));
+    atom.set(setAtomArgs, newValue, reduxSetterGenerator(atom, store, middlewareStore, atoms, promises));
 };
 
 const updateGraphFromAtom = (
     atom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     atoms: Atoms,
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     promises: AtomPromises
 ): void => {
     const storeState = store.getState();
-    const dependerKeys = storeState.atoms.graph.dependants[atom.key];
+    const dependerKeys = middlewareStore.getState().graph.dependants[atom.key];
 
     if (dependerKeys === undefined) {
         return;
@@ -225,25 +243,30 @@ const updateGraphFromAtom = (
             continue;
         }
 
-        const dependenciesBeforeUpdate = store.getState().atoms.graph.dependencies[dependerKey];
-        store.dispatch(internalResetGraphNodeDependencies(dependerKey));
+        const dependenciesBeforeUpdate = middlewareStore.getState().graph.dependencies[dependerKey];
+        middlewareStore.dispatch(internalResetGraphNodeDependencies(dependerKey));
 
         const dependerValue = depender.get({
-            get: createAtomGetter(depender, atoms, store, promises),
-            getAsync: createAsyncAtomGetter(depender, atoms, store, promises)
+            get: createAtomGetter(depender, atoms, store, middlewareStore, promises),
+            getAsync: createAsyncAtomGetter(depender, atoms, store, middlewareStore, promises)
         }, storeState);
 
         store.dispatch(internalSet({
             atomKey: depender.key,
-            value: handlePossiblePromise(dependerValue, depender.key, atoms, store, promises)
+            value: handlePossiblePromise(dependerValue, depender.key, atoms, store, middlewareStore, promises)
         }));
 
-        const dependenciesAfterUpdate = store.getState().atoms.graph.dependencies[dependerKey];
+        const dependenciesAfterUpdate = middlewareStore.getState().graph.dependencies[dependerKey];
         if (dependenciesBeforeUpdate !== undefined && dependenciesAfterUpdate !== undefined) {
-            removeStaleGraphConnections(store, dependerKey, dependenciesBeforeUpdate, dependenciesAfterUpdate);
+            removeStaleGraphConnections(
+                middlewareStore,
+                dependerKey,
+                dependenciesBeforeUpdate,
+                dependenciesAfterUpdate
+            );
         }
 
-        updateGraphFromAtom(depender, atoms, store, promises);
+        updateGraphFromAtom(depender, atoms, store, middlewareStore, promises);
     }
 };
 
@@ -251,14 +274,17 @@ export const getAtomMiddleware = () => {
     const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => {
         const atoms: Atoms = {};
         const promises: AtomPromises = {};
+        const middlewareStore = configureStore({
+            reducer: atomMiddlewareReducer
+        });
 
         return action => {
             if (action.type === internalInitialiseAtom.toString()) {
-                return handleInitialiseAtomAction(store, action, atoms, promises);
+                return handleInitialiseAtomAction(store, middlewareStore, action, atoms, promises);
             }
 
             if (action.type === setAtom.toString()) {
-                return handleSetAtomAction(store, action, atoms, promises);
+                return handleSetAtomAction(store, middlewareStore, action, atoms, promises);
             }
 
             return next(action);
@@ -272,7 +298,8 @@ function handlePossiblePromise<T>(
     valueOrPromise: T | Promise<T>,
     atomKey: string,
     atoms: Atoms,
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     promises: AtomPromises
 ): T | LoadingAtom {
     if (!isPromise(valueOrPromise)) {
@@ -280,7 +307,7 @@ function handlePossiblePromise<T>(
     }
 
     const promise = valueOrPromise;
-    handlePromise(promise, atomKey, atoms, store, promises);
+    handlePromise(promise, atomKey, atoms, store, middlewareStore, promises);
 
     const atomState = store.getState().atoms.states[atomKey];
     if (atomState === undefined) {
@@ -294,7 +321,8 @@ async function handlePromise<T>(
     promise: Promise<T>,
     atomKey: string,
     atoms: Atoms,
-    store: AtomMiddlewareStore,
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
     promises: AtomPromises
 ): Promise<T> {
     const atom = atoms[atomKey];
@@ -320,7 +348,7 @@ async function handlePromise<T>(
     if (atom === undefined) {
         return value;
     }
-    updateGraphFromAtom(atom, atoms, store, promises);
+    updateGraphFromAtom(atom, atoms, store, middlewareStore, promises);
     return value;
 }
 
