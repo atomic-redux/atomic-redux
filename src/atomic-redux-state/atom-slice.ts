@@ -139,14 +139,8 @@ export function initialiseAtomFromState<T>(
     dispatch: Dispatch<any>,
     atom: Atom<T, SyncOrAsyncValue<T>>
 ): Immutable<T> | LoadingAtom {
-    if (state.atoms.graph.dependencies[atom.key] === undefined) {
-        return dispatch(internalInitialiseAtom(atom)) as unknown as Immutable<T> | LoadingAtom;
-    }
-
-    const atomState = state.atoms.states[atom.key];
-    return atomState !== undefined
-        ? atomState.value as T
-        : new LoadingAtom();
+    dispatch(internalInitialiseAtom(atom));
+    return getAtomValueFromState(state, atom);
 }
 
 function getAtomValue<T>(atom: Atom<T, AsyncAtomValue<T>>, state: AtomicStoreState): Promise<T>;

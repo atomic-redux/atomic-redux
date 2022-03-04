@@ -201,47 +201,6 @@ describe('atom-middleware', () => {
             expect(states[thirdAtomKey]?.value).toBe(testValue * 4);
         });
 
-        it('should return atom default value if doesnt already exist in state', () => {
-            const actionHandler = mockNextHandler(jest.fn());
-
-            const testAtomKey = 'test-atom';
-            const defaultValue = 10;
-            const testAtom = atom({
-                key: testAtomKey,
-                default: defaultValue
-            });
-
-            getStateMock.mockReturnValue(createMockState());
-
-            const action = internalInitialiseAtom(testAtom);
-
-            const result = actionHandler(action);
-
-            expect(result).toBe(defaultValue);
-        });
-
-        it('should return atom value if exists in state', () => {
-            const actionHandler = mockNextHandler(jest.fn());
-
-            const testAtomKey = 'test-atom';
-            const testAtomValue = 10;
-            const testAtom = atom({
-                key: testAtomKey,
-                default: 0
-            });
-
-            getStateMock.mockReturnValue(createMockState({
-                key: testAtomKey,
-                value: testAtomValue
-            }));
-
-            const action = internalInitialiseAtom(testAtom);
-
-            const result = actionHandler(action);
-
-            expect(result).toBe(testAtomValue);
-        });
-
         it('should keep state undefined for async atom until promise is resolved', async () => {
             const store = createTestStore();
 

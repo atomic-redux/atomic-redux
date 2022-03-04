@@ -134,13 +134,10 @@ const handleInitialiseAtomAction = <T>(
     action: PayloadAction<Atom<T, SyncOrAsyncValue<T>>>,
     atoms: Atoms,
     promises: AtomPromises
-): T | LoadingAtom => {
+): void => {
     const atom = action.payload;
-
-    const value = getAtomValue(store, atom, atoms, promises);
+    getAtomValue(store, atom, atoms, promises);
     store.dispatch(internalAddNodeToGraph(atom.key));
-
-    return value;
 };
 
 const handleSetAtomAction = (
