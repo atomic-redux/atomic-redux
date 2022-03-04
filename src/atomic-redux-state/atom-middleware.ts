@@ -32,6 +32,8 @@ type MiddlewareStore = MiddlewareAPI<Dispatch<any>, AtomMiddlewareSliceState>;
 type Atoms = SafeRecord<string, Atom<unknown, SyncOrAsyncValue<unknown>>>;
 type AtomPromises = SafeRecord<string, Promise<unknown>[]>;
 
+const atomMiddlewareStoreName = 'Atom Middleware';
+
 function createAtomGetter(
     currentAtom: Atom<unknown, SyncOrAsyncValue<unknown>>,
     atoms: Atoms,
@@ -296,7 +298,10 @@ export const getAtomMiddleware = () => {
         const atoms: Atoms = {};
         const promises: AtomPromises = {};
         const middlewareStore = configureStore({
-            reducer: atomMiddlewareReducer
+            reducer: atomMiddlewareReducer,
+            devTools: {
+                name: atomMiddlewareStoreName
+            }
         });
 
         return action => {
