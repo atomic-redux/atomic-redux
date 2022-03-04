@@ -187,13 +187,16 @@ export const UserDataDisplay = () => {
 ```
 
 #### Accessing atom values outside React context - `getAtomValueFromStore`
-The `getAtomFromStore(store, atom)` method allows retrieval of atom values outside of the React context by providing the Redux store containing the atoms.
+The `initialiseAtomFromStore(store, atom)` method initialises and returns an atom value from outside of the React context by providing the Redux store containing the atoms.
+This is the prefered way to get an atom value outside of a React context.
 
 ```ts
 import { getAtomValueFromStore } from 'atomic-redux-state';
 
-const atomValue = getAtomValueFromStore(store, myAtom);
+const atomValue = initialiseAtomFromStore(store, myAtom);
 ```
+
+Alternatively, use `getAtomValueFromState(state, atom)` to perform a read-only get on atom values in state. Avoid using this instead of `initialiseAtomFromStore`, as this will not set the atom value in the Redux state if it has not yet been initialised, so the atom `get` method result is not cached.
 
 #### Setting atom values outside React context - `setAtom`
 The `setAtom(atom, value)` action creator allows you to set atom values outside of the React context, or in a Redux middleware such as [Sagas](https://redux-saga.js.org/).
