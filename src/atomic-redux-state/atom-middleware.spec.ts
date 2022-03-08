@@ -263,6 +263,112 @@ describe('atom-middleware', () => {
             // eslint-disable-next-line max-len
             }).toThrowError(/.*Atom dependency loop detected: third-atom -> second-atom -> third-atom.*/);
         });
+
+        it('should only call get method once per atom on initialise when connections skip depth levels', () => {
+            const store = createTestStore();
+
+            const firstAtom = atom({
+                key: 'first-atom',
+                default: 0
+            });
+
+            const secondAtomSpy = jest.fn();
+            const secondAtom = derivedAtom({
+                key: 'second-atom',
+                get: ({ get }) => {
+                    secondAtomSpy();
+                    return get(firstAtom);
+                }
+            });
+
+            const thirdAtomSpy = jest.fn();
+            const thirdAtom = derivedAtom({
+                key: 'third-atom',
+                get: ({ get }) => {
+                    thirdAtomSpy();
+                    return get(secondAtom);
+                }
+            });
+
+            const fourthAtomSpy = jest.fn();
+            const fourthAtom = derivedAtom({
+                key: 'fourth-atom',
+                get: ({ get }) => {
+                    fourthAtomSpy();
+                    get(firstAtom);
+                    return get(thirdAtom);
+                }
+            });
+
+            store.dispatch(internalInitialiseAtom(fourthAtom));
+
+            expect(secondAtomSpy).toHaveBeenCalledTimes(1);
+            expect(thirdAtomSpy).toHaveBeenCalledTimes(1);
+            expect(fourthAtomSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('should only call get method once per atom on initialise when connections do not skip depth levels', () => {
+            const store = createTestStore();
+
+            const firstAtom = atom({
+                key: 'first-atom',
+                default: 0
+            });
+
+            const secondAtomSpy = jest.fn();
+            const secondAtom = derivedAtom({
+                key: 'second-atom',
+                get: ({ get }) => {
+                    secondAtomSpy();
+                    return get(firstAtom);
+                }
+            });
+
+            const thirdAtomSpy = jest.fn();
+            const thirdAtom = derivedAtom({
+                key: 'third-atom',
+                get: ({ get }) => {
+                    thirdAtomSpy();
+                    return get(secondAtom);
+                }
+            });
+
+            const fourthAtomSpy = jest.fn();
+            const fourthAtom = derivedAtom({
+                key: 'fourth-atom',
+                get: ({ get }) => {
+                    fourthAtomSpy();
+                    return get(firstAtom);
+                }
+            });
+
+            const fifthAtomSpy = jest.fn();
+            const fifthAtom = derivedAtom({
+                key: 'fifth-atom',
+                get: ({ get }) => {
+                    fifthAtomSpy();
+                    return get(fourthAtom);
+                }
+            });
+
+            const sixthAtomSpy = jest.fn();
+            const sixthAtom = derivedAtom({
+                key: 'sixth-atom',
+                get: ({ get }) => {
+                    sixthAtomSpy();
+                    get(thirdAtom);
+                    return get(fifthAtom);
+                }
+            });
+
+            store.dispatch(internalInitialiseAtom(sixthAtom));
+
+            expect(secondAtomSpy).toHaveBeenCalledTimes(1);
+            expect(thirdAtomSpy).toHaveBeenCalledTimes(1);
+            expect(fourthAtomSpy).toHaveBeenCalledTimes(1);
+            expect(fifthAtomSpy).toHaveBeenCalledTimes(1);
+            expect(sixthAtomSpy).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe('setAtom', () => {
@@ -425,6 +531,117 @@ describe('atom-middleware', () => {
 
             expect(states[secondAtomKey]).toBeDefined();
             expect(states[secondAtomKey]?.value).toBe(testValue);
+        });
+
+        it('should only call get method once per atom on atom set when connections skip depth levels', () => {
+            const store = createTestStore();
+
+            const firstAtom = atom({
+                key: 'first-atom',
+                default: 0
+            });
+
+            const secondAtomSpy = jest.fn();
+            const secondAtom = derivedAtom({
+                key: 'second-atom',
+                get: ({ get }) => {
+                    secondAtomSpy();
+                    return get(firstAtom);
+                }
+            });
+
+            const thirdAtomSpy = jest.fn();
+            const thirdAtom = derivedAtom({
+                key: 'third-atom',
+                get: ({ get }) => {
+                    thirdAtomSpy();
+                    return get(secondAtom);
+                }
+            });
+
+            const fourthAtomSpy = jest.fn();
+            const fourthAtom = derivedAtom({
+                key: 'fourth-atom',
+                get: ({ get }) => {
+                    fourthAtomSpy();
+                    get(firstAtom);
+                    return get(thirdAtom);
+                }
+            });
+            store.dispatch(internalInitialiseAtom(fourthAtom));
+            jest.clearAllMocks();
+
+            store.dispatch(setAtom(firstAtom, 1));
+
+            expect(secondAtomSpy).toHaveBeenCalledTimes(1);
+            expect(thirdAtomSpy).toHaveBeenCalledTimes(1);
+            expect(fourthAtomSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('should only call get method once per atom on atom set when connections do not skip depth levels', () => {
+            const store = createTestStore();
+
+            const firstAtom = atom({
+                key: 'first-atom',
+                default: 0
+            });
+
+            const secondAtomSpy = jest.fn();
+            const secondAtom = derivedAtom({
+                key: 'second-atom',
+                get: ({ get }) => {
+                    secondAtomSpy();
+                    return get(firstAtom);
+                }
+            });
+
+            const thirdAtomSpy = jest.fn();
+            const thirdAtom = derivedAtom({
+                key: 'third-atom',
+                get: ({ get }) => {
+                    thirdAtomSpy();
+                    return get(secondAtom);
+                }
+            });
+
+            const fourthAtomSpy = jest.fn();
+            const fourthAtom = derivedAtom({
+                key: 'fourth-atom',
+                get: ({ get }) => {
+                    fourthAtomSpy();
+                    return get(firstAtom);
+                }
+            });
+
+            const fifthAtomSpy = jest.fn();
+            const fifthAtom = derivedAtom({
+                key: 'fifth-atom',
+                get: ({ get }) => {
+                    fifthAtomSpy();
+                    return get(fourthAtom);
+                }
+            });
+
+            const sixthAtomSpy = jest.fn();
+            const sixthAtom = derivedAtom({
+                key: 'sixth-atom',
+                get: ({ get }) => {
+                    sixthAtomSpy();
+                    get(thirdAtom);
+                    return get(fifthAtom);
+                }
+            });
+
+            store.dispatch(internalInitialiseAtom(sixthAtom));
+
+            jest.clearAllMocks();
+            store.dispatch(setAtom(firstAtom, 1));
+
+            expect(secondAtomSpy).toHaveBeenCalledTimes(1);
+            expect(thirdAtomSpy).toHaveBeenCalledTimes(1);
+            expect(fourthAtomSpy).toHaveBeenCalledTimes(1);
+            expect(fifthAtomSpy).toHaveBeenCalledTimes(1);
+            expect(sixthAtomSpy).toHaveBeenCalledTimes(1);
         });
 
         it('should reset parent of derivedAtom when reset method called', () => {

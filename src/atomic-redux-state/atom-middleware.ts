@@ -5,6 +5,8 @@ import {
     AtomMiddlewareSliceState,
     internalAddGraphConnection,
     internalAddNodeToGraph,
+    internalClearPendingAtomUpdates,
+    internalMarkAtomPendingUpdate,
     internalRemoveGraphConnection,
     internalResetGraphNodeDependencies
 } from './atom-middleware-slice';
@@ -43,12 +45,13 @@ function createAtomGetter(
     atomStack: string[]
 ) {
     return <T, U extends SyncOrAsyncValue<T>>(previousAtom: Atom<T, U>): GetAtomResult<T, U> => {
+        atomStack.push(previousAtom.key);
         middlewareStore.dispatch(internalAddGraphConnection({
             fromAtomKey: previousAtom.key,
-            toAtomKey: currentAtom.key
+            toAtomKey: currentAtom.key,
+            fromAtomDepth: atomStack.length
         }));
 
-        atomStack.push(previousAtom.key);
         checkForDependencyLoop(atomStack);
         const value = getAtomValue(
             store,
@@ -58,8 +61,8 @@ function createAtomGetter(
             promises,
             atomStack
         ) as GetAtomResult<T, U>;
-        atomStack.pop();
 
+        atomStack.pop();
         return value;
     };
 }
@@ -73,16 +76,17 @@ function createAsyncAtomGetter(
     atomStack: string[]
 ) {
     return <T, U extends SyncOrAsyncValue<T>>(previousAtom: Atom<T, U>): Promise<T> => {
+        atomStack.push(previousAtom.key);
         middlewareStore.dispatch(internalAddGraphConnection({
             fromAtomKey: previousAtom.key,
-            toAtomKey: currentAtom.key
+            toAtomKey: currentAtom.key,
+            fromAtomDepth: atomStack.length
         }));
 
-        atomStack.push(previousAtom.key);
         checkForDependencyLoop(atomStack);
         const value = getAtomValueAsync(store, middlewareStore, previousAtom, atoms, promises, atomStack);
-        atomStack.pop();
 
+        atomStack.pop();
         return value;
     };
 }
@@ -253,43 +257,69 @@ const updateGraphFromAtom = (
     middlewareStore: MiddlewareStore,
     promises: AtomPromises
 ): void => {
+    setNodesAfterAtomAsPendingUpdate(atom.key, middlewareStore);
     const storeState = store.getState();
-    const dependerKeys = middlewareStore.getState().graph[atom.key]?.dependants;
 
-    if (dependerKeys === undefined) {
+    const depths = Object.keys(middlewareStore.getState().pendingAtomUpdates).map(k => Number(k)).sort((a, b) => b - a);
+    for (const atomDepth of depths) {
+        const pendingUpdates = middlewareStore.getState().pendingAtomUpdates[atomDepth];
+        if (pendingUpdates === undefined) {
+            continue;
+        }
+
+        for (const updatingAtomKey of pendingUpdates) {
+            const updatingAtom = atoms[updatingAtomKey];
+            if (updatingAtom === undefined) {
+                continue;
+            }
+
+            const dependenciesBeforeUpdate = middlewareStore.getState().graph[updatingAtomKey]?.dependencies;
+            middlewareStore.dispatch(internalResetGraphNodeDependencies(updatingAtomKey));
+
+            const dependerValue = updatingAtom.get({
+                get: createAtomGetter(updatingAtom, atoms, store, middlewareStore, promises, []),
+                getAsync: createAsyncAtomGetter(updatingAtom, atoms, store, middlewareStore, promises, [])
+            }, storeState);
+
+            store.dispatch(internalSet({
+                atomKey: updatingAtomKey,
+                value: handlePossiblePromise(dependerValue, updatingAtomKey, atoms, store, middlewareStore, promises)
+            }));
+
+            const dependenciesAfterUpdate = middlewareStore.getState().graph[updatingAtomKey]?.dependencies;
+            if (dependenciesBeforeUpdate !== undefined && dependenciesAfterUpdate !== undefined) {
+                removeStaleGraphConnections(
+                    middlewareStore,
+                    updatingAtomKey,
+                    dependenciesBeforeUpdate,
+                    dependenciesAfterUpdate
+                );
+            }
+        }
+    }
+    middlewareStore.dispatch(internalClearPendingAtomUpdates());
+};
+
+const setNodesAfterAtomAsPendingUpdate = (
+    atomKey: string,
+    middlewareStore: MiddlewareStore
+): void => {
+    const graphNode = middlewareStore.getState().graph[atomKey];
+    const dependerKeys = graphNode?.dependants;
+
+    if (graphNode === undefined || dependerKeys === undefined) {
         return;
     }
 
     for (const dependerKey of dependerKeys) {
-        const depender = atoms[dependerKey];
-        if (depender === undefined) {
+        const dependerNode = middlewareStore.getState().graph[dependerKey];
+        if (dependerNode === undefined) {
             continue;
         }
 
-        const dependenciesBeforeUpdate = middlewareStore.getState().graph[dependerKey]?.dependencies;
-        middlewareStore.dispatch(internalResetGraphNodeDependencies(dependerKey));
+        middlewareStore.dispatch(internalMarkAtomPendingUpdate(dependerKey));
 
-        const dependerValue = depender.get({
-            get: createAtomGetter(depender, atoms, store, middlewareStore, promises, []),
-            getAsync: createAsyncAtomGetter(depender, atoms, store, middlewareStore, promises, [])
-        }, storeState);
-
-        store.dispatch(internalSet({
-            atomKey: depender.key,
-            value: handlePossiblePromise(dependerValue, depender.key, atoms, store, middlewareStore, promises)
-        }));
-
-        const dependenciesAfterUpdate = middlewareStore.getState().graph[dependerKey]?.dependencies;
-        if (dependenciesBeforeUpdate !== undefined && dependenciesAfterUpdate !== undefined) {
-            removeStaleGraphConnections(
-                middlewareStore,
-                dependerKey,
-                dependenciesBeforeUpdate,
-                dependenciesAfterUpdate
-            );
-        }
-
-        updateGraphFromAtom(depender, atoms, store, middlewareStore, promises);
+        setNodesAfterAtomAsPendingUpdate(dependerKey, middlewareStore);
     }
 };
 

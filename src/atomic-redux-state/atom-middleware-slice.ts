@@ -4,14 +4,17 @@ import { SafeRecord } from './utils';
 type AtomGraphNode = {
     dependencies: string[];
     dependants: string[];
+    depth: number;
 }
 
 export type AtomMiddlewareSliceState = {
     graph: SafeRecord<string, AtomGraphNode>;
+    pendingAtomUpdates: SafeRecord<number, string[]>; // key: atom depth, value: atom keys
 }
 
 const initialState: AtomMiddlewareSliceState = {
-    graph: {}
+    graph: {},
+    pendingAtomUpdates: {}
 };
 
 export const atomMiddlewareSlice = createSlice({
@@ -22,13 +25,19 @@ export const atomMiddlewareSlice = createSlice({
             if (state.graph[action.payload] === undefined) {
                 state.graph[action.payload] = {
                     dependants: [],
-                    dependencies: []
+                    dependencies: [],
+                    depth: 0
                 };
             }
         },
-        internalAddGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
+        internalAddGraphConnection: (state, action: PayloadAction<{
+            fromAtomKey: string,
+            toAtomKey: string,
+            fromAtomDepth: number
+        }>) => {
             const fromAtomKey = action.payload.fromAtomKey;
             const toAtomKey = action.payload.toAtomKey;
+            const fromAtomDepth = action.payload.fromAtomDepth;
 
             if (fromAtomKey === toAtomKey) {
                 return;
@@ -37,8 +46,21 @@ export const atomMiddlewareSlice = createSlice({
             if (state.graph[fromAtomKey] === undefined) {
                 state.graph[fromAtomKey] = {
                     dependants: [],
-                    dependencies: []
+                    dependencies: [],
+                    depth: fromAtomDepth
                 };
+            }
+
+            if (state.graph[toAtomKey] === undefined) {
+                state.graph[toAtomKey] = {
+                    dependants: [],
+                    dependencies: [],
+                    depth: 0
+                };
+            }
+
+            if (state.graph[fromAtomKey]!.depth < fromAtomDepth) {
+                state.graph[fromAtomKey]!.depth = fromAtomDepth;
             }
 
             if (!state.graph[fromAtomKey]?.dependants?.includes(toAtomKey)) {
@@ -69,6 +91,23 @@ export const atomMiddlewareSlice = createSlice({
             if (toNode !== undefined) {
                 toNode.dependants = toNode.dependants.filter(d => d !== fromAtomKey);
             }
+        },
+        internalMarkAtomPendingUpdate: (state, action: PayloadAction<string>) => {
+            const node = state.graph[action.payload];
+            if (node === undefined) {
+                return;
+            }
+
+            if (state.pendingAtomUpdates[node.depth] === undefined) {
+                state.pendingAtomUpdates[node.depth] = [];
+            }
+
+            if (!state.pendingAtomUpdates[node.depth]?.includes(action.payload)) {
+                state.pendingAtomUpdates[node.depth]?.push(action.payload);
+            }
+        },
+        internalClearPendingAtomUpdates: state => {
+            state.pendingAtomUpdates = {};
         }
     }
 });
@@ -77,7 +116,9 @@ export const {
     internalAddNodeToGraph,
     internalAddGraphConnection,
     internalResetGraphNodeDependencies,
-    internalRemoveGraphConnection
+    internalRemoveGraphConnection,
+    internalMarkAtomPendingUpdate,
+    internalClearPendingAtomUpdates
 } = atomMiddlewareSlice.actions;
 
 export const atomMiddlewareReducer = atomMiddlewareSlice.reducer;
