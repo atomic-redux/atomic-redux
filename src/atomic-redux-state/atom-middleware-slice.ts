@@ -1,18 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SafeRecord } from './utils';
 
+type AtomGraphNode = {
+    dependencies: string[];
+    dependants: string[];
+}
+
 export type AtomMiddlewareSliceState = {
-    graph: {
-        dependencies: SafeRecord<string, string[]>;
-        dependants: SafeRecord<string, string[]>;
-    }
+    graph: SafeRecord<string, AtomGraphNode>;
 }
 
 const initialState: AtomMiddlewareSliceState = {
-    graph: {
-        dependencies: {},
-        dependants: {}
-    }
+    graph: {}
 };
 
 export const atomMiddlewareSlice = createSlice({
@@ -20,12 +19,11 @@ export const atomMiddlewareSlice = createSlice({
     initialState,
     reducers: {
         internalAddNodeToGraph: (state, action: PayloadAction<string>) => {
-            if (state.graph.dependants[action.payload] === undefined) {
-                state.graph.dependants[action.payload] = [];
-            }
-
-            if (state.graph.dependencies[action.payload] === undefined) {
-                state.graph.dependencies[action.payload] = [];
+            if (state.graph[action.payload] === undefined) {
+                state.graph[action.payload] = {
+                    dependants: [],
+                    dependencies: []
+                };
             }
         },
         internalAddGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
@@ -36,31 +34,41 @@ export const atomMiddlewareSlice = createSlice({
                 return;
             }
 
-            if (state.graph.dependants[fromAtomKey] === undefined) {
-                state.graph.dependants[fromAtomKey] = [];
+            if (state.graph[fromAtomKey] === undefined) {
+                state.graph[fromAtomKey] = {
+                    dependants: [],
+                    dependencies: []
+                };
             }
 
-            if (state.graph.dependencies[toAtomKey] === undefined) {
-                state.graph.dependencies[toAtomKey] = [];
+            if (!state.graph[fromAtomKey]?.dependants?.includes(toAtomKey)) {
+                state.graph[fromAtomKey]?.dependants?.push(toAtomKey);
             }
 
-            if (!state.graph.dependants[fromAtomKey]?.includes(toAtomKey)) {
-                state.graph.dependants[fromAtomKey]?.push(toAtomKey);
-            }
-
-            if (!state.graph.dependencies[toAtomKey]?.includes(fromAtomKey)) {
-                state.graph.dependencies[toAtomKey]?.push(fromAtomKey);
+            if (!state.graph[toAtomKey]?.dependencies?.includes(fromAtomKey)) {
+                state.graph[toAtomKey]?.dependencies?.push(fromAtomKey);
             }
         },
         internalResetGraphNodeDependencies: (state, action: PayloadAction<string>) => {
-            state.graph.dependencies[action.payload] = [];
+            const node = state.graph[action.payload];
+            if (node !== undefined) {
+                node.dependencies = [];
+            }
         },
         internalRemoveGraphConnection: (state, action: PayloadAction<{ fromAtomKey: string, toAtomKey: string }>) => {
             const fromAtomKey = action.payload.fromAtomKey;
             const toAtomKey = action.payload.toAtomKey;
 
-            state.graph.dependants[fromAtomKey] = state.graph.dependants[fromAtomKey]?.filter(d => d !== toAtomKey);
-            state.graph.dependencies[toAtomKey] = state.graph.dependencies[toAtomKey]?.filter(d => d !== fromAtomKey);
+            const fromNode = state.graph[fromAtomKey];
+            const toNode = state.graph[toAtomKey];
+
+            if (fromNode !== undefined) {
+                fromNode.dependants = fromNode.dependants.filter(d => d !== toAtomKey);
+            }
+
+            if (toNode !== undefined) {
+                toNode.dependants = toNode.dependants.filter(d => d !== fromAtomKey);
+            }
         }
     }
 });

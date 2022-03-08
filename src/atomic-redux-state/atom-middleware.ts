@@ -254,7 +254,7 @@ const updateGraphFromAtom = (
     promises: AtomPromises
 ): void => {
     const storeState = store.getState();
-    const dependerKeys = middlewareStore.getState().graph.dependants[atom.key];
+    const dependerKeys = middlewareStore.getState().graph[atom.key]?.dependants;
 
     if (dependerKeys === undefined) {
         return;
@@ -266,7 +266,7 @@ const updateGraphFromAtom = (
             continue;
         }
 
-        const dependenciesBeforeUpdate = middlewareStore.getState().graph.dependencies[dependerKey];
+        const dependenciesBeforeUpdate = middlewareStore.getState().graph[dependerKey]?.dependencies;
         middlewareStore.dispatch(internalResetGraphNodeDependencies(dependerKey));
 
         const dependerValue = depender.get({
@@ -279,7 +279,7 @@ const updateGraphFromAtom = (
             value: handlePossiblePromise(dependerValue, depender.key, atoms, store, middlewareStore, promises)
         }));
 
-        const dependenciesAfterUpdate = middlewareStore.getState().graph.dependencies[dependerKey];
+        const dependenciesAfterUpdate = middlewareStore.getState().graph[dependerKey]?.dependencies;
         if (dependenciesBeforeUpdate !== undefined && dependenciesAfterUpdate !== undefined) {
             removeStaleGraphConnections(
                 middlewareStore,
