@@ -365,8 +365,10 @@ const commitStagedUpdates = (store: MainStore, middlewareStore: MiddlewareStore)
         updates.push({ atomKey, value });
     }
 
-    store.dispatch(internalSet(updates));
-    middlewareStore.dispatch(internalClearStagedChanges());
+    if (updates.length > 0) {
+        store.dispatch(internalSet(updates));
+        middlewareStore.dispatch(internalClearStagedChanges());
+    }
 };
 
 export const getAtomMiddleware = () => {
