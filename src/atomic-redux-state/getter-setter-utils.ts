@@ -1,6 +1,5 @@
 /* eslint-disable max-classes-per-file */
 import { Draft, Immutable } from 'immer';
-import { AtomicStoreState } from './atom-slice';
 import { Atom, SyncOrAsyncValue, WritableAtom } from './atom-types';
 
 export type GetAtomResult<T, U extends SyncOrAsyncValue<T>> =
@@ -26,14 +25,14 @@ export type SetOptions = {
 export class DefaultValue { }
 export class LoadingAtom { }
 
-export type AtomValue<T> = (args: GetOptions, state: AtomicStoreState) => T;
-export type AsyncAtomValue<T> = (args: GetOptions, state: AtomicStoreState) => Promise<T>;
+export type GetInternalAtomState = (atomKey: string) => unknown;
+export type AtomValue<T> = (args: GetOptions, getState: GetInternalAtomState) => T;
+export type AsyncAtomValue<T> = (args: GetOptions, getState: GetInternalAtomState) => Promise<T>;
 export type AtomUpdateFunction<T> = (value: T | DefaultValue, args: SetOptions) => void;
 export type InternalAtomUpdateFunction<T> = (
     args: SetOptions,
     value: T | DefaultValue,
-    setAtomValue: (newValue: T) => void)
-    => void;
+    setAtomValue: (newValue: T) => void) => void;
 
 export type AtomUpdateCallback<T> = ((state: Draft<T>) => void);
 export type ValueOrSetter<T> = T | AtomUpdateCallback<T>;

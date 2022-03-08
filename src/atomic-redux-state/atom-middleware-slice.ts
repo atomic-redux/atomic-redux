@@ -10,11 +10,13 @@ type AtomGraphNode = {
 export type AtomMiddlewareSliceState = {
     graph: SafeRecord<string, AtomGraphNode>;
     pendingAtomUpdates: SafeRecord<number, string[]>; // key: atom depth, value: atom keys
+    stagedChanges: SafeRecord<string, unknown>;
 }
 
 const initialState: AtomMiddlewareSliceState = {
     graph: {},
-    pendingAtomUpdates: {}
+    pendingAtomUpdates: {},
+    stagedChanges: {}
 };
 
 export const atomMiddlewareSlice = createSlice({
@@ -108,6 +110,12 @@ export const atomMiddlewareSlice = createSlice({
         },
         internalClearPendingAtomUpdates: state => {
             state.pendingAtomUpdates = {};
+        },
+        internalStageValue: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
+            state.stagedChanges[action.payload.atomKey] = action.payload.value;
+        },
+        internalClearStagedChanges: state => {
+            state.stagedChanges = {};
         }
     }
 });
@@ -118,7 +126,9 @@ export const {
     internalResetGraphNodeDependencies,
     internalRemoveGraphConnection,
     internalMarkAtomPendingUpdate,
-    internalClearPendingAtomUpdates
+    internalClearPendingAtomUpdates,
+    internalStageValue,
+    internalClearStagedChanges
 } = atomMiddlewareSlice.actions;
 
 export const atomMiddlewareReducer = atomMiddlewareSlice.reducer;

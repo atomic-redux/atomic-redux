@@ -9,10 +9,10 @@ export type AtomInitialiser<T> = {
 export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtom<T, AtomValue<T>> {
     return {
         key: initialiser.key,
-        get: (_, state) => {
-            const atomState = state.atoms.states[initialiser.key];
+        get: (_, getState) => {
+            const atomState = getState(initialiser.key);
             return atomState !== undefined
-                ? atomState.value as T
+                ? atomState as T
                 : initialiser.default;
         },
         set: (_, value, setAtomValue) => {

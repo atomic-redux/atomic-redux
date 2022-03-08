@@ -6,12 +6,15 @@ import {
     internalAddGraphConnection,
     internalAddNodeToGraph,
     internalClearPendingAtomUpdates,
+    internalClearStagedChanges,
     internalMarkAtomPendingUpdate,
     internalRemoveGraphConnection,
-    internalResetGraphNodeDependencies
+    internalResetGraphNodeDependencies,
+    internalStageValue
 } from './atom-middleware-slice';
 import {
     AtomicStoreState,
+    AtomUpdate,
     initialiseAtomFromState,
     internalInitialiseAtom,
     internalSet,
@@ -103,6 +106,11 @@ const getAtomValue = <T>(
         atoms[atom.key] = atom;
     }
 
+    const stagedAtomState = middlewareStore.getState().stagedChanges[atom.key];
+    if (stagedAtomState !== undefined) {
+        return stagedAtomState as T;
+    }
+
     const atomState = store.getState().atoms.states[atom.key];
     if (atomState !== undefined) {
         return atomState.value as T;
@@ -111,11 +119,11 @@ const getAtomValue = <T>(
     const result = atom.get({
         get: createAtomGetter(atom, atoms, store, middlewareStore, promises, atomStack),
         getAsync: createAsyncAtomGetter(atom, atoms, store, middlewareStore, promises, atomStack)
-    }, store.getState());
+    }, createStateGetter(store, middlewareStore));
     const value = handlePossiblePromise(result, atom.key, atoms, store, middlewareStore, promises);
 
     if (!(value instanceof LoadingAtom)) {
-        store.dispatch(internalSet({
+        middlewareStore.dispatch(internalStageValue({
             atomKey: atom.key,
             value
         }));
@@ -144,7 +152,7 @@ const getAtomValueAsync = <T>(
     const result = atom.get({
         get: createAtomGetter(atom, atoms, store, middlewareStore, promises, atomStack),
         getAsync: createAsyncAtomGetter(atom, atoms, store, middlewareStore, promises, atomStack)
-    }, store.getState());
+    }, createStateGetter(store, middlewareStore));
 
     const promise = Promise.resolve(result);
     return handlePromise(promise, atom.key, atoms, store, middlewareStore, promises);
@@ -175,6 +183,7 @@ const handleInitialiseAtomAction = <T>(
     const atom = action.payload;
     getAtomValue(store, middlewareStore, atom, atoms, promises, []);
     middlewareStore.dispatch(internalAddNodeToGraph(atom.key));
+    commitStagedUpdates(store, middlewareStore);
 };
 
 const handleSetAtomAction = (
@@ -223,12 +232,17 @@ const reduxSetterGenerator = (
     atoms: Atoms,
     promises: AtomPromises
 ) => <T>(value: T) => {
-    store.dispatch(internalSet({
-        atomKey: atom.key,
-        value: handlePossiblePromise(value, atom.key, atoms, store, middlewareStore, promises)
-    }));
+    const result = handlePossiblePromise(value, atom.key, atoms, store, middlewareStore, promises);
+
+    if (!(result instanceof LoadingAtom)) {
+        middlewareStore.dispatch(internalStageValue({
+            atomKey: atom.key,
+            value: result
+        }));
+    }
 
     updateGraphFromAtom(atom, atoms, store, middlewareStore, promises);
+    commitStagedUpdates(store, middlewareStore);
 };
 
 const setAtomWithProduce = <T>(
@@ -258,8 +272,6 @@ const updateGraphFromAtom = (
     promises: AtomPromises
 ): void => {
     setNodesAfterAtomAsPendingUpdate(atom.key, middlewareStore);
-    const storeState = store.getState();
-
     const depths = Object.keys(middlewareStore.getState().pendingAtomUpdates).map(k => Number(k)).sort((a, b) => b - a);
     for (const atomDepth of depths) {
         const pendingUpdates = middlewareStore.getState().pendingAtomUpdates[atomDepth];
@@ -279,12 +291,23 @@ const updateGraphFromAtom = (
             const dependerValue = updatingAtom.get({
                 get: createAtomGetter(updatingAtom, atoms, store, middlewareStore, promises, []),
                 getAsync: createAsyncAtomGetter(updatingAtom, atoms, store, middlewareStore, promises, [])
-            }, storeState);
+            }, createStateGetter(store, middlewareStore));
 
-            store.dispatch(internalSet({
-                atomKey: updatingAtomKey,
-                value: handlePossiblePromise(dependerValue, updatingAtomKey, atoms, store, middlewareStore, promises)
-            }));
+            const value = handlePossiblePromise(
+                dependerValue,
+                updatingAtomKey,
+                atoms,
+                store,
+                middlewareStore,
+                promises
+            );
+
+            if (!(value instanceof LoadingAtom)) {
+                middlewareStore.dispatch(internalStageValue({
+                    atomKey: updatingAtomKey,
+                    value
+                }));
+            }
 
             const dependenciesAfterUpdate = middlewareStore.getState().graph[updatingAtomKey]?.dependencies;
             if (dependenciesBeforeUpdate !== undefined && dependenciesAfterUpdate !== undefined) {
@@ -298,6 +321,16 @@ const updateGraphFromAtom = (
         }
     }
     middlewareStore.dispatch(internalClearPendingAtomUpdates());
+};
+
+const createStateGetter = (
+    store: MainStore,
+    middlewareStore: MiddlewareStore
+) => (atomKey: string): unknown => {
+    const stagedValue = middlewareStore.getState().stagedChanges[atomKey];
+    return stagedValue !== undefined
+        ? stagedValue
+        : store.getState().atoms.states[atomKey]?.value;
 };
 
 const setNodesAfterAtomAsPendingUpdate = (
@@ -321,6 +354,19 @@ const setNodesAfterAtomAsPendingUpdate = (
 
         setNodesAfterAtomAsPendingUpdate(dependerKey, middlewareStore);
     }
+};
+
+const commitStagedUpdates = (store: MainStore, middlewareStore: MiddlewareStore): void => {
+    const stagedChanges = middlewareStore.getState().stagedChanges;
+
+    const updates: AtomUpdate[] = [];
+    for (const atomKey of Object.keys(stagedChanges)) {
+        const value = stagedChanges[atomKey];
+        updates.push({ atomKey, value });
+    }
+
+    store.dispatch(internalSet(updates));
+    middlewareStore.dispatch(internalClearStagedChanges());
 };
 
 export const getAtomMiddleware = () => {
@@ -395,7 +441,7 @@ async function handlePromise<T>(
     const value = await promise;
 
     removeFromArray(promises[atomKey]!, promise);
-    store.dispatch(internalSet({ atomKey, value }));
+    middlewareStore.dispatch(internalStageValue({ atomKey, value }));
 
     if (promises[atomKey]!.length < 1) {
         store.dispatch(internalSetLoading({ atomKey, loading: false }));
@@ -405,6 +451,7 @@ async function handlePromise<T>(
         return value;
     }
     updateGraphFromAtom(atom, atoms, store, middlewareStore, promises);
+    commitStagedUpdates(store, middlewareStore);
     return value;
 }
 

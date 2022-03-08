@@ -41,21 +41,27 @@ export function setAtom<T>(
 setAtom.type = setAtomActionName;
 setAtom.toString = () => setAtomActionName;
 
+export type AtomUpdate = {
+    atomKey: string,
+    value: unknown
+}
+
 export const atomsSlice = createSlice({
     name: 'atoms',
     initialState,
     reducers: {
-        internalSet: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
-            const currentState = state.states[action.payload.atomKey];
-            if (currentState !== undefined) {
-                currentState.value = action.payload.value;
-                return;
-            }
+        internalSet: (state, action: PayloadAction<AtomUpdate[]>) => {
+            for (const change of action.payload) {
+                if (state.states[change.atomKey] !== undefined) {
+                    state.states[change.atomKey]!.value = change.value;
+                    continue;
+                }
 
-            state.states[action.payload.atomKey] = {
-                value: action.payload.value,
-                loading: false
-            };
+                state.states[change.atomKey] = {
+                    value: change.value,
+                    loading: false
+                };
+            }
         },
         internalSetLoading: (state, action: PayloadAction<{ atomKey: string, loading: boolean }>) => {
             const currentState = state.states[action.payload.atomKey];
@@ -105,7 +111,7 @@ function getAtomValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>, state: AtomicStoreS
         get: <U, V extends SyncOrAsyncValue<U>>(nextAtom: Atom<U, V>) =>
             (getAtomValueFromState(state, nextAtom, atomStack) as GetAtomResult<U, V>),
         getAsync: nextAtom => Promise.resolve(getAtomValue(nextAtom, state, atomStack))
-    }, state);
+    }, atomKey => state.atoms.states[atomKey]?.value);
 
     atomStack.pop();
     return value;

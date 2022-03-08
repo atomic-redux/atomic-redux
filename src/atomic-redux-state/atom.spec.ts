@@ -1,4 +1,3 @@
-import { createMockState } from '../__test-files__/test-utils';
 import { atom } from './atom';
 import { DefaultValue, GetOptions, SetOptions } from './getter-setter-utils';
 
@@ -22,11 +21,7 @@ describe('atom', () => {
                 default: defaultValue
             });
 
-            const result = testAtom.get({} as GetOptions, {
-                atoms: {
-                    states: {}
-                }
-            });
+            const result = testAtom.get({} as GetOptions, () => undefined);
 
             expect(result).toBe(defaultValue);
         });
@@ -41,12 +36,13 @@ describe('atom', () => {
                 default: defaultValue
             });
 
-            const testState = createMockState({
-                key: testKey,
-                value: stateValue
-            });
-
-            const result = testAtom.get({} as GetOptions, testState);
+            const result = testAtom.get(
+                {} as GetOptions,
+                (atomKey: string) =>
+                    (atomKey === testKey
+                        ? stateValue
+                        : undefined)
+            );
             expect(result).toBe(stateValue);
         });
     });
