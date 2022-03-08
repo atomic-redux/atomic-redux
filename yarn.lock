@@ -2560,20 +2560,20 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-atomic-redux-state-react@^1.0.16:
-  version "1.0.16"
-  resolved "https://registry.yarnpkg.com/atomic-redux-state-react/-/atomic-redux-state-react-1.0.16.tgz#572aaba3f248c3800497c20aba1689c382ec5b69"
-  integrity sha512-Jm2roNhlYAc0yz4G8RrXXbbu6D2pfYuC6oDLeu7GqDyPamnXTg9SQ03pofFcbeqhmJxiRu+cNk1YzLXVqeLIHA==
+atomic-redux-state-react@^1.0.17:
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/atomic-redux-state-react/-/atomic-redux-state-react-1.0.17.tgz#967ea793177cc8ed2a91556c3781e25ae0ef259d"
+  integrity sha512-Vtks9RmcrRfM5pyNBmXh7w7LfUG4cOX7RFfe9AMuJOymLLrFix694L00MgiLBEgZ/IZTaxN3MCi0OwIVs+wnEg==
   dependencies:
-    atomic-redux-state "^1.5.3"
+    atomic-redux-state "^1.5.4"
     immer "^9.0.12"
     react "^17.0.2"
     react-redux "^7.2.6"
 
-atomic-redux-state@^1.5.3:
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/atomic-redux-state/-/atomic-redux-state-1.5.3.tgz#60776bca1ac51d72cbfd7ab2356b422b3bd77aa2"
-  integrity sha512-M3SHrCT1s+K1OiUDzwLknEHQvZZmOWbc2jqAGXY2sIoFeOijZcJux/a4kKZwxaARziJ/X7X5/koAwaWN/7QeDA==
+atomic-redux-state@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/atomic-redux-state/-/atomic-redux-state-1.5.4.tgz#4daf0038407fc8543e78a337f0cefa05c2a2301c"
+  integrity sha512-9NJ0ziozwMrY7UBLeR69GgyFv2Q41KUQIABjh5NsN0RXATGugRz3Xvt4rFoOi5nYlPExsL6e5V82O0nb662BnA==
   dependencies:
     "@reduxjs/toolkit" "^1.7.2"
     immer "^9.0.12"
