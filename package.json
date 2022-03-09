@@ -1,6 +1,6 @@
 {
   "name": "atomic-redux-state-react",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "React bindings for atomic-redux-state",
   "main": "out/index.js",
   "types": "out/index.d.ts",
