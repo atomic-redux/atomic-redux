@@ -144,6 +144,11 @@ const getAtomValueAsync = <T>(
         atoms[atom.key] = atom;
     }
 
+    const stagedAtomState = middlewareStore.getState().stagedChanges[atom.key];
+    if (stagedAtomState !== undefined) {
+        return Promise.resolve(stagedAtomState as T);
+    }
+
     const atomState = store.getState().atoms.states[atom.key];
     if (atomState !== undefined) {
         return Promise.resolve(atomState.value as T);
