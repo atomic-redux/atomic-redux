@@ -137,6 +137,11 @@ export function getAtomValueFromState<T>(
     atomStack: string[] = []
 ): T | LoadingAtom {
     const atomState = state.atoms.states[atom.key];
+
+    if (atomState !== undefined && atomState.loadingState === AtomLoadingState.Loading) {
+        return new LoadingAtom();
+    }
+
     const result = atomState !== undefined
         ? atomState.value as T
         : getAtomValue(atom, state, atomStack);
