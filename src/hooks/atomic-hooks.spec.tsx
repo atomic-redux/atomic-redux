@@ -1,10 +1,11 @@
 import { Store } from '@reduxjs/toolkit';
 import { act, renderHook, RenderHookOptions } from '@testing-library/react-hooks';
 import { atom, derivedAtom, setAtom } from 'atomic-redux-state';
+import { AtomLoadingState } from 'atomic-redux-state/out/atomic-redux-state/atom-loading-state';
 import {
     getAtomValueFromState,
     internalInitialiseAtom,
-    internalSetLoading
+    internalSetLoadingState
 } from 'atomic-redux-state/out/atomic-redux-state/atom-slice';
 import { Provider } from 'react-redux';
 import { useAtomicState, useIsAtomUpdating, useSetAtomicState } from '..';
@@ -169,7 +170,10 @@ describe('useIsAtomUpdating', () => {
         expect(result.current).toBe(false);
 
         act(() => {
-            store.dispatch(internalSetLoading({ atomKey: testAtom.key, loading: true }));
+            store.dispatch(internalSetLoadingState({
+                atomKey: testAtom.key,
+                loadingState: AtomLoadingState.Updating
+            }));
         });
 
         expect(result.current).toBe(true);
@@ -338,7 +342,10 @@ describe('useAtomicState', () => {
         expect(isUpdating).toBe(false);
 
         act(() => {
-            store.dispatch(internalSetLoading({ atomKey: testAtom.key, loading: true }));
+            store.dispatch(internalSetLoadingState({
+                atomKey: testAtom.key,
+                loadingState: AtomLoadingState.Updating
+            }));
         });
 
         [, , , isUpdating] = result.current;
