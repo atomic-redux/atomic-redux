@@ -2,12 +2,13 @@
 
 import { createTestStore } from '../__test-files__/test-utils';
 import { atom } from './atom';
+import { AtomLoadingState } from './atom-loading-state';
 import {
     getAtomValueFromState,
     initialiseAtomFromState,
     initialiseAtomFromStore,
     internalInitialiseAtom,
-    internalSetLoading,
+    internalSetLoadingState,
     isAtomUpdating
 } from './atom-slice';
 import { derivedAtom } from './derived-atom';
@@ -231,7 +232,7 @@ describe('isAtomUpdating', () => {
         expect(result).toBe(false);
     });
 
-    it('should return true when atom is loading', () => {
+    it('should return true when atom is updating', () => {
         const store = createTestStore();
 
         const testAtom = atom({
@@ -240,9 +241,9 @@ describe('isAtomUpdating', () => {
         });
 
         store.dispatch(internalInitialiseAtom(testAtom));
-        store.dispatch(internalSetLoading({
+        store.dispatch(internalSetLoadingState({
             atomKey: testAtom.key,
-            loading: true
+            loadingState: AtomLoadingState.Updating
         }));
 
         const result = isAtomUpdating(store.getState(), testAtom);

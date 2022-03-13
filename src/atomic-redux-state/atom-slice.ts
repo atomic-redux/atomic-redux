@@ -1,12 +1,13 @@
 import { createAction, createSlice, Dispatch, PayloadAction, Store } from '@reduxjs/toolkit';
 import { Immutable } from 'immer';
+import { AtomLoadingState } from './atom-loading-state';
 import { Atom, SyncOrAsyncValue, WritableAtom } from './atom-types';
 import { AsyncAtomValue, AtomValue, GetAtomResult, LoadingAtom, ValueOrSetter } from './getter-setter-utils';
 import { checkForDependencyLoop, isPromise, SafeRecord } from './utils';
 
 type InternalAtomState = {
     value: unknown,
-    loading: boolean
+    loadingState: AtomLoadingState
 }
 
 export type SliceState = {
@@ -59,15 +60,22 @@ export const atomsSlice = createSlice({
 
                 state.states[change.atomKey] = {
                     value: change.value,
-                    loading: false
+                    loadingState: AtomLoadingState.Idle
                 };
             }
         },
-        internalSetLoading: (state, action: PayloadAction<{ atomKey: string, loading: boolean }>) => {
-            const currentState = state.states[action.payload.atomKey];
-            if (currentState !== undefined) {
-                currentState.loading = action.payload.loading;
+        internalSetLoadingState: (state, action: PayloadAction<{
+            atomKey: string, loadingState: AtomLoadingState
+        }>) => {
+            if (state.states[action.payload.atomKey] === undefined) {
+                state.states[action.payload.atomKey] = {
+                    value: undefined,
+                    loadingState: action.payload.loadingState
+                };
+                return;
             }
+
+            state.states[action.payload.atomKey]!.loadingState = action.payload.loadingState;
         }
     }
 });
@@ -140,11 +148,11 @@ export function getAtomValueFromState<T>(
 
 export const isAtomUpdating = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsyncValue<T>>): boolean => {
     const atomState = state.atoms.states[atom.key];
-    return atomState !== undefined && atomState.loading;
+    return atomState !== undefined && atomState.loadingState === AtomLoadingState.Updating;
 };
 
 export const {
     internalSet,
-    internalSetLoading
+    internalSetLoadingState
 } = atomsSlice.actions;
 export default atomsSlice.reducer;

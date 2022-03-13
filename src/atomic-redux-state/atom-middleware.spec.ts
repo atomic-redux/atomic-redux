@@ -1,5 +1,6 @@
 import { createMockState, createTestStore } from '../__test-files__/test-utils';
 import { atom } from './atom';
+import { AtomLoadingState } from './atom-loading-state';
 import { getAtomMiddleware } from './atom-middleware';
 import { internalInitialiseAtom, setAtom } from './atom-slice';
 import { derivedAtom } from './derived-atom';
@@ -83,7 +84,7 @@ describe('atom-middleware', () => {
             expect(states[thirdAtomKey]?.value).toBe(testValue * 4);
         });
 
-        it('should keep state undefined for async atom until promise is resolved', async () => {
+        it('should keep loading state as Loading for async atom until promise is resolved', async () => {
             const store = createTestStore();
 
             const testValue = 10;
@@ -96,13 +97,15 @@ describe('atom-middleware', () => {
             });
             store.dispatch(internalInitialiseAtom(testAtom));
 
-            expect(store.getState().atoms.states[testAtomKey]).toBeUndefined();
+            expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
+            expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Loading);
+            expect(store.getState().atoms.states[testAtomKey]?.value).toBe(undefined);
 
             await promise;
             await new Promise(process.nextTick);
 
             expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
-            expect(store.getState().atoms.states[testAtomKey]?.loading).toBe(false);
+            expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Idle);
             expect(store.getState().atoms.states[testAtomKey]?.value).toBe(testValue);
         });
 
@@ -125,13 +128,15 @@ describe('atom-middleware', () => {
             });
             store.dispatch(internalInitialiseAtom(testAtom));
 
-            expect(store.getState().atoms.states[testAtomKey]).toBeUndefined();
+            expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
+            expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Loading);
+            expect(store.getState().atoms.states[testAtomKey]?.value).toBe(undefined);
 
             await promise;
             await new Promise(process.nextTick);
 
             expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
-            expect(store.getState().atoms.states[testAtomKey]?.loading).toBe(false);
+            expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Idle);
             expect(store.getState().atoms.states[testAtomKey]?.value).toBe(testValue);
         });
 
@@ -153,13 +158,15 @@ describe('atom-middleware', () => {
             });
             store.dispatch(internalInitialiseAtom(testAtom));
 
-            expect(store.getState().atoms.states[testAtomKey]).toBeUndefined();
+            expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
+            expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Loading);
+            expect(store.getState().atoms.states[testAtomKey]?.value).toBe(undefined);
 
             await promise;
             await new Promise(process.nextTick);
 
             expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
-            expect(store.getState().atoms.states[testAtomKey]?.loading).toBe(false);
+            expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Idle);
             expect(store.getState().atoms.states[testAtomKey]?.value).toBe(testValue);
         });
 
@@ -407,7 +414,7 @@ describe('atom-middleware', () => {
             const states = store.getState().atoms.states;
             expect(states[testAtomKey]).toBeDefined();
             expect(states[testAtomKey]?.value).toBe(testValue);
-            expect(states[testAtomKey]?.loading).toBe(false);
+            expect(states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Idle);
         });
 
         it('should set the atom value based on the current state when a callback is provided', () => {
@@ -713,7 +720,7 @@ describe('atom-middleware', () => {
             expect(states[firstAtomKey]?.value).toBe(10);
         });
 
-        it('should set loading state until async atom promise is resolved', async () => {
+        it('should set loading state to updating until async atom promise is resolved', async () => {
             const store = createTestStore();
 
             const startValue = 1;
@@ -738,19 +745,19 @@ describe('atom-middleware', () => {
             await new Promise(process.nextTick);
 
             expect(store.getState().atoms.states[asyncAtomKey]).toBeDefined();
-            expect(store.getState().atoms.states[asyncAtomKey]?.loading).toBe(false);
+            expect(store.getState().atoms.states[asyncAtomKey]?.loadingState).toBe(AtomLoadingState.Idle);
             expect(store.getState().atoms.states[asyncAtomKey]?.value).toBe(startValue);
 
             promise = new Promise<number>(resolve => { resolve(newValue); });
             store.dispatch(setAtom(parentAtom, 1));
 
             expect(store.getState().atoms.states[asyncAtomKey]).toBeDefined();
-            expect(store.getState().atoms.states[asyncAtomKey]?.loading).toBe(true);
+            expect(store.getState().atoms.states[asyncAtomKey]?.loadingState).toBe(AtomLoadingState.Updating);
             expect(store.getState().atoms.states[asyncAtomKey]?.value).toBe(startValue);
 
             await new Promise(process.nextTick);
 
-            expect(store.getState().atoms.states[asyncAtomKey]?.loading).toBe(false);
+            expect(store.getState().atoms.states[asyncAtomKey]?.loadingState).toBe(AtomLoadingState.Idle);
             expect(store.getState().atoms.states[asyncAtomKey]?.value).toBe(newValue);
         });
     });

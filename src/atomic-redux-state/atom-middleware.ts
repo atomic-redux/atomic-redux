@@ -1,5 +1,6 @@
 import { configureStore, Dispatch, Middleware, MiddlewareAPI, PayloadAction } from '@reduxjs/toolkit';
 import produce from 'immer';
+import { AtomLoadingState } from './atom-loading-state';
 import {
     atomMiddlewareReducer,
     AtomMiddlewareSliceState,
@@ -18,7 +19,7 @@ import {
     initialiseAtomFromState,
     internalInitialiseAtom,
     internalSet,
-    internalSetLoading,
+    internalSetLoadingState,
     setAtom,
     SetAtomPayload
 } from './atom-slice';
@@ -441,9 +442,12 @@ async function handlePromise<T>(
     promises[atomKey]!.push(promise);
 
     const atomState = store.getState().atoms.states[atomKey];
-    if (atomState !== undefined) {
-        store.dispatch(internalSetLoading({ atomKey, loading: true }));
-    }
+    store.dispatch(internalSetLoadingState({
+        atomKey,
+        loadingState: atomState === undefined
+            ? AtomLoadingState.Loading
+            : AtomLoadingState.Updating
+    }));
 
     const value = await promise;
 
@@ -451,7 +455,10 @@ async function handlePromise<T>(
     middlewareStore.dispatch(internalStageValue({ atomKey, value }));
 
     if (promises[atomKey]!.length < 1) {
-        store.dispatch(internalSetLoading({ atomKey, loading: false }));
+        store.dispatch(internalSetLoadingState({
+            atomKey,
+            loadingState: AtomLoadingState.Idle
+        }));
     }
 
     if (atom === undefined) {

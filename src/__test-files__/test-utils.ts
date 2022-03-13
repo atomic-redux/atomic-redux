@@ -1,4 +1,5 @@
 import { combineReducers, configureStore, Store } from '@reduxjs/toolkit';
+import { AtomLoadingState } from '../atomic-redux-state/atom-loading-state';
 import { getAtomMiddleware } from '../atomic-redux-state/atom-middleware';
 import atomsReducer, { AtomicStoreState } from '../atomic-redux-state/atom-slice';
 
@@ -27,7 +28,9 @@ export function createMockState(...atomStates: MockState[]): AtomicStoreState {
     for (const atomState of atomStates) {
         state.atoms.states[atomState.key] = {
             value: atomState.value,
-            loading: atomState.loading ?? false
+            loadingState: atomState.loading
+                ? AtomLoadingState.Loading
+                : AtomLoadingState.Idle
         };
     }
 
