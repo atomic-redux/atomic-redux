@@ -114,7 +114,9 @@ const getAtomValue = <T>(
 
     const atomState = store.getState().atoms.states[atom.key];
     if (atomState !== undefined) {
-        return atomState.value as T;
+        return atomState.loadingState === AtomLoadingState.Loading
+            ? LoadingAtom
+            : atomState.value as T;
     }
 
     const result = atom.get({
