@@ -170,10 +170,10 @@ describe('useIsAtomUpdating', () => {
         expect(result.current).toBe(false);
 
         act(() => {
-            store.dispatch(internalSetLoadingState({
+            store.dispatch(internalSetLoadingState([{
                 atomKey: testAtom.key,
                 loadingState: AtomLoadingState.Updating
-            }));
+            }]));
         });
 
         expect(result.current).toBe(true);
@@ -342,10 +342,10 @@ describe('useAtomicState', () => {
         expect(isUpdating).toBe(false);
 
         act(() => {
-            store.dispatch(internalSetLoadingState({
+            store.dispatch(internalSetLoadingState([{
                 atomKey: testAtom.key,
                 loadingState: AtomLoadingState.Updating
-            }));
+            }]));
         });
 
         [, , , isUpdating] = result.current;
