@@ -156,7 +156,14 @@ const getAtomValueAsync = <T>(
 
     const atomState = store.getState().atoms.states[atom.key];
     if (atomState !== undefined) {
-        return Promise.resolve(atomState.value as T);
+        if (atomState.loadingState !== AtomLoadingState.Loading) {
+            return Promise.resolve(atomState.value as T);
+        }
+
+        const atomPromises = promises[atom.key];
+        if (atomPromises !== undefined && atomPromises.length > 0) {
+            return atomPromises[0] as Promise<T>;
+        }
     }
 
     const result = atom.get({
