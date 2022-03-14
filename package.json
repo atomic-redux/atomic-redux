@@ -4,6 +4,9 @@
   "description": "React bindings for atomic-redux-state",
   "main": "out/index.js",
   "types": "out/index.d.ts",
+  "files": [
+    "out/**/*"
+  ],
   "scripts": {
     "test": "jest --watch",
     "build": "tsc",
