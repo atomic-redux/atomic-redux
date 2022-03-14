@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AtomLoadingState } from './atom-loading-state';
 import { SafeRecord } from './utils';
 
 type AtomGraphNode = {
@@ -11,12 +12,14 @@ export type AtomMiddlewareSliceState = {
     graph: SafeRecord<string, AtomGraphNode>;
     pendingAtomUpdates: SafeRecord<number, string[]>; // key: atom depth, value: atom keys
     stagedChanges: SafeRecord<string, unknown>;
+    stagedLoadingStates: SafeRecord<string, AtomLoadingState>;
 }
 
 const initialState: AtomMiddlewareSliceState = {
     graph: {},
     pendingAtomUpdates: {},
-    stagedChanges: {}
+    stagedChanges: {},
+    stagedLoadingStates: {}
 };
 
 export const atomMiddlewareSlice = createSlice({
@@ -114,8 +117,14 @@ export const atomMiddlewareSlice = createSlice({
         internalStageValue: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
             state.stagedChanges[action.payload.atomKey] = action.payload.value;
         },
+        internalStageLoadingState: (state, action: PayloadAction<{
+            atomKey: string, loadingState: AtomLoadingState
+        }>) => {
+            state.stagedLoadingStates[action.payload.atomKey] = action.payload.loadingState;
+        },
         internalClearStagedChanges: state => {
             state.stagedChanges = {};
+            state.stagedLoadingStates = {};
         }
     }
 });
@@ -128,6 +137,7 @@ export const {
     internalMarkAtomPendingUpdate,
     internalClearPendingAtomUpdates,
     internalStageValue,
+    internalStageLoadingState,
     internalClearStagedChanges
 } = atomMiddlewareSlice.actions;
 

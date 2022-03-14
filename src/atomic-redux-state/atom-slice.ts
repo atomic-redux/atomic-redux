@@ -47,6 +47,11 @@ export type AtomUpdate = {
     value: unknown
 }
 
+export type AtomLoadingStateUpdate = {
+    atomKey: string,
+    loadingState: AtomLoadingState
+}
+
 export const atomsSlice = createSlice({
     name: 'atoms',
     initialState,
@@ -64,18 +69,18 @@ export const atomsSlice = createSlice({
                 };
             }
         },
-        internalSetLoadingState: (state, action: PayloadAction<{
-            atomKey: string, loadingState: AtomLoadingState
-        }>) => {
-            if (state.states[action.payload.atomKey] === undefined) {
-                state.states[action.payload.atomKey] = {
-                    value: undefined,
-                    loadingState: action.payload.loadingState
-                };
-                return;
-            }
+        internalSetLoadingState: (state, action: PayloadAction<AtomLoadingStateUpdate[]>) => {
+            for (const change of action.payload) {
+                if (state.states[change.atomKey] === undefined) {
+                    state.states[change.atomKey] = {
+                        value: undefined,
+                        loadingState: change.loadingState
+                    };
+                    continue;
+                }
 
-            state.states[action.payload.atomKey]!.loadingState = action.payload.loadingState;
+                state.states[change.atomKey]!.loadingState = change.loadingState;
+            }
         }
     }
 });

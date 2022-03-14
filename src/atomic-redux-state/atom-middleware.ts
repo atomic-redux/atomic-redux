@@ -11,10 +11,12 @@ import {
     internalMarkAtomPendingUpdate,
     internalRemoveGraphConnection,
     internalResetGraphNodeDependencies,
+    internalStageLoadingState,
     internalStageValue
 } from './atom-middleware-slice';
 import {
     AtomicStoreState,
+    AtomLoadingStateUpdate,
     AtomUpdate,
     initialiseAtomFromState,
     internalInitialiseAtom,
@@ -366,6 +368,7 @@ const setNodesAfterAtomAsPendingUpdate = (
 
 const commitStagedUpdates = (store: MainStore, middlewareStore: MiddlewareStore): void => {
     const stagedChanges = middlewareStore.getState().stagedChanges;
+    const stagedLoadingStates = middlewareStore.getState().stagedLoadingStates;
 
     const updates: AtomUpdate[] = [];
     for (const atomKey of Object.keys(stagedChanges)) {
@@ -375,8 +378,19 @@ const commitStagedUpdates = (store: MainStore, middlewareStore: MiddlewareStore)
 
     if (updates.length > 0) {
         store.dispatch(internalSet(updates));
-        middlewareStore.dispatch(internalClearStagedChanges());
     }
+
+    const loadingStatesUpdates: AtomLoadingStateUpdate[] = [];
+    for (const atomKey of Object.keys(stagedLoadingStates)) {
+        const loadingState = stagedLoadingStates[atomKey]!;
+        loadingStatesUpdates.push({ atomKey, loadingState });
+    }
+
+    if (loadingStatesUpdates.length > 0) {
+        store.dispatch(internalSetLoadingState(loadingStatesUpdates));
+    }
+
+    middlewareStore.dispatch(internalClearStagedChanges());
 };
 
 export const getAtomMiddleware = () => {
@@ -444,12 +458,12 @@ async function handlePromise<T>(
     promises[atomKey]!.push(promise);
 
     const atomState = store.getState().atoms.states[atomKey];
-    store.dispatch(internalSetLoadingState({
+    store.dispatch(internalSetLoadingState([{
         atomKey,
         loadingState: atomState === undefined
             ? AtomLoadingState.Loading
             : AtomLoadingState.Updating
-    }));
+    }]));
 
     const value = await promise;
 
@@ -457,7 +471,7 @@ async function handlePromise<T>(
     middlewareStore.dispatch(internalStageValue({ atomKey, value }));
 
     if (promises[atomKey]!.length < 1) {
-        store.dispatch(internalSetLoadingState({
+        middlewareStore.dispatch(internalStageLoadingState({
             atomKey,
             loadingState: AtomLoadingState.Idle
         }));

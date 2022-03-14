@@ -241,10 +241,10 @@ describe('isAtomUpdating', () => {
         });
 
         store.dispatch(internalInitialiseAtom(testAtom));
-        store.dispatch(internalSetLoadingState({
+        store.dispatch(internalSetLoadingState([{
             atomKey: testAtom.key,
             loadingState: AtomLoadingState.Updating
-        }));
+        }]));
 
         const result = isAtomUpdating(store.getState(), testAtom);
 
