@@ -156,6 +156,16 @@ export function getAtomValueFromState<T>(
         : result;
 }
 
+export const selectAtom = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsyncValue<T>>): T | undefined => {
+    const atomState = state.atoms.states[atom.key];
+
+    if (atomState === undefined) {
+        return undefined;
+    }
+
+    return atomState.value as T;
+};
+
 export const isAtomUpdating = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsyncValue<T>>): boolean => {
     const atomState = state.atoms.states[atom.key];
     return atomState !== undefined && atomState.loadingState === AtomLoadingState.Updating;
