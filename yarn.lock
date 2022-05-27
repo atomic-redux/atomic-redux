@@ -989,10 +989,10 @@ asynckit@^0.4.0:
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha1-x57Zf380y48robyXkLzDZkdLS3k=
 
-atomic-redux-state@^1.5.12:
-  version "1.5.12"
-  resolved "https://registry.yarnpkg.com/atomic-redux-state/-/atomic-redux-state-1.5.12.tgz#7ed3bc778a1fa5e0b8a05e086b7e0b868a0aef46"
-  integrity sha512-Gu7/9iwHkTpb37y8VqhkebjaNfkq8sbYjrf+uauIrH8jCa+yQfaRXK9igHIfTsVyJJch0Yn1OdwJgO1eLF3L2A==
+atomic-redux-state@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/atomic-redux-state/-/atomic-redux-state-1.6.0.tgz#0ac17cad761075e8242e821e1420d906698ee07c"
+  integrity sha512-aKtLTHQ0Qwq5ho0r5iTZ4CrzHFT9AvtsJbRdUUQ4vLrutS28vZOIow7ekdFAxJI6YD9walvAhrli1yL7PQGLxQ==
   dependencies:
     "@reduxjs/toolkit" "^1.7.2"
     immer "^9.0.12"
