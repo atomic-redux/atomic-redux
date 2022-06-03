@@ -4,8 +4,8 @@ React bindings for https://github.com/matt-winfield/atomic-redux-state
 
 ### Building
 
-Build using `yarn build`
+Build using `pnpm build`
 
 ### Testing
 
-Test using `yarn test`
+Test using `pnpm test`

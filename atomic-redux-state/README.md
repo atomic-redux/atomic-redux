@@ -14,7 +14,7 @@ This library also allows interaction with atoms within Redux middleware, for exa
 
 First, set up a Redux store and provider, as described in the [Redux Toolkit getting started guide](https://redux-toolkit.js.org/tutorials/quick-start).
 
-Install the core and React libraries using `yarn add atomic-redux-state atomic-redux-state-react`.
+Install the core and React libraries using `npm`, `yarn` or `pnpm`: `pnpm add atomic-redux-state atomic-redux-state-react`.
 If not using with React, `atomic-redux-state-react` can be omitted.
 
 You must then add the atom middleware and reducer to your Redux store.
@@ -213,8 +213,8 @@ store.dispatch(setAtom(myAtom, 10));
 
 ### Building
 
-Build using `yarn build`
+Build using `pnpm build`
 
 ### Testing
 
-Test using `yarn test`
+Test using `pnpm test`
