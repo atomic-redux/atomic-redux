@@ -374,12 +374,14 @@
     {
       "packageName": "atomic-redux-state",
       "projectFolder": "atomic-redux-state",
-      "reviewCategory": "production"
+      "reviewCategory": "production",
+      "shouldPublish": true
     },
     {
       "packageName": "atomic-redux-state-react",
       "projectFolder": "atomic-redux-state-react",
-      "reviewCategory": "production"
+      "reviewCategory": "production",
+      "shouldPublish": true
     },
     
     {
