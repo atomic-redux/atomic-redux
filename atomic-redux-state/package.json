@@ -28,7 +28,7 @@
   "author": "Matthew Winfield",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/matt-winfield/atomic-redux-state/issues"
+    "url": "https://github.com/matt-winfield/atomic-redux/issues"
   },
   "homepage": "https://github.com/matt-winfield/atomic-redux#readme",
   "devDependencies": {
