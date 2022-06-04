@@ -1,6 +1,6 @@
 # Atomic Redux State - React
 
-React bindings for https://github.com/matt-winfield/atomic-redux-state
+React bindings for https://github.com/matt-winfield/atomic-redux
 
 ### Building
 

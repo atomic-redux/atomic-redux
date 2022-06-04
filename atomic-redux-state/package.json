@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matt-winfield/atomic-redux-state.git"
+    "url": "git+https://github.com/matt-winfield/atomic-redux.git"
   },
   "keywords": [
     "Redux",
@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/matt-winfield/atomic-redux-state/issues"
   },
-  "homepage": "https://github.com/matt-winfield/atomic-redux-state#readme",
+  "homepage": "https://github.com/matt-winfield/atomic-redux#readme",
   "devDependencies": {
     "@types/jest": "^27.4.0",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
