@@ -381,13 +381,15 @@
       "packageName": "atomic-redux-state-react",
       "projectFolder": "atomic-redux-state-react",
       "reviewCategory": "production",
-      "shouldPublish": true
+      "shouldPublish": true,
+      "tags": ["react"]
     },
     
     {
       "packageName": "atomic-redux-example",
       "projectFolder": "examples/atomic-redux-example",
-      "reviewCategory": "tools"
+      "reviewCategory": "tools",
+      "tags": ["example"]
     }
   ]
 }
