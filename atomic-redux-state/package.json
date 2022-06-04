@@ -46,7 +46,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^1.7.2",
+    "@reduxjs/toolkit": "~1.8.2",
     "immer": "^9.0.12"
   }
 }
