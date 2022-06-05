@@ -10332,7 +10332,7 @@ packages:
     dev: false
 
   file:projects/atomic-redux-state-react.tgz_ac713131f424e541e5abcd32dc6226e1:
-    resolution: {integrity: sha512-mfW9T7ZbL7EROZTYZf8569qUDlbLVYr3Z1IcfaVRz2sUxfDrLu3qTZTv/MaTq7F7pdGe2hvwSUoCsLnXmM5hQQ==, tarball: file:projects/atomic-redux-state-react.tgz}
+    resolution: {integrity: sha512-sMCxh1uvIGZE/VCDya5LLPTR6L1iK9uU1j3z8PNy5Rilx/itATaGVOS8qzzTBc2xOnAQcZgF3V7Ra8NJ21zNAw==, tarball: file:projects/atomic-redux-state-react.tgz}
     id: file:projects/atomic-redux-state-react.tgz
     name: '@rush-temp/atomic-redux-state-react'
     version: 0.0.0
@@ -10340,6 +10340,7 @@ packages:
       '@reduxjs/toolkit': 1.8.2_react-redux@8.0.2+react@18.1.0
       '@testing-library/react-hooks': 7.0.2_react-dom@18.1.0+react@18.1.0
       '@types/jest': 27.5.2
+      '@types/node': 12.20.54
       '@types/react': 18.0.11
       '@typescript-eslint/eslint-plugin': 5.27.0_53a3a26d566b734365db03aac28a1a58
       '@typescript-eslint/parser': 5.27.0_eslint@8.17.0+typescript@4.7.3
@@ -10373,13 +10374,14 @@ packages:
     dev: false
 
   file:projects/atomic-redux-state.tgz_be5a112ffd2fe45fd5ec29c9141967fc:
-    resolution: {integrity: sha512-Zpb2PqTpkjaWIv1hA/y+UFFEhhcu3zRN67MAeViwUez/gOpGBS8fA3yCk4Z/210c0bM9jq2EyrdeZ9f0X2ZvNA==, tarball: file:projects/atomic-redux-state.tgz}
+    resolution: {integrity: sha512-gpONbwsiVi9UYTsCUB5swafXBvjgYoTtaOoRJMIj1iUowCPku+H1Rf0gvZRucs291HG/PKMELAj1P8g8slKd6w==, tarball: file:projects/atomic-redux-state.tgz}
     id: file:projects/atomic-redux-state.tgz
     name: '@rush-temp/atomic-redux-state'
     version: 0.0.0
     dependencies:
       '@reduxjs/toolkit': 1.8.2_react-redux@8.0.2+react@18.1.0
       '@types/jest': 27.5.2
+      '@types/node': 12.20.54
       '@typescript-eslint/eslint-plugin': 5.27.0_53a3a26d566b734365db03aac28a1a58
       '@typescript-eslint/parser': 5.27.0_eslint@8.17.0+typescript@4.7.3
       eslint: 8.17.0
