@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/matt-winfield/atomic-redux#readme",
   "dependencies": {
-    "atomic-redux-state": "workspace:*",
+    "atomic-redux-state": "1.6.0",
     "immer": "^9.0.12",
     "react": "~18.1.0",
     "react-redux": "~8.0.2",
