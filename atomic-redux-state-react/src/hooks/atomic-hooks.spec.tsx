@@ -1,5 +1,5 @@
 import { Store } from '@reduxjs/toolkit';
-import { act, renderHook, RenderHookOptions } from '@testing-library/react-hooks';
+import { act, renderHook, RenderHookOptions } from '@testing-library/react';
 import { atom, derivedAtom, setAtom } from 'atomic-redux-state';
 import { AtomLoadingState } from 'atomic-redux-state/out/atomic-redux-state/atom-loading-state';
 import {
