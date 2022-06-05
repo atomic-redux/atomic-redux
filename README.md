@@ -6,6 +6,8 @@ An application state management solution built on top of Redux, inspired by [Rec
 
 `atomic-redux-state` uses a simple API for managing global application state, aiming to reduce the boilerplate code prevalent in regular Redux. This API is clearer to read, and makes managing derived state easier.
 
+Internally, it automtically builds a [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) of dependencies, to prevent unneccesary re-execution of selectors, without requiring manual memoisation like Redux selectors do.
+
 Recoil, the library that inspired this package, has an excellent developer-friendly API for managing application state, especially derived state or dynamic data. However, it can only be used within a React context, which may not be suitable for all applications. For example, a system that integrates some React components into an existing website cannot (easily) get the data stored in Recoil atoms.
 
 This library also allows interaction with atoms within Redux middleware, for example in [Redux Sagas](https://redux-saga.js.org/).
