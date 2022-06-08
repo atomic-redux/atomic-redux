@@ -400,16 +400,24 @@ const commitStagedUpdates = (store: MainStore, middlewareStore: MiddlewareStore)
     middlewareStore.dispatch(internalClearStagedChanges());
 };
 
-export const getAtomMiddleware = () => {
-    const setAtomMiddleware: Middleware<{}, AtomicStoreState> = store => next => {
+type AtomMiddleware =
+    Middleware<{}, AtomicStoreState>
+    & {
+        getState: (() => AtomMiddlewareSliceState)
+    }
+
+export const getAtomMiddleware = (preloadedState?: AtomMiddlewareSliceState) => {
+    const middlewareStore = configureStore({
+        reducer: atomMiddlewareReducer,
+        devTools: {
+            name: atomMiddlewareStoreName
+        },
+        preloadedState
+    });
+
+    const setAtomMiddleware: AtomMiddleware = store => next => {
         const atoms: Atoms = {};
         const promises: AtomPromises = {};
-        const middlewareStore = configureStore({
-            reducer: atomMiddlewareReducer,
-            devTools: {
-                name: atomMiddlewareStoreName
-            }
-        });
 
         return action => {
             if (action.type === internalInitialiseAtom.toString()) {
@@ -423,6 +431,8 @@ export const getAtomMiddleware = () => {
             return next(action);
         };
     };
+
+    setAtomMiddleware.getState = () => middlewareStore.getState();
 
     return setAtomMiddleware;
 };
