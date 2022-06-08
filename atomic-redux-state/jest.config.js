@@ -7,5 +7,8 @@ module.exports = {
         'src/**/*',
         '!**/index.ts',
         '!*/__test-files__/**/*'
+    ],
+    reporters: [
+        'jest-standard-reporter'
     ]
 };
