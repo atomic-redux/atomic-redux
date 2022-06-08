@@ -104,7 +104,10 @@ describe('useResetAtomicState', () => {
 
         const { result } = renderHook(() => useResetAtomicState(testAtom), createRenderHookOptions(store));
 
-        store.dispatch(setAtom(testAtom, 0));
+        act(() => {
+            store.dispatch(setAtom(testAtom, 0));
+        });
+
         expect(getAtomValueFromState(store.getState(), testAtom)).toBe(0);
 
         act(() => {
@@ -140,10 +143,12 @@ describe('useIsAtomUpdating', () => {
             key: 'test-atom',
             get: async () => promise
         });
-        store.dispatch(internalInitialiseAtom(testAtom));
 
-        await promise;
-        await new Promise(process.nextTick);
+        await act(async () => {
+            store.dispatch(internalInitialiseAtom(testAtom));
+            await promise;
+            await new Promise(process.nextTick);
+        });
 
         const { result } = renderHook(() => useIsAtomUpdating(testAtom), createRenderHookOptions(store));
 
@@ -160,10 +165,13 @@ describe('useIsAtomUpdating', () => {
             key: 'test-atom',
             get: async () => promise
         });
-        store.dispatch(internalInitialiseAtom(testAtom));
 
-        await promise;
-        await new Promise(process.nextTick);
+        await act(async () => {
+            store.dispatch(internalInitialiseAtom(testAtom));
+
+            await promise;
+            await new Promise(process.nextTick);
+        });
 
         const { result } = renderHook(() => useIsAtomUpdating(testAtom), createRenderHookOptions(store));
 
@@ -268,7 +276,10 @@ describe('useAtomicState', () => {
 
         const { result } = renderHook(() => useAtomicState(testAtom), createRenderHookOptions(store));
 
-        store.dispatch(setAtom(testAtom, 0));
+        act(() => {
+            store.dispatch(setAtom(testAtom, 0));
+        });
+
         expect(getAtomValueFromState(store.getState(), testAtom)).toBe(0);
 
         const [, , reset] = result.current;
@@ -307,12 +318,17 @@ describe('useAtomicState', () => {
             get: async () => promise,
             set: () => {}
         });
-        store.dispatch(internalInitialiseAtom(testAtom));
+
+        act(() => {
+            store.dispatch(internalInitialiseAtom(testAtom));
+        });
 
         const { result } = renderHook(() => useAtomicState(testAtom), createRenderHookOptions(store));
 
-        await promise;
-        await new Promise(process.nextTick);
+        await act(async () => {
+            await promise;
+            await new Promise(process.nextTick);
+        });
 
         const [, , , isUpdating] = result.current;
 
@@ -330,12 +346,17 @@ describe('useAtomicState', () => {
             get: async () => promise,
             set: () => {}
         });
-        store.dispatch(internalInitialiseAtom(testAtom));
+
+        act(() => {
+            store.dispatch(internalInitialiseAtom(testAtom));
+        });
 
         const { result } = renderHook(() => useAtomicState(testAtom), createRenderHookOptions(store));
 
-        await promise;
-        await new Promise(process.nextTick);
+        await act(async () => {
+            await promise;
+            await new Promise(process.nextTick);
+        });
 
         let [, , , isUpdating] = result.current;
 
