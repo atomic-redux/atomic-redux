@@ -8104,6 +8104,18 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: false
 
+  /next-redux-wrapper/7.0.5_722d74fe1a0e2a7f1791b45450532e23:
+    resolution: {integrity: sha512-UFXdAWG5i+GFT8+Hoqpx3GArkPh34fVWF9YoA2VSHlBzsrPtnRd7NWM6FNSYUennpommTpWJ09mu+r/1UxyIkg==}
+    peerDependencies:
+      next: '>=10.0.3'
+      react: '*'
+      react-redux: '*'
+    dependencies:
+      next: 12.1.6_f27a4c237496d6873c96491b66a1e77e
+      react: 18.1.0
+      react-redux: 8.0.2_cad515bb57912320824263251f74acdf
+    dev: false
+
   /next/12.1.6_f27a4c237496d6873c96491b66a1e77e:
     resolution: {integrity: sha512-cebwKxL3/DhNKfg9tPZDQmbRKjueqykHHbgaoG4VBRH3AHQJ2HO0dbKFiS1hPhe1/qgc2d/hFeadsbPicmLD+A==}
     engines: {node: '>=12.22.0'}
@@ -11719,25 +11731,30 @@ packages:
     dev: false
 
   file:projects/server-side-rendering.tgz_@babel+core@7.18.2:
-    resolution: {integrity: sha512-OycXMel5MA5s3QfnJZM0pqned6igho5y9JIh5c7N/muGxIMYW7rJZ23YcIXofALGumKtRw5ucAHmgPWWd03EcQ==, tarball: file:projects/server-side-rendering.tgz}
+    resolution: {integrity: sha512-B68zndY8Erdib8kb915Xu4WHqTKxsdMkq2du4F9zileh05MTdKGZtwmwZoAgabejTAdQBI3hae/EZjUEOvXGKw==, tarball: file:projects/server-side-rendering.tgz}
     id: file:projects/server-side-rendering.tgz
     name: '@rush-temp/server-side-rendering'
     version: 0.0.0
     dependencies:
+      '@reduxjs/toolkit': 1.8.2_react-redux@8.0.2+react@18.1.0
       '@types/node': 12.20.54
       '@types/react': 18.0.12
       '@types/react-dom': 18.0.5
       eslint: 8.17.0
       eslint-config-next: 12.1.6_85a02a54f427868067898054ce8dfb78
       next: 12.1.6_f27a4c237496d6873c96491b66a1e77e
+      next-redux-wrapper: 7.0.5_722d74fe1a0e2a7f1791b45450532e23
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
+      react-redux: 8.0.2_cad515bb57912320824263251f74acdf
       typescript: 4.7.3
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
       - fibers
       - node-sass
+      - react-native
+      - redux
       - sass
       - supports-color
     dev: false
