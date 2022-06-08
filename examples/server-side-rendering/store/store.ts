@@ -8,10 +8,15 @@ const rootReducer = combineReducers({
 
 export type StoreState = ReturnType<typeof rootReducer>
 
-export const createStore = (preloadedState?: StoreState, atomState?: AtomMiddlewareSliceState) => configureStore({
-    reducer: rootReducer,
-    preloadedState,
-    middleware: [
-        getAtomMiddleware(atomState)
-    ]
-});
+export const createStore = (preloadedState?: StoreState, atomState?: AtomMiddlewareSliceState) => {
+    const atomMiddleware = getAtomMiddleware(atomState);
+    const store = configureStore({
+        reducer: rootReducer,
+        preloadedState,
+        middleware: [
+            atomMiddleware
+        ]
+    });
+
+    return { store, atomMiddleware }
+}

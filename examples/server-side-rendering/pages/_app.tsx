@@ -4,7 +4,9 @@ import { createStore } from '../store/store';
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Provider store={createStore(pageProps.initialReduxStoreState)}>
+  const { store } = createStore(pageProps.initialReduxStoreState, pageProps.initialAtomState)
+
+  return <Provider store={store}>
     <Component {...pageProps} />
   </Provider>
 }

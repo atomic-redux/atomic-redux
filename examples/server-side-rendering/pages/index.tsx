@@ -65,7 +65,7 @@ const Home: NextPage = () => {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const store = createStore();
+  const { store, atomMiddleware } = createStore();
 
   const posts = await fetch('https://jsonplaceholder.typicode.com/posts')
     .then(response => response.json()) as PostModel[];
@@ -74,7 +74,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      initialReduxStoreState: store.getState()
+      initialReduxStoreState: store.getState(),
+      initialAtomState: atomMiddleware.getState()
     }
   }
 }
