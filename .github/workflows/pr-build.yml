@@ -17,14 +17,6 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 7.1.8
-
-      - name: Check for missing change logs
-        run: node common/scripts/install-run-rush.js change --verify
-
       - name: Install dependencies
         run: node common/scripts/install-run-rush.js install
 
