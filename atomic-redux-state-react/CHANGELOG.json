@@ -2,6 +2,25 @@
   "name": "atomic-redux-state-react",
   "entries": [
     {
+      "version": "1.0.27",
+      "tag": "atomic-redux-state-react_v1.0.27",
+      "date": "Wed, 08 Jun 2022 14:07:56 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "Add change log",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "5bcdbdade13bedbf8461ad1200136ce395146786"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"atomic-redux-state\" from `1.6.0` to `1.6.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.26",
       "tag": "atomic-redux-state-react_v1.0.26",
       "date": "Wed, 08 Jun 2022 10:18:22 GMT",

@@ -1,6 +1,6 @@
 {
   "name": "atomic-redux-state-react",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "React bindings for atomic-redux-state",
   "main": "out/index.js",
   "types": "out/index.d.ts",
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/matt-winfield/atomic-redux#readme",
   "dependencies": {
-    "atomic-redux-state": "1.6.0",
+    "atomic-redux-state": "1.6.1",
     "immer": "^9.0.12",
     "react": "~18.1.0",
     "react-redux": "~8.0.2",
