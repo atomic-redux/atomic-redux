@@ -1,13 +1,17 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { postsSlice } from '../features/posts/posts.slice';
+import { atomsReducer, getAtomMiddleware } from 'atomic-redux-state';
+import { AtomMiddlewareSliceState } from 'atomic-redux-state/out/atomic-redux-state/atom-middleware-slice';
 
 const rootReducer = combineReducers({
-    posts: postsSlice.reducer
+    atoms: atomsReducer
 })
 
 export type StoreState = ReturnType<typeof rootReducer>
 
-export const createStore = (preloadedState?: StoreState) => configureStore({
+export const createStore = (preloadedState?: StoreState, atomState?: AtomMiddlewareSliceState) => configureStore({
     reducer: rootReducer,
-    preloadedState
+    preloadedState,
+    middleware: [
+        getAtomMiddleware(atomState)
+    ]
 });

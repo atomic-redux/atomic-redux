@@ -1,20 +1,34 @@
+import { setAtom } from 'atomic-redux-state'
+import { useAtomicState, useAtomicValue } from 'atomic-redux-state-react'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useSelector } from 'react-redux'
+import { useCallback } from 'react'
 import { Post } from '../features/posts/post'
 import { PostModel } from '../features/posts/postModel'
-import { selectPosts, setPosts } from '../features/posts/posts.slice'
+import { postsAtom } from '../features/posts/postsAtom'
+import { totalPostsAtom } from '../features/posts/totalPostsAtom'
 import { createStore } from '../store/store'
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
-  const posts = useSelector(selectPosts);
+  const [posts, setPosts] = useAtomicState(postsAtom)
+  const totalPosts = useAtomicValue(totalPostsAtom);
+
+  const addPost = useCallback(() => {
+    setPosts(posts => {
+      posts.unshift({
+        id: totalPosts + 1,
+        title: 'My New Post',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
+      });
+    })
+  }, [])
 
   return (
     <div className={styles.container}>
       <Head>
-        <title>Server Side Rendering</title>
+        <title>SSR App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -22,6 +36,12 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
+
+        <p className={styles.description}>
+          Showing { totalPosts } posts
+        </p>
+
+        <button onClick={addPost}>Add Post</button>
 
         <div className={styles.grid}>
           { posts.map(post => <Post key={post.id} title={post.title} body={post.body} />)}
@@ -50,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const posts = await fetch('https://jsonplaceholder.typicode.com/posts')
     .then(response => response.json()) as PostModel[];
   
-  store.dispatch(setPosts(posts))
+  store.dispatch(setAtom(postsAtom, posts))
 
   return {
     props: {
