@@ -6,6 +6,7 @@ export type AtomInitialiser<T> = {
     default: T;
 }
 
+// TODO: Test comment, delete me!
 export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtom<T, AtomValue<T>> {
     return {
         key: initialiser.key,
