@@ -29,5 +29,5 @@ jobs:
         run: node common/scripts/install-run-rush.js test --verbose
 
       - name: Publish
-        run: node common/scripts/install-run-rush.js publish --apply --publish --npm-auth-token ${{ secrets.NPM_TOKEN }} --add-commit-details
+        run: node common/scripts/install-run-rush.js publish --apply --target-branch master --publish --npm-auth-token ${{ secrets.NPM_TOKEN }} --add-commit-details
       
