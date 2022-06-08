@@ -11,17 +11,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch_depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      - name: Install dependencies
-        run: node common/scripts/install-run-rush.js install
-
       - name: Check for missing change logs
         run: node common/scripts/install-run-rush.js change --verify
+
+      - name: Install dependencies
+        run: node common/scripts/install-run-rush.js install
 
       - name: Build
         run: node common/scripts/install-run-rush.js rebuild --verbose
