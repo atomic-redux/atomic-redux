@@ -50,10 +50,10 @@
       "reviewCategory": "tools"
     },
 
-    // {
-    //   "packageName": "server-side-rendering",
-    //   "projectFolder": "examples/server-side-rendering",
-    //   "reviewCategory": "tools"
-    // }
+    {
+      "packageName": "server-side-rendering",
+      "projectFolder": "examples/server-side-rendering",
+      "reviewCategory": "tools"
+    }
   ]
 }
