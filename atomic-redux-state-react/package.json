@@ -2,47 +2,49 @@
   "name": "atomic-redux-state-react",
   "version": "1.0.26",
   "description": "React bindings for atomic-redux-state",
-  "main": "out/index.js",
-  "types": "out/index.d.ts",
-  "files": [
-    "out/**/*"
-  ],
-  "scripts": {
-    "test": "jest",
-    "build": "tsc",
-    "lint": "eslint \"src/**\"",
-    "lint-fix": "eslint --fix \"src/**\"",
-    "prepack": "yarn lint-fix && jest && yarn build",
-    "preversion": "jest",
-    "postversion": "git push && git push --tags"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/matt-winfield/atomic-redux.git"
-  },
   "keywords": [
     "React",
     "Redux",
     "State Management",
     "TypeScript"
   ],
-  "author": "Matthew Winfield",
-  "license": "MIT",
+  "homepage": "https://github.com/matt-winfield/atomic-redux#readme",
   "bugs": {
     "url": "https://github.com/matt-winfield/atomic-redux-state-react/issues"
   },
-  "homepage": "https://github.com/matt-winfield/atomic-redux#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matt-winfield/atomic-redux.git"
+  },
+  "license": "MIT",
+  "author": "Matthew Winfield",
+  "main": "out/index.js",
+  "types": "out/index.d.ts",
+  "files": [
+    "out/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint \"src/**\"",
+    "lint-fix": "eslint --fix \"src/**\"",
+    "prepack": "yarn lint-fix && jest && yarn build",
+    "test": "jest",
+    "preversion": "jest",
+    "postversion": "git push && git push --tags"
+  },
   "dependencies": {
+    "@types/react": "~18.0.10",
     "atomic-redux-state": "1.6.0",
     "immer": "^9.0.12",
     "react": "~18.1.0",
-    "react-redux": "~8.0.2",
-    "@types/react": "~18.0.10"
+    "react-redux": "~8.0.2"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "~1.8.2",
     "@testing-library/react": "~13.3.0",
     "@types/jest": "~28.1.1",
+    "@types/node": "^12.0.0",
+    "@types/react": "~18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "eslint": "^8.9.0",
@@ -52,12 +54,10 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "jest": "~28.1.1",
+    "jest-environment-jsdom": "~28.1.0",
+    "jest-standard-reporter": "~2.0.0",
     "react-dom": "~18.1.0",
     "ts-jest": "~28.0.4",
-    "typescript": "^4.5.5",
-    "@types/react": "~18.0.10",
-    "jest-environment-jsdom": "~28.1.0",
-    "@types/node": "^12.0.0",
-    "jest-standard-reporter": "~2.0.0"
+    "typescript": "^4.5.5"
   }
 }
