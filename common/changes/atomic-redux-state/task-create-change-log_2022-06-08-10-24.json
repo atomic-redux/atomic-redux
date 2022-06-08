@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Add change log",
+      "type": "none"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
