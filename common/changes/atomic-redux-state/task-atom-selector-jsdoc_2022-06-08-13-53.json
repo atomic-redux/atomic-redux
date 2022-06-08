@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Add jsdoc for atom selector",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
