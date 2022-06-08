@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Wed, 08 Jun 2022 14:07:56 GMT and should not be manually modified.
+This log was last generated on Wed, 08 Jun 2022 15:06:50 GMT and should not be manually modified.
+
+## 1.7.0
+Wed, 08 Jun 2022 15:06:50 GMT
+
+### Minor changes
+
+- Add optional preloaded state argument to getAtomMiddleware to set initial state, allowing usage in hydration after server-side rendering.
 
 ## 1.6.1
 Wed, 08 Jun 2022 14:07:56 GMT
