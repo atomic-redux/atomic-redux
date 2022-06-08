@@ -1,12 +1,12 @@
-name: Build Pull Request
+name: Build Master
 
 on:
-  pull_request:
+  push:
     branches: [ master ]
 
 jobs:
   build:
-    name: Build
+    name: Build and Publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,9 +19,6 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Check for missing change logs
-        run: node common/scripts/install-run-rush.js change --verify
-
       - name: Install dependencies
         run: node common/scripts/install-run-rush.js install
 
@@ -30,4 +27,7 @@ jobs:
 
       - name: Test
         run: node common/scripts/install-run-rush.js test --verbose
+
+      - name: Publish
+        run: node common/scripts/install-run-rush.js publish --apply --publish --npm-auth-token ${{ secrets.NPM_TOKEN }} --add-commit-details
       
