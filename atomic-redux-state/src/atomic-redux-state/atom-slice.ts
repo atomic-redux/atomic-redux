@@ -156,6 +156,12 @@ export function getAtomValueFromState<T>(
         : result;
 }
 
+/**
+ * A selector function that returns the current state of an atom
+ * @param state The state of the atom store
+ * @param atom The atom to select
+ * @returns Current atom value
+ */
 export const selectAtom = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsyncValue<T>>): T | undefined => {
     const atomState = state.atoms.states[atom.key];
 
