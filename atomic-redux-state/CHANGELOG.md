@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Wed, 08 Jun 2022 15:06:50 GMT and should not be manually modified.
+This log was last generated on Fri, 10 Jun 2022 13:11:52 GMT and should not be manually modified.
+
+## 2.0.0
+Fri, 10 Jun 2022 13:11:52 GMT
+
+### Breaking changes
+
+- Strip internal types from published output
 
 ## 1.7.0
 Wed, 08 Jun 2022 15:06:50 GMT

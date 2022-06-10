@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.0.0",
+      "tag": "atomic-redux-state_v2.0.0",
+      "date": "Fri, 10 Jun 2022 13:11:52 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "Strip internal types from published output",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "afe2b660dd54287ec71e1928cbea09e4b9661c5a"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.7.0",
       "tag": "atomic-redux-state_v1.7.0",
       "date": "Wed, 08 Jun 2022 15:06:50 GMT",
