@@ -22,6 +22,7 @@ const initialState: AtomMiddlewareSliceState = {
     stagedLoadingStates: {}
 };
 
+/** @internal */
 export const atomMiddlewareSlice = createSlice({
     name: 'atom-middleware',
     initialState,
@@ -129,6 +130,7 @@ export const atomMiddlewareSlice = createSlice({
     }
 });
 
+/** @internal */
 export const {
     internalAddNodeToGraph,
     internalAddGraphConnection,

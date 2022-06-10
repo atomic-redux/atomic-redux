@@ -1,15 +1,10 @@
 import { Store } from '@reduxjs/toolkit';
 import { act, renderHook, RenderHookOptions } from '@testing-library/react';
-import { atom, derivedAtom, setAtom } from 'atomic-redux-state';
+import { atom, derivedAtom, getAtomValueFromState, initialiseAtom, setAtom } from 'atomic-redux-state';
 import { AtomLoadingState } from 'atomic-redux-state/out/atomic-redux-state/atom-loading-state';
-import {
-    getAtomValueFromState,
-    internalInitialiseAtom,
-    internalSetLoadingState
-} from 'atomic-redux-state/out/atomic-redux-state/atom-slice';
 import { Provider } from 'react-redux';
 import { useAtomicState, useIsAtomUpdating, useSetAtomicState } from '..';
-import { createTestStore } from '../__test-files__/test-utils';
+import { createTestStore, setAtomUpdating } from '../__test-files__/test-utils';
 import { useAtomicValue, useResetAtomicState } from './atomic-hooks';
 
 const createRenderHookOptions: (store: Store) => RenderHookOptions<unknown> = store => {
@@ -145,7 +140,7 @@ describe('useIsAtomUpdating', () => {
         });
 
         await act(async () => {
-            store.dispatch(internalInitialiseAtom(testAtom));
+            store.dispatch(initialiseAtom(testAtom));
             await promise;
             await new Promise(process.nextTick);
         });
@@ -167,7 +162,7 @@ describe('useIsAtomUpdating', () => {
         });
 
         await act(async () => {
-            store.dispatch(internalInitialiseAtom(testAtom));
+            store.dispatch(initialiseAtom(testAtom));
 
             await promise;
             await new Promise(process.nextTick);
@@ -178,10 +173,10 @@ describe('useIsAtomUpdating', () => {
         expect(result.current).toBe(false);
 
         act(() => {
-            store.dispatch(internalSetLoadingState([{
+            store.dispatch(setAtomUpdating({
                 atomKey: testAtom.key,
                 loadingState: AtomLoadingState.Updating
-            }]));
+            }));
         });
 
         expect(result.current).toBe(true);
@@ -320,7 +315,7 @@ describe('useAtomicState', () => {
         });
 
         act(() => {
-            store.dispatch(internalInitialiseAtom(testAtom));
+            store.dispatch(initialiseAtom(testAtom));
         });
 
         const { result } = renderHook(() => useAtomicState(testAtom), createRenderHookOptions(store));
@@ -348,7 +343,7 @@ describe('useAtomicState', () => {
         });
 
         act(() => {
-            store.dispatch(internalInitialiseAtom(testAtom));
+            store.dispatch(initialiseAtom(testAtom));
         });
 
         const { result } = renderHook(() => useAtomicState(testAtom), createRenderHookOptions(store));
@@ -363,10 +358,10 @@ describe('useAtomicState', () => {
         expect(isUpdating).toBe(false);
 
         act(() => {
-            store.dispatch(internalSetLoadingState([{
+            store.dispatch(setAtomUpdating({
                 atomKey: testAtom.key,
                 loadingState: AtomLoadingState.Updating
-            }]));
+            }));
         });
 
         [, , , isUpdating] = result.current;

@@ -28,8 +28,7 @@ export class LoadingAtom { }
 export type GetInternalAtomState = (atomKey: string) => unknown;
 export type AtomValue<T> = (args: GetOptions, getState: GetInternalAtomState) => T;
 export type AsyncAtomValue<T> = (args: GetOptions, getState: GetInternalAtomState) => Promise<T>;
-export type AtomUpdateFunction<T> = (value: T | DefaultValue, args: SetOptions) => void;
-export type InternalAtomUpdateFunction<T> = (
+export type AtomUpdateFunction<T> = (
     args: SetOptions,
     value: T | DefaultValue,
     setAtomValue: (newValue: T) => void) => void;

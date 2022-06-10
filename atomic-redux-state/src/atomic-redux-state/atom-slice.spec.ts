@@ -4,11 +4,8 @@ import { createTestStore } from '../__test-files__/test-utils';
 import { atom } from './atom';
 import { AtomLoadingState } from './atom-loading-state';
 import {
-    getAtomValueFromState,
-    initialiseAtomFromState,
-    initialiseAtomFromStore,
-    internalInitialiseAtom,
-    internalSetLoadingState,
+    getAtomValueFromState, initialiseAtom, initialiseAtomFromState,
+    initialiseAtomFromStore, internalSetLoadingState,
     isAtomUpdating
 } from './atom-slice';
 import { derivedAtom } from './derived-atom';
@@ -53,7 +50,7 @@ describe('initialiseAtomFromState', () => {
             default: testValue
         });
 
-        store.dispatch(internalInitialiseAtom(testAtom));
+        store.dispatch(initialiseAtom(testAtom));
 
         const value = initialiseAtomFromState(store.getState(), store.dispatch, testAtom);
         expect(value).toBe(testValue);
@@ -83,7 +80,7 @@ describe('getAtomValueFromState', () => {
             default: testValue
         });
 
-        store.dispatch(internalInitialiseAtom(testAtom));
+        store.dispatch(initialiseAtom(testAtom));
 
         const value = getAtomValueFromState(store.getState(), testAtom);
         expect(value).toBe(testValue);
@@ -153,7 +150,7 @@ describe('getAtomValueFromState', () => {
             }
         });
 
-        store.dispatch(internalInitialiseAtom(testAtom));
+        store.dispatch(initialiseAtom(testAtom));
 
         await promise;
         await new Promise(process.nextTick);
@@ -225,7 +222,7 @@ describe('isAtomUpdating', () => {
             default: 0
         });
 
-        store.dispatch(internalInitialiseAtom(testAtom));
+        store.dispatch(initialiseAtom(testAtom));
 
         const result = isAtomUpdating(store.getState(), testAtom);
 
@@ -240,7 +237,7 @@ describe('isAtomUpdating', () => {
             default: 0
         });
 
-        store.dispatch(internalInitialiseAtom(testAtom));
+        store.dispatch(initialiseAtom(testAtom));
         store.dispatch(internalSetLoadingState([{
             atomKey: testAtom.key,
             loadingState: AtomLoadingState.Updating

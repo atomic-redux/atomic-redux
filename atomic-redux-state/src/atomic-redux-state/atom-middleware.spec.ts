@@ -2,7 +2,7 @@ import { createMockState, createTestStore } from '../__test-files__/test-utils';
 import { atom } from './atom';
 import { AtomLoadingState } from './atom-loading-state';
 import { getAtomMiddleware } from './atom-middleware';
-import { internalInitialiseAtom, setAtom } from './atom-slice';
+import { initialiseAtom, setAtom } from './atom-slice';
 import { derivedAtom } from './derived-atom';
 import { DefaultValue } from './getter-setter-utils';
 
@@ -64,9 +64,9 @@ describe('atom-middleware', () => {
 
             getStateMock.mockReturnValue(createMockState());
 
-            const initialiseFirstAtomAction = internalInitialiseAtom(firstAtom);
-            const initialiseSecondAtomAction = internalInitialiseAtom(secondAtom);
-            const initialiseThirdAtomAction = internalInitialiseAtom(thirdAtom);
+            const initialiseFirstAtomAction = initialiseAtom(firstAtom);
+            const initialiseSecondAtomAction = initialiseAtom(secondAtom);
+            const initialiseThirdAtomAction = initialiseAtom(thirdAtom);
 
             store.dispatch(initialiseFirstAtomAction);
             store.dispatch(initialiseSecondAtomAction);
@@ -95,7 +95,7 @@ describe('atom-middleware', () => {
                 key: testAtomKey,
                 get: async () => promise
             });
-            store.dispatch(internalInitialiseAtom(testAtom));
+            store.dispatch(initialiseAtom(testAtom));
 
             expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
             expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Loading);
@@ -119,14 +119,14 @@ describe('atom-middleware', () => {
                 key: 'base-atom',
                 get: async () => promise
             });
-            store.dispatch(internalInitialiseAtom(baseAtom));
+            store.dispatch(initialiseAtom(baseAtom));
 
             const testAtomKey = 'test-atom';
             const testAtom = derivedAtom({
                 key: testAtomKey,
                 get: async ({ getAsync }) => getAsync(baseAtom)
             });
-            store.dispatch(internalInitialiseAtom(testAtom));
+            store.dispatch(initialiseAtom(testAtom));
 
             expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
             expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Loading);
@@ -156,7 +156,7 @@ describe('atom-middleware', () => {
                 key: testAtomKey,
                 get: async ({ getAsync }) => getAsync(baseAtom)
             });
-            store.dispatch(internalInitialiseAtom(testAtom));
+            store.dispatch(initialiseAtom(testAtom));
 
             expect(store.getState().atoms.states[testAtomKey]).toBeDefined();
             expect(store.getState().atoms.states[testAtomKey]?.loadingState).toBe(AtomLoadingState.Loading);
@@ -190,7 +190,7 @@ describe('atom-middleware', () => {
             });
 
             expect(() => {
-                store.dispatch(internalInitialiseAtom(secondAtom));
+                store.dispatch(initialiseAtom(secondAtom));
             }).toThrowError(/.*Atom dependency loop detected: first-atom -> second-atom -> first-atom.*/);
         });
 
@@ -230,7 +230,7 @@ describe('atom-middleware', () => {
             });
 
             expect(() => {
-                store.dispatch(internalInitialiseAtom(firstAtom));
+                store.dispatch(initialiseAtom(firstAtom));
             // eslint-disable-next-line max-len
             }).toThrowError(/.*Atom dependency loop detected: fourth-atom -> third-atom -> second-atom -> first-atom -> fourth-atom.*/);
         });
@@ -266,7 +266,7 @@ describe('atom-middleware', () => {
             });
 
             expect(() => {
-                store.dispatch(internalInitialiseAtom(fourthAtom));
+                store.dispatch(initialiseAtom(fourthAtom));
             // eslint-disable-next-line max-len
             }).toThrowError(/.*Atom dependency loop detected: third-atom -> second-atom -> third-atom.*/);
         });
@@ -307,7 +307,7 @@ describe('atom-middleware', () => {
                 }
             });
 
-            store.dispatch(internalInitialiseAtom(fourthAtom));
+            store.dispatch(initialiseAtom(fourthAtom));
 
             expect(secondAtomSpy).toHaveBeenCalledTimes(1);
             expect(thirdAtomSpy).toHaveBeenCalledTimes(1);
@@ -368,7 +368,7 @@ describe('atom-middleware', () => {
                 }
             });
 
-            store.dispatch(internalInitialiseAtom(sixthAtom));
+            store.dispatch(initialiseAtom(sixthAtom));
 
             expect(secondAtomSpy).toHaveBeenCalledTimes(1);
             expect(thirdAtomSpy).toHaveBeenCalledTimes(1);
@@ -484,7 +484,7 @@ describe('atom-middleware', () => {
                 get: ({ get }) => get(secondAtom) * 2
             });
 
-            store.dispatch(internalInitialiseAtom(thirdAtom));
+            store.dispatch(initialiseAtom(thirdAtom));
 
             const action = setAtom(firstAtom, testValue);
             store.dispatch(action);
@@ -525,8 +525,8 @@ describe('atom-middleware', () => {
                 }
             });
 
-            store.dispatch(internalInitialiseAtom(firstAtom));
-            store.dispatch(internalInitialiseAtom(secondAtom));
+            store.dispatch(initialiseAtom(firstAtom));
+            store.dispatch(initialiseAtom(secondAtom));
 
             const action = setAtom(secondAtom, testValue);
             store.dispatch(action);
@@ -575,7 +575,7 @@ describe('atom-middleware', () => {
                     return get(thirdAtom);
                 }
             });
-            store.dispatch(internalInitialiseAtom(fourthAtom));
+            store.dispatch(initialiseAtom(fourthAtom));
             jest.clearAllMocks();
 
             store.dispatch(setAtom(firstAtom, 1));
@@ -639,7 +639,7 @@ describe('atom-middleware', () => {
                 }
             });
 
-            store.dispatch(internalInitialiseAtom(sixthAtom));
+            store.dispatch(initialiseAtom(sixthAtom));
 
             jest.clearAllMocks();
             store.dispatch(setAtom(firstAtom, 1));
@@ -669,8 +669,8 @@ describe('atom-middleware', () => {
                 }
             });
 
-            store.dispatch(internalInitialiseAtom(firstAtom));
-            store.dispatch(internalInitialiseAtom(secondAtom));
+            store.dispatch(initialiseAtom(firstAtom));
+            store.dispatch(initialiseAtom(secondAtom));
 
             const action = setAtom(secondAtom, new DefaultValue());
             store.dispatch(action);
@@ -708,8 +708,8 @@ describe('atom-middleware', () => {
                 }
             });
 
-            store.dispatch(internalInitialiseAtom(firstAtom));
-            store.dispatch(internalInitialiseAtom(secondAtom));
+            store.dispatch(initialiseAtom(firstAtom));
+            store.dispatch(initialiseAtom(secondAtom));
 
             const action = setAtom(secondAtom, new DefaultValue());
             store.dispatch(action);
@@ -741,7 +741,7 @@ describe('atom-middleware', () => {
                 }
             });
 
-            store.dispatch(internalInitialiseAtom(asyncAtom));
+            store.dispatch(initialiseAtom(asyncAtom));
             await new Promise(process.nextTick);
 
             expect(store.getState().atoms.states[asyncAtomKey]).toBeDefined();

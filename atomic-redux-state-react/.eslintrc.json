@@ -22,7 +22,9 @@
     ],
     "rules": {
         "comma-dangle": ["error", "never"],
-        "indent": ["error", 4],
+        "indent": ["error", 4, {
+            "SwitchCase": 1
+        }],
         "max-len": ["error", 120],
         "arrow-parens": ["error", "as-needed"],
         "import/extensions": ["warn", "never"],

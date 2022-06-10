@@ -17,10 +17,7 @@ import {
 import {
     AtomicStoreState,
     AtomLoadingStateUpdate,
-    AtomUpdate,
-    initialiseAtomFromState,
-    internalInitialiseAtom,
-    internalSet,
+    AtomUpdate, initialiseAtom, initialiseAtomFromState, internalSet,
     internalSetLoadingState,
     setAtom,
     SetAtomPayload
@@ -420,7 +417,7 @@ export const getAtomMiddleware = (preloadedState?: AtomMiddlewareSliceState) => 
         const promises: AtomPromises = {};
 
         return action => {
-            if (action.type === internalInitialiseAtom.toString()) {
+            if (action.type === initialiseAtom.toString()) {
                 return handleInitialiseAtomAction(store, middlewareStore, action, atoms, promises);
             }
 

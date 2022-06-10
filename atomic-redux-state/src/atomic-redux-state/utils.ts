@@ -1,9 +1,11 @@
 export type SafeRecord<T extends string | number | symbol, U> = Record<T, U | undefined>;
 
+/** @internal */
 export function isPromise(value: any): value is Promise<unknown> {
     return value !== undefined && typeof value.then === 'function';
 }
 
+/** @internal */
 export const checkForDependencyLoop = (atomStack: string[]): void => {
     if ((new Set(atomStack)).size === atomStack.length) {
         return;
