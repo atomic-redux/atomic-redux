@@ -10,13 +10,13 @@ type InternalAtomState = {
     loadingState: AtomLoadingState
 }
 
-export type SliceState = {
+export type AtomSliceState = {
     states: SafeRecord<string, InternalAtomState>;
 }
 
-export type AtomicStoreState = { atoms: SliceState };
+export type AtomicStoreState = { atoms: AtomSliceState };
 
-const initialState: SliceState = {
+const initialState: AtomSliceState = {
     states: {}
 };
 
@@ -25,8 +25,8 @@ export type SetAtomPayload<T> = {
     value: ValueOrSetter<T>;
 }
 
-export const internalInitialiseAtom = createAction<Atom<unknown, SyncOrAsyncValue<unknown>>>(
-    'atoms/internalInitialiseAtom'
+export const initialiseAtom = createAction<Atom<unknown, SyncOrAsyncValue<unknown>>>(
+    'atoms/initialiseAtom'
 );
 
 const setAtomActionName = 'atoms/setAtom';
@@ -42,16 +42,19 @@ export function setAtom<T>(
 setAtom.type = setAtomActionName;
 setAtom.toString = () => setAtomActionName;
 
+/** @internal */
 export type AtomUpdate = {
     atomKey: string,
     value: unknown
 }
 
+/** @internal */
 export type AtomLoadingStateUpdate = {
     atomKey: string,
     loadingState: AtomLoadingState
 }
 
+/** @internal */
 export const atomsSlice = createSlice({
     name: 'atoms',
     initialState,
@@ -107,7 +110,7 @@ export function initialiseAtomFromState<T>(
     dispatch: Dispatch<any>,
     atom: Atom<T, SyncOrAsyncValue<T>>
 ): Immutable<T> | LoadingAtom {
-    dispatch(internalInitialiseAtom(atom));
+    dispatch(initialiseAtom(atom));
     return getAtomValueFromState(state, atom);
 }
 
@@ -172,11 +175,18 @@ export const selectAtom = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsync
     return atomState.value as T;
 };
 
+/**
+ * Returns `true` if atom is currently updating
+ * @param state The store state
+ * @param atom The atom to check
+ * @returns Updating status
+ */
 export const isAtomUpdating = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsyncValue<T>>): boolean => {
     const atomState = state.atoms.states[atom.key];
     return atomState !== undefined && atomState.loadingState === AtomLoadingState.Updating;
 };
 
+/** @internal */
 export const {
     internalSet,
     internalSetLoadingState

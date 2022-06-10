@@ -2,13 +2,12 @@ export { atom } from './atomic-redux-state/atom';
 export { getAtomMiddleware } from './atomic-redux-state/atom-middleware';
 export {
     default as atomsReducer,
-    getAtomValueFromState,
-    initialiseAtomFromState,
+    getAtomValueFromState, initialiseAtom, initialiseAtomFromState,
     initialiseAtomFromStore,
     isAtomUpdating,
     setAtom
 } from './atomic-redux-state/atom-slice';
-export type { AtomicStoreState, selectAtom, SetAtomPayload } from './atomic-redux-state/atom-slice';
+export type { AtomicStoreState, AtomSliceState, selectAtom, SetAtomPayload } from './atomic-redux-state/atom-slice';
 export type { Atom, SyncOrAsyncValue, WritableAtom } from './atomic-redux-state/atom-types';
 export { derivedAtom } from './atomic-redux-state/derived-atom';
 export { DefaultValue, LoadingAtom } from './atomic-redux-state/getter-setter-utils';

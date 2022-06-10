@@ -1,9 +1,8 @@
 import {
     AsyncAtomValue, Atom, AtomicStoreState, AtomValue,
-    DefaultValue, getAtomValueFromState,
-    isAtomUpdating, LoadingAtom, setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
+    DefaultValue, getAtomValueFromState, initialiseAtom, isAtomUpdating,
+    LoadingAtom, setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
 } from 'atomic-redux-state';
-import { internalInitialiseAtom } from 'atomic-redux-state/out/atomic-redux-state/atom-slice';
 import { Immutable } from 'immer';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,7 +15,7 @@ export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(internalInitialiseAtom(atom));
+        dispatch(initialiseAtom(atom));
     }, []);
     return useAtomicSelector(state => getAtomValueFromState(state, atom));
 }
