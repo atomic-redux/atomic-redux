@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Strip internal types from published output",
+      "type": "major"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
