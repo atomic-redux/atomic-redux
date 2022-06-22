@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state-react",
+      "comment": "Fix duplicate atom getter calls",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state-react"
+}
