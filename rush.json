@@ -34,26 +34,37 @@
       "packageName": "atomic-redux-state",
       "projectFolder": "atomic-redux-state",
       "reviewCategory": "production",
-      "shouldPublish": true
+      "shouldPublish": true,
+      "tags": [ "package" ]
     },
 
     {
       "packageName": "atomic-redux-state-react",
       "projectFolder": "atomic-redux-state-react",
       "reviewCategory": "production",
-      "shouldPublish": true
+      "shouldPublish": true,
+      "tags": [ "package" ]
     },
     
     {
       "packageName": "atomic-redux-example",
       "projectFolder": "examples/atomic-redux-example",
-      "reviewCategory": "tools"
+      "reviewCategory": "tools",
+      "tags": [ "example" ]
     },
 
     {
       "packageName": "server-side-rendering",
       "projectFolder": "examples/server-side-rendering",
-      "reviewCategory": "tools"
+      "reviewCategory": "tools",
+      "tags": [ "example" ]
+    },
+
+    {
+      "packageName": "redux-saga-example",
+      "projectFolder": "examples/redux-saga-example",
+      "reviewCategory": "tools",
+      "tags": [ "example" ]
     }
   ]
 }
