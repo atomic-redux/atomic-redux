@@ -2,6 +2,25 @@
   "name": "atomic-redux-state-react",
   "entries": [
     {
+      "version": "1.0.30",
+      "tag": "atomic-redux-state-react_v1.0.30",
+      "date": "Wed, 22 Jun 2022 16:43:25 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix duplicate atom getter calls",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "5a66dea5f92e8f0b05c0c5ac0c0e1c5217088685"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"atomic-redux-state\" from `2.0.0` to `2.0.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.29",
       "tag": "atomic-redux-state-react_v1.0.29",
       "date": "Fri, 10 Jun 2022 13:11:52 GMT",

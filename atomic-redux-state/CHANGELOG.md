@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Fri, 10 Jun 2022 13:11:52 GMT and should not be manually modified.
+This log was last generated on Wed, 22 Jun 2022 16:43:25 GMT and should not be manually modified.
+
+## 2.0.1
+Wed, 22 Jun 2022 16:43:25 GMT
+
+### Patches
+
+- Publish selectAtom as value instead of type
 
 ## 2.0.0
 Fri, 10 Jun 2022 13:11:52 GMT

@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.0.1",
+      "tag": "atomic-redux-state_v2.0.1",
+      "date": "Wed, 22 Jun 2022 16:43:25 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Publish selectAtom as value instead of type",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "5a66dea5f92e8f0b05c0c5ac0c0e1c5217088685"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.0",
       "tag": "atomic-redux-state_v2.0.0",
       "date": "Fri, 10 Jun 2022 13:11:52 GMT",
