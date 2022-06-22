@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Publish selectAtom as value instead of type",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
