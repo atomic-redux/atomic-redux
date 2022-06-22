@@ -188,19 +188,40 @@ export const UserDataDisplay = () => {
 }
 ```
 
-#### Accessing atom values outside React context - `getAtomValueFromStore`
-The `initialiseAtomFromStore(store, atom)` method initialises and returns an atom value from outside of the React context by providing the Redux store containing the atoms.
-This is the prefered way to get an atom value outside of a React context.
+### Usage outside of React context
+
+#### Initialising an atom - `initialiseAtom`
+
+Before an atom can be used outside of the React context, it must be initialised by dispatching the `initialiseAtom` action to the store:
 
 ```ts
-import { getAtomValueFromStore } from 'atomic-redux-state';
+import { initialiseAtom } from `atomic-redux-state`;
+
+store.dispatch(initialiseAtom(myAtom));
+```
+
+#### Getting atom values - `selectAtom`
+
+The `selectAtom(store, atom)` method gets an atom value from the Redux store. If the atom has not been initialised, this could return `undefined`.
+
+```ts
+import { selectAtom } from 'atomic-redux-state';
+
+const atomValue = selectAtom(store, myAtom);
+```
+
+#### Initialise and get - `initialiseAtomFromStore`
+
+The `initialiseAtomFromStore(store, atom)` method combines the initialise and select methods, allowing the retrieval of an atom value without dispatching the `initialiseAtom` action first. Since this initialises the atom first, the atom value will not be `undefined`.
+
+```ts
+import { initialiseAtomValueFromStore } from 'atomic-redux-state';
 
 const atomValue = initialiseAtomFromStore(store, myAtom);
 ```
 
-Alternatively, use `getAtomValueFromState(state, atom)` to perform a read-only get on atom values in state. Avoid using this instead of `initialiseAtomFromStore`, as this will not set the atom value in the Redux state if it has not yet been initialised, so the atom `get` method result is not cached.
-
 #### Setting atom values outside React context - `setAtom`
+
 The `setAtom(atom, value)` action creator allows you to set atom values outside of the React context, or in a Redux middleware such as [Sagas](https://redux-saga.js.org/).
 
 Dispatch the action created by `setAtom` to update the atom value.
@@ -209,14 +230,18 @@ import { setAtom } from 'atomic-redux-state';
 
 store.dispatch(setAtom(myAtom, 10));
 
-// getAtomValueFromStore(store, myAtom) now returns 10
+// selectAtom(store, myAtom) now returns 10
 ```
 
+#### Accessing from Redux Sagas
 
-### Building
+Atoms can be accessed using the `selectAtom` selector and the `setAtom` action.
 
-Build using `yarn build`
+```ts
+import { setAtom, selectAtom } from 'atomic-redux-state';
 
-### Testing
-
-Test using `yarn test`
+export function* mySaga() {
+    const value = yield select(selectAtom, myAtom);
+    yield put(setAtom, myOtherAtom, 10);
+}
+```
