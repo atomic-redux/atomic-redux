@@ -232,3 +232,16 @@ store.dispatch(setAtom(myAtom, 10));
 
 // selectAtom(store, myAtom) now returns 10
 ```
+
+#### Accessing from Redux Sagas
+
+Atoms can be accessed using the `selectAtom` selector and the `setAtom` action.
+
+```ts
+import { setAtom, selectAtom } from 'atomic-redux-state';
+
+export function* mySaga() {
+    const value = yield select(selectAtom, myAtom);
+    yield put(setAtom, myOtherAtom, 10);
+}
+```
