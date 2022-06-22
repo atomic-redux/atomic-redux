@@ -12,7 +12,6 @@ export function Counter() {
     const dispatch = useDispatch();
 
     return (<>
-        <div className={styles.row}>A</div>
         <div className={styles.row}>
             <button
                 className={styles.button}
