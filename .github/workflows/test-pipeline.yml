@@ -1,0 +1,16 @@
+name: "Test Pipeline"
+
+on: [pull_request]
+
+jobs:
+  bump-version:
+    name: "Test include admins"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Temporarily disable "include administrators" branch protection
+        uses: benjefferies/branch-protection-bot@master
+        with:
+          access_token: ${{ secrets.BOT_USER_TOKEN }}
+          branch: ${{ github.event.repository.default_branch }}
+          enforce_admins: false
