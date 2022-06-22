@@ -20,6 +20,10 @@
         "react",
         "@typescript-eslint"
     ],
+    "ignorePatterns": [
+        "node_modules",
+        "**/out/**"
+    ],
     "rules": {
         "comma-dangle": ["error", "never"],
         "indent": ["error", 4, {
