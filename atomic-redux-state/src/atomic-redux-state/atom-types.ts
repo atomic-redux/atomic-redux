@@ -5,6 +5,9 @@ export type SyncOrAsyncValue<T> = AtomValue<T> | AsyncAtomValue<T>;
 export interface Atom<T, U extends SyncOrAsyncValue<T>> {
     key: string;
     get: U;
+    /**
+     * Returns a read-only copy of the atom.
+     */
     toReadonly(): Atom<T, U>;
 }
 
