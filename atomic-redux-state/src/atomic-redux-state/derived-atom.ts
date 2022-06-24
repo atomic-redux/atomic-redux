@@ -1,4 +1,4 @@
-import { Atom, WritableAtom } from './atom-types';
+import { Atom, ReadOnlyAtom, ReadWriteAtom, WritableAtom } from './atom-types';
 import { AsyncAtomValue, AtomValue, DefaultValue, GetOptions, SetOptions } from './getter-setter-utils';
 
 type SyncGetType<T> = (args: GetOptions) => T;
@@ -27,16 +27,9 @@ export function derivedAtom<T, G extends GetType<T>>(
     initialiser: DerivedAtomInitialiser<T, G>
 ): Atom<T, G> | WritableAtom<T, G> {
     if (isWritableInitialiser(initialiser)) {
-        return {
-            key: initialiser.key,
-            get: initialiser.get,
-            set: initialiser.set
-        };
+        return new ReadWriteAtom(initialiser.key, initialiser.get, initialiser.set);
     }
-    return {
-        key: initialiser.key,
-        get: initialiser.get
-    };
+    return new ReadOnlyAtom(initialiser.key, initialiser.get);
 }
 
 function isWritableInitialiser<T, G extends GetType<T>>(

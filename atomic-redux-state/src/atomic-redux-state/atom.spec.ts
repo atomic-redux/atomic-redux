@@ -1,4 +1,5 @@
 import { atom } from './atom';
+import { ReadOnlyAtom } from './atom-types';
 import { DefaultValue, GetOptions, SetOptions } from './getter-setter-utils';
 
 describe('atom', () => {
@@ -102,6 +103,22 @@ describe('atom', () => {
             testAtom.set({} as SetOptions, new DefaultValue(), mockSetCallback);
 
             expect(mockSetCallback).toHaveBeenCalledWith(defaultValue);
+        });
+    });
+
+    describe('toReadonly', () => {
+        it('should return a ReadOnlyAtom', () => {
+            const testKey = 'test-atom';
+            const testAtom = atom({
+                key: testKey,
+                default: 0
+            });
+
+            const readonlyAtom = testAtom.toReadonly();
+
+            expect(readonlyAtom).toBeInstanceOf(ReadOnlyAtom);
+            // @ts-ignore - Testing that this method does not exist despite the typing indicating it doesn't
+            expect(readonlyAtom.set).toBeUndefined();
         });
     });
 });
