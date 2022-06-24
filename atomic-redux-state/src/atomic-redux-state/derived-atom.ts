@@ -3,7 +3,7 @@ import { AsyncAtomValue, AtomValue, DefaultValue, GetOptions, SetOptions } from 
 
 type SyncGetType<T> = (args: GetOptions) => T;
 type AsyncGetType<T> = (args: GetOptions) => Promise<T>;
-type GetType<T> = SyncGetType<T> | AsyncGetType<T>
+type GetType<T> = SyncGetType<T> | AsyncGetType<T>;
 
 interface BaseDerivedAtomInitialiser<T, G extends GetType<T>> {
     key: string;

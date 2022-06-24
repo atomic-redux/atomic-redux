@@ -5,7 +5,9 @@
   "scripts": {
     "build": "node scripts/build.js",
     "dev": "node scripts/start.js",
-    "test": "node scripts/test.js --watchAll=false"
+    "test": "node scripts/test.js --watchAll=false",
+    "lint": "",
+    "lint-fix": ""
   },
   "babel": {
     "presets": [

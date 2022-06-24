@@ -8,11 +8,11 @@ import { checkForDependencyLoop, isPromise, SafeRecord } from './utils';
 type InternalAtomState = {
     value: unknown,
     loadingState: AtomLoadingState
-}
+};
 
 export type AtomSliceState = {
     states: SafeRecord<string, InternalAtomState>;
-}
+};
 
 export type AtomicStoreState = { atoms: AtomSliceState };
 
@@ -23,7 +23,7 @@ const initialState: AtomSliceState = {
 export type SetAtomPayload<T> = {
     atom: Atom<T, SyncOrAsyncValue<T>>;
     value: ValueOrSetter<T>;
-}
+};
 
 export const initialiseAtom = createAction<Atom<unknown, SyncOrAsyncValue<unknown>>>(
     'atoms/initialiseAtom'
@@ -46,13 +46,13 @@ setAtom.toString = () => setAtomActionName;
 export type AtomUpdate = {
     atomKey: string,
     value: unknown
-}
+};
 
 /** @internal */
 export type AtomLoadingStateUpdate = {
     atomKey: string,
     loadingState: AtomLoadingState
-}
+};
 
 /** @internal */
 export const atomsSlice = createSlice({
@@ -104,7 +104,7 @@ export function initialiseAtomFromState<T>(state: AtomicStoreState, dispatch: Di
 // eslint-disable-next-line max-len
 export function initialiseAtomFromState<T>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: Atom<T, AtomValue<T>>): GetAtomResult<T, AtomValue<T>>;
 // eslint-disable-next-line max-len
-export function initialiseAtomFromState<T>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom
+export function initialiseAtomFromState<T>(state: AtomicStoreState, dispatch: Dispatch<any>, atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom;
 export function initialiseAtomFromState<T>(
     state: AtomicStoreState,
     dispatch: Dispatch<any>,

@@ -26,6 +26,22 @@
       "description": "Run all unit tests in each project",
       "enableParallelism": true,
       "safeForSimultaneousRushProcesses": true
+    },
+    {
+      "commandKind": "bulk",
+      "name": "lint",
+      "summary": "Run code linting",
+      "description": "Run code linting in each project",
+      "enableParallelism": true,
+      "safeForSimultaneousRushProcesses": true
+    },
+    {
+      "commandKind": "bulk",
+      "name": "lint-fix",
+      "summary": "Fix code linting errors",
+      "description": "Fix code linting errors in each project",
+      "enableParallelism": true,
+      "safeForSimultaneousRushProcesses": true
     }
   ],
 

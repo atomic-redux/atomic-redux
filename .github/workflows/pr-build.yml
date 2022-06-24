@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: node common/scripts/install-run-rush.js install
 
+      - name: Lint
+        run: node common/scripts/install-run-rush.js lint
+
       - name: Build
         run: node common/scripts/install-run-rush.js rebuild --verbose
 

@@ -6,14 +6,14 @@ type AtomGraphNode = {
     dependencies: string[];
     dependants: string[];
     depth: number;
-}
+};
 
 export type AtomMiddlewareSliceState = {
     graph: SafeRecord<string, AtomGraphNode>;
     pendingAtomUpdates: SafeRecord<number, string[]>; // key: atom depth, value: atom keys
     stagedChanges: SafeRecord<string, unknown>;
     stagedLoadingStates: SafeRecord<string, AtomLoadingState>;
-}
+};
 
 const initialState: AtomMiddlewareSliceState = {
     graph: {},
