@@ -28,8 +28,8 @@
     "lint": "eslint \"src/**\"",
     "lint-fix": "eslint --fix \"src/**\"",
     "prepack": "yarn lint-fix && jest && yarn build",
-    "test": "jest",
-    "preversion": "jest",
+    "test": "jest --verbose",
+    "preversion": "jest --verbose",
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
@@ -58,6 +58,7 @@
     "jest-standard-reporter": "~2.0.0",
     "react-dom": "~18.1.0",
     "ts-jest": "~28.0.4",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "eslint-config-airbnb-typescript": "~17.0.0"
   }
 }

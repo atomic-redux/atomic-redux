@@ -39,6 +39,7 @@ specifiers:
   dotenv-expand: ^5.1.0
   eslint: ^8.9.0
   eslint-config-airbnb: ^19.0.4
+  eslint-config-airbnb-typescript: ~17.0.0
   eslint-config-next: 12.1.6
   eslint-config-react-app: ^7.0.1
   eslint-plugin-import: ^2.25.4
@@ -81,6 +82,7 @@ specifiers:
   tailwindcss: ^3.0.2
   terser-webpack-plugin: ^5.2.5
   ts-jest: ~28.0.4
+  typed-redux-saga: ~1.5.0
   typescript: ^4.5.5
   webpack: ^5.64.4
   webpack-dev-server: ^4.6.0
@@ -126,6 +128,7 @@ dependencies:
   dotenv-expand: 5.1.0
   eslint: 8.17.0
   eslint-config-airbnb: 19.0.4_790ac381f0561db09e4c291cb829676e
+  eslint-config-airbnb-typescript: 17.0.0_1a4a6bb2631fa2a68d16837765ffefbb
   eslint-config-next: 12.1.6_85a02a54f427868067898054ce8dfb78
   eslint-config-react-app: 7.0.1_d6ff458c8016522ffa875501e7e9305f
   eslint-plugin-import: 2.26.0_eslint@8.17.0
@@ -168,6 +171,7 @@ dependencies:
   tailwindcss: 3.0.24
   terser-webpack-plugin: 5.3.3_webpack@5.73.0
   ts-jest: 28.0.4_e490584784132dcb4d7a2b1fd0409039
+  typed-redux-saga: 1.5.0_redux-saga@1.1.3
   typescript: 4.7.3
   webpack: 5.73.0
   webpack-dev-server: 4.9.1_webpack@5.73.0
@@ -5124,6 +5128,21 @@ packages:
       object.assign: 4.1.2
       object.entries: 1.1.5
       semver: 6.3.0
+    dev: false
+
+  /eslint-config-airbnb-typescript/17.0.0_1a4a6bb2631fa2a68d16837765ffefbb:
+    resolution: {integrity: sha512-elNiuzD0kPAPTXjFWg+lE24nMdHMtuxgYoD30OyMD6yrW1AhFZPAg27VX7d3tzOErw+dgJTNWfRSDqEcXb4V0g==}
+    peerDependencies:
+      '@typescript-eslint/eslint-plugin': ^5.13.0
+      '@typescript-eslint/parser': ^5.0.0
+      eslint: ^7.32.0 || ^8.2.0
+      eslint-plugin-import: ^2.25.3
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 5.27.0_53a3a26d566b734365db03aac28a1a58
+      '@typescript-eslint/parser': 5.27.0_eslint@8.17.0+typescript@4.7.3
+      eslint: 8.17.0
+      eslint-config-airbnb-base: 15.0.0_de2e8b5f32821e366389b4575f54c566
+      eslint-plugin-import: 2.26.0_eslint@8.17.0
     dev: false
 
   /eslint-config-airbnb/19.0.4_790ac381f0561db09e4c291cb829676e:
@@ -11731,7 +11750,7 @@ packages:
     dev: false
 
   file:projects/atomic-redux-state-react.tgz_223924243b7a5a8320b6da2d2be7c7f2:
-    resolution: {integrity: sha512-uX5vptJ3frDh2mBJMIAgQ73QgJCUmOo0tEH6R7mIsALRMZGW5AXEy99tKK73E+VomEzoCNjFILq/hkzWJXLuKQ==, tarball: file:projects/atomic-redux-state-react.tgz}
+    resolution: {integrity: sha512-Zh7YkS7hcfR6SKKjjG5NLSa6/OgPs0P5FPDPf9/5Ok7Z7Ni+e9efnl7dSkU1O62yzgdacw2TtBaqzWwYRLNf4A==, tarball: file:projects/atomic-redux-state-react.tgz}
     id: file:projects/atomic-redux-state-react.tgz
     name: '@rush-temp/atomic-redux-state-react'
     version: 0.0.0
@@ -11745,6 +11764,7 @@ packages:
       '@typescript-eslint/parser': 5.27.0_eslint@8.17.0+typescript@4.7.3
       eslint: 8.17.0
       eslint-config-airbnb: 19.0.4_790ac381f0561db09e4c291cb829676e
+      eslint-config-airbnb-typescript: 17.0.0_1a4a6bb2631fa2a68d16837765ffefbb
       eslint-plugin-import: 2.26.0_eslint@8.17.0
       eslint-plugin-jsx-a11y: 6.5.1_eslint@8.17.0
       eslint-plugin-react: 7.30.0_eslint@8.17.0
@@ -11774,7 +11794,7 @@ packages:
     dev: false
 
   file:projects/atomic-redux-state.tgz_6dffb028017529583fc86be525983951:
-    resolution: {integrity: sha512-m8060nmY6nCYr4bUty0MQCeiI/AAAW4ugvuEha5jeyNNzX2a5IMMLXuBvWBim7xk676HhJHKq0sJHxj/lZokfA==, tarball: file:projects/atomic-redux-state.tgz}
+    resolution: {integrity: sha512-a++z8pHD9qpH9+gPTAKO5qoH2Pt1TzL/PJgj/y8yvyz50XfjP5sUSRBu4l/MVRLfzr9hOxQWaAClpQBHZIVlTw==, tarball: file:projects/atomic-redux-state.tgz}
     id: file:projects/atomic-redux-state.tgz
     name: '@rush-temp/atomic-redux-state'
     version: 0.0.0
@@ -11787,6 +11807,7 @@ packages:
       babel-jest: 28.1.1_@babel+core@7.18.2
       eslint: 8.17.0
       eslint-config-airbnb: 19.0.4_790ac381f0561db09e4c291cb829676e
+      eslint-config-airbnb-typescript: 17.0.0_1a4a6bb2631fa2a68d16837765ffefbb
       eslint-plugin-import: 2.26.0_eslint@8.17.0
       eslint-plugin-jsx-a11y: 6.5.1_eslint@8.17.0
       eslint-plugin-react: 7.30.0_eslint@8.17.0
