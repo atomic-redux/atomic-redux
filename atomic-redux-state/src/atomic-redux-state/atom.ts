@@ -4,7 +4,7 @@ import { AtomValue, DefaultValue } from './getter-setter-utils';
 export type AtomInitialiser<T> = {
     key: string;
     default: T;
-}
+};
 
 export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtom<T, AtomValue<T>> {
     return {
@@ -25,6 +25,6 @@ export function atom<T>(initialiser: AtomInitialiser<T>): WritableAtom<T, AtomVa
         },
         toReadonly() {
             return new ReadOnlyAtom(initialiser.key, this.get);
-        },
+        }
     };
 }

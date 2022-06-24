@@ -401,7 +401,7 @@ type AtomMiddleware =
     Middleware<{}, AtomicStoreState>
     & {
         getState: (() => AtomMiddlewareSliceState)
-    }
+    };
 
 export const getAtomMiddleware = (preloadedState?: AtomMiddlewareSliceState) => {
     const middlewareStore = configureStore({

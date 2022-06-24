@@ -14,13 +14,13 @@ export type ResetAtom = <T>(atom: WritableAtom<T, SyncOrAsyncValue<T>>) => void;
 export type GetOptions = {
     get: AtomGetter;
     getAsync: AsyncAtomGetter;
-}
+};
 
 export type SetOptions = {
     get: AtomGetter;
     set: AtomSetter;
     reset: ResetAtom;
-}
+};
 
 export class DefaultValue { }
 export class LoadingAtom { }

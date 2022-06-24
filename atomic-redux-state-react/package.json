@@ -27,10 +27,7 @@
     "build": "tsc --project tsconfig.build.json",
     "lint": "eslint \"src/**\"",
     "lint-fix": "eslint --fix \"src/**\"",
-    "prepack": "yarn lint-fix && jest && yarn build",
-    "test": "jest --verbose",
-    "preversion": "jest --verbose",
-    "postversion": "git push && git push --tags"
+    "test": "jest --verbose"
   },
   "dependencies": {
     "@types/react": "~18.0.10",

@@ -26,10 +26,7 @@
     "build": "tsc --project tsconfig.build.json",
     "lint": "eslint \"src/**\"",
     "lint-fix": "eslint --fix \"src/**\"",
-    "prepack": "yarn lint-fix && jest && yarn build",
-    "test": "jest --verbose",
-    "preversion": "jest",
-    "postversion": "git push && git push --tags"
+    "test": "jest --verbose"
   },
   "dependencies": {
     "@reduxjs/toolkit": "~1.8.2",

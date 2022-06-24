@@ -5,7 +5,7 @@ import { AtomLoadingState } from 'atomic-redux-state/out/atomic-redux-state/atom
 type SetAtomUpdatingPayload = {
     atomKey: string,
     loadingState: AtomLoadingState
-}
+};
 
 /** @internal */
 export const setAtomUpdating = createAction<SetAtomUpdatingPayload>('atoms/setAtomUpdating');

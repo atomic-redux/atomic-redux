@@ -7,7 +7,7 @@ type MockState = {
     key: string,
     value: any,
     loading?: boolean
-}
+};
 
 export function createTestStore(): Store<AtomicStoreState> {
     return configureStore({

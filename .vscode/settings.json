@@ -1,0 +1,6 @@
+{
+    "eslint.workingDirectories": [
+        "./atomic-redux-state",
+        "./atomic-redux-state-react",
+    ]
+}
