@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.1.0",
+      "tag": "atomic-redux-state_v2.1.0",
+      "date": "Fri, 24 Jun 2022 21:02:35 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Add toReadonly method to atoms",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "bbd4f30c128f9a24b1f4470a3376ba3f1680fd45"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.1",
       "tag": "atomic-redux-state_v2.0.1",
       "date": "Wed, 22 Jun 2022 16:43:25 GMT",

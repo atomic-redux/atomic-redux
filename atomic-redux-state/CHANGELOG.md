@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Wed, 22 Jun 2022 16:43:25 GMT and should not be manually modified.
+This log was last generated on Fri, 24 Jun 2022 21:02:35 GMT and should not be manually modified.
+
+## 2.1.0
+Fri, 24 Jun 2022 21:02:35 GMT
+
+### Minor changes
+
+- Add toReadonly method to atoms
 
 ## 2.0.1
 Wed, 22 Jun 2022 16:43:25 GMT
