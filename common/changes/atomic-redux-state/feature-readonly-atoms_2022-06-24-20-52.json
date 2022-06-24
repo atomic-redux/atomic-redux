@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Add toReadonly method to atoms",
+      "type": "minor"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
