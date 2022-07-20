@@ -161,7 +161,7 @@ const getAtomValue = <T>(
             pendingChanges,
             devtools
         )
-    }, createStateGetter(store, middlewareStore, pendingChanges));
+    }, createStateGetter(store, pendingChanges));
     const value = handlePossiblePromise(
         result,
         atom.key,
@@ -223,7 +223,7 @@ const getAtomValueAsync = <T>(
             pendingChanges,
             devtools
         )
-    }, createStateGetter(store, middlewareStore, pendingChanges));
+    }, createStateGetter(store, pendingChanges));
 
     const promise = Promise.resolve(result);
     return handlePromise(
@@ -442,7 +442,7 @@ const updateGraphFromAtom = (
                     pendingChanges,
                     devtools
                 )
-            }, createStateGetter(store, middlewareStore, pendingChanges));
+            }, createStateGetter(store, pendingChanges));
 
             const value = handlePossiblePromise(
                 dependerValue,
@@ -475,7 +475,6 @@ const updateGraphFromAtom = (
 
 const createStateGetter = (
     store: MainStore,
-    middlewareStore: MiddlewareStore,
     pendingChanges: PendingChanges
 ) => (atomKey: string): unknown => {
     const stagedValue = pendingChanges.stagedValues[atomKey];
