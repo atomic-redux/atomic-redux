@@ -1,6 +1,6 @@
 {
   "name": "atomic-redux-state-react",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "React bindings for atomic-redux-state",
   "keywords": [
     "React",
