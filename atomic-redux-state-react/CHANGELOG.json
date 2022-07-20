@@ -2,6 +2,20 @@
   "name": "atomic-redux-state-react",
   "entries": [
     {
+      "version": "1.0.32",
+      "tag": "atomic-redux-state-react_v1.0.32",
+      "date": "Wed, 20 Jul 2022 08:43:33 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Move several dependencies to peerDependencies to prevent issues with mismatching versions",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "55e102eab763688831d5e0edd8521341216b6868"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.31",
       "tag": "atomic-redux-state-react_v1.0.31",
       "date": "Fri, 24 Jun 2022 21:43:49 GMT",
