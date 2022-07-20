@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Add support for DevTools",
+      "type": "minor"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
