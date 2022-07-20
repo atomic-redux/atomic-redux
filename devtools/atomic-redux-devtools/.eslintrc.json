@@ -6,6 +6,7 @@
     },
     "extends": [
         "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
         "airbnb",
         "airbnb-typescript"
     ],
@@ -31,6 +32,12 @@
         "@typescript-eslint/indent": ["error", 4, {
             "SwitchCase": 1
         }],
+        "react/jsx-indent": "off",
+        "react/jsx-indent-props": "off",
+        "react/function-component-definition": ["error", {
+            "namedComponents": "arrow-function"
+        }],
+        "react/require-default-props": "off",
         "max-len": ["error", 120],
         "max-classes-per-file": "off",
         "arrow-parens": ["error", "as-needed"],
@@ -41,18 +48,20 @@
         "@typescript-eslint/no-unused-vars": ["error"],
         "no-redeclare": "off",
         "@typescript-eslint/no-redeclare": ["error"],
-        "no-shadow": "off",
-        "@typescript-eslint/no-shadow": ["error"],
+        "react/jsx-filename-extension": ["error", { "extensions": [".jsx", ".tsx"] }],
         "import/prefer-default-export": "off",
-        "import/no-cycle": "off",
         "import/no-default-export": "warn",
+        "import/no-cycle": "off",
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.spec.ts", "**/*.spec.tsx", "**/__test-files__/**/*"]}],
         "prefer-destructuring": "off",
         "no-param-reassign": "off",
         "object-curly-newline": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "implicit-arrow-linebreak": "off",
         "linebreak-style": "off",
-        "no-plusplus": "off"
+        "react/react-in-jsx-scope": "off",
+        "no-plusplus": "off",
+        "guard-for-in": "off"
     },
     "settings": {
         "import/resolver": {

@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './Counter.module.css';
 import { CounterA } from './CounterA';
 import { CounterB } from './CounterB';

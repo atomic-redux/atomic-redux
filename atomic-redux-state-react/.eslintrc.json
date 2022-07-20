@@ -6,6 +6,7 @@
     },
     "extends": [
         "plugin:react/recommended",
+        "plugin:react/recommended",
         "airbnb",
         "airbnb-typescript"
     ],
@@ -31,6 +32,7 @@
         "@typescript-eslint/indent": ["error", 4, {
             "SwitchCase": 1
         }],
+        "react/jsx-indent": "off",
         "max-len": ["error", 120],
         "max-classes-per-file": "off",
         "arrow-parens": ["error", "as-needed"],
@@ -52,7 +54,8 @@
         "@typescript-eslint/no-use-before-define": "off",
         "implicit-arrow-linebreak": "off",
         "linebreak-style": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "no-plusplus": "off"
     },
     "settings": {
         "import/resolver": {

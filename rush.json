@@ -47,6 +47,14 @@
     },
     
     {
+      "packageName": "atomic-redux-devtools",
+      "projectFolder": "devtools/atomic-redux-devtools",
+      "reviewCategory": "production",
+      "shouldPublish": true,
+      "tags": [ "package", "devtools" ]
+    },
+
+    {
       "packageName": "atomic-redux-example",
       "projectFolder": "examples/atomic-redux-example",
       "reviewCategory": "tools",

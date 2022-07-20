@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 import { AtomLoadingState } from './atom-loading-state';
 import { SafeRecord } from './utils';
 
@@ -20,6 +20,26 @@ const initialState: AtomMiddlewareSliceState = {
     pendingAtomUpdates: {},
     stagedChanges: {},
     stagedLoadingStates: {}
+};
+
+const updateGraphDepthFromAtom = (
+    graph: Draft<SafeRecord<string, AtomGraphNode>>,
+    atomKey: string,
+    depth: number,
+    atomStack: string[] = []
+) => {
+    const atom = graph[atomKey];
+    if (atom === undefined || atomStack.includes(atomKey) || atom.depth >= depth) {
+        return;
+    }
+
+    atom.depth = depth;
+
+    for (const dependencyKey of atom.dependencies) {
+        atomStack.push(atomKey);
+        updateGraphDepthFromAtom(graph, dependencyKey, depth + 1, atomStack);
+        atomStack.pop();
+    }
 };
 
 /** @internal */
@@ -61,13 +81,11 @@ export const atomMiddlewareSlice = createSlice({
                 state.graph[toAtomKey] = {
                     dependants: [],
                     dependencies: [],
-                    depth: 0
+                    depth: fromAtomDepth - 1
                 };
             }
 
-            if (state.graph[fromAtomKey]!.depth < fromAtomDepth) {
-                state.graph[fromAtomKey]!.depth = fromAtomDepth;
-            }
+            updateGraphDepthFromAtom(state.graph, fromAtomKey, fromAtomDepth);
 
             if (!state.graph[fromAtomKey]?.dependants?.includes(toAtomKey)) {
                 state.graph[fromAtomKey]?.dependants?.push(toAtomKey);

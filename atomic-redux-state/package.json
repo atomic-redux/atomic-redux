@@ -7,13 +7,13 @@
     "State Management",
     "TypeScript"
   ],
-  "homepage": "https://github.com/matt-winfield/atomic-redux#readme",
+  "homepage": "https://github.com/atomic-redux/atomic-redux#readme",
   "bugs": {
-    "url": "https://github.com/matt-winfield/atomic-redux/issues"
+    "url": "https://github.com/atomic-redux/atomic-redux/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matt-winfield/atomic-redux.git"
+    "url": "git+https://github.com/atomic-redux/atomic-redux.git"
   },
   "license": "MIT",
   "author": "Matthew Winfield",
