@@ -13,3 +13,5 @@ export { DefaultValue, LoadingAtom } from './atomic-redux-state/getter-setter-ut
 export type {
     AsyncAtomValue, AtomUpdateCallback, AtomValue, ValueOrSetter
 } from './atomic-redux-state/getter-setter-utils';
+export type { DevtoolsMessage, DevtoolsState } from './devtools/devtools-message';
+export { atomicReduxDevtoolsEventType } from './devtools/devtools-update';

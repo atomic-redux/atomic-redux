@@ -11,10 +11,12 @@ export interface DevtoolsGraphNode {
     dependants: string[];
 }
 
+export interface DevtoolsState {
+    states: SafeRecord<string, DevtoolsAtomState>;
+    graph: SafeRecord<string, DevtoolsGraphNode>;
+}
+
 export interface DevtoolsMessage {
     type: string;
-    payload: {
-        states: SafeRecord<string, DevtoolsAtomState>;
-        graph: SafeRecord<string, DevtoolsGraphNode>;
-    }
+    payload: DevtoolsState;
 }

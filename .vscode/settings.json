@@ -2,5 +2,9 @@
     "eslint.workingDirectories": [
         "./atomic-redux-state",
         "./atomic-redux-state-react",
+        "./devtools/atomic-redux-devtools",
+        "./examples/atomic-redux-example",
+        "./examples/server-side-rendering",
+        "./examples/redux-saga-example"
     ]
 }

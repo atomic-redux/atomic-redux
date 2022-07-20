@@ -6,6 +6,7 @@ specifiers:
   '@babel/plugin-transform-react-jsx': ~7.14.9
   '@pmmmwh/react-refresh-webpack-plugin': ^0.5.3
   '@reduxjs/toolkit': ~1.8.2
+  '@rush-temp/atomic-redux-devtools': file:./projects/atomic-redux-devtools.tgz
   '@rush-temp/atomic-redux-example': file:./projects/atomic-redux-example.tgz
   '@rush-temp/atomic-redux-state': file:./projects/atomic-redux-state.tgz
   '@rush-temp/atomic-redux-state-react': file:./projects/atomic-redux-state-react.tgz
@@ -95,9 +96,10 @@ dependencies:
   '@babel/plugin-transform-react-jsx': 7.14.9_@babel+core@7.18.2
   '@pmmmwh/react-refresh-webpack-plugin': 0.5.7_254b7236849cb8add85a954853111e14
   '@reduxjs/toolkit': 1.8.2_react-redux@8.0.2+react@18.1.0
+  '@rush-temp/atomic-redux-devtools': file:projects/atomic-redux-devtools.tgz_367cc3d334786a3833ad455d21380092
   '@rush-temp/atomic-redux-example': file:projects/atomic-redux-example.tgz
   '@rush-temp/atomic-redux-state': file:projects/atomic-redux-state.tgz_6dffb028017529583fc86be525983951
-  '@rush-temp/atomic-redux-state-react': file:projects/atomic-redux-state-react.tgz_223924243b7a5a8320b6da2d2be7c7f2
+  '@rush-temp/atomic-redux-state-react': file:projects/atomic-redux-state-react.tgz_d71b11c56d6839753f558a815345b8cd
   '@rush-temp/redux-saga-example': file:projects/redux-saga-example.tgz
   '@rush-temp/server-side-rendering': file:projects/server-side-rendering.tgz_@babel+core@7.18.2
   '@svgr/webpack': 5.5.0
@@ -11642,8 +11644,48 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
+  file:projects/atomic-redux-devtools.tgz_367cc3d334786a3833ad455d21380092:
+    resolution: {integrity: sha512-ifRoq5xYPZkPqHqarv4jOauolOFV6MXDUKpy2yeel8RAtQk/i6hONwOXeJyzGLHb1zGHtVZTKZgJKv2wARhF5w==, tarball: file:projects/atomic-redux-devtools.tgz}
+    id: file:projects/atomic-redux-devtools.tgz
+    name: '@rush-temp/atomic-redux-devtools'
+    version: 0.0.0
+    dependencies:
+      '@reduxjs/toolkit': 1.8.2_react-redux@8.0.2+react@18.1.0
+      '@testing-library/react': 13.3.0_react-dom@18.1.0+react@18.1.0
+      '@types/jest': 28.1.1
+      '@types/node': 12.20.54
+      '@types/react': 18.0.12
+      '@typescript-eslint/eslint-plugin': 5.27.0_53a3a26d566b734365db03aac28a1a58
+      '@typescript-eslint/parser': 5.27.0_eslint@8.17.0+typescript@4.7.3
+      eslint: 8.17.0
+      eslint-config-airbnb: 19.0.4_790ac381f0561db09e4c291cb829676e
+      eslint-config-airbnb-typescript: 17.0.0_1a4a6bb2631fa2a68d16837765ffefbb
+      eslint-plugin-import: 2.26.0_eslint@8.17.0
+      eslint-plugin-jsx-a11y: 6.5.1_eslint@8.17.0
+      eslint-plugin-react: 7.30.0_eslint@8.17.0
+      eslint-plugin-react-hooks: 4.5.0_eslint@8.17.0
+      jest: 28.1.1_@types+node@12.20.54
+      jest-environment-jsdom: 28.1.0
+      jest-standard-reporter: 2.0.0
+      react: 18.1.0
+      ts-jest: 28.0.4_e490584784132dcb4d7a2b1fd0409039
+      typescript: 4.7.3
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-jest
+      - bufferutil
+      - canvas
+      - esbuild
+      - node-notifier
+      - react-dom
+      - react-redux
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
   file:projects/atomic-redux-example.tgz:
-    resolution: {integrity: sha512-J6pyIntTpeyd9b4dxhQGsY+MXXeFROcUujM5RBtxr9BVY37Ptfekmkju0lv1sHlJI72abmwJBFNuXzvOiKyprA==, tarball: file:projects/atomic-redux-example.tgz}
+    resolution: {integrity: sha512-YOivkSXqP22isxTuLvjC7GCsN5HXH/hTWcNUaPi9bOVeFIffvCmcKOT2Vrc9TYhMVoeTTYxEaxARXp0QrPiiGA==, tarball: file:projects/atomic-redux-example.tgz}
     name: '@rush-temp/atomic-redux-example'
     version: 0.0.0
     dependencies:
@@ -11749,8 +11791,8 @@ packages:
       - webpack-plugin-serve
     dev: false
 
-  file:projects/atomic-redux-state-react.tgz_223924243b7a5a8320b6da2d2be7c7f2:
-    resolution: {integrity: sha512-Zh7YkS7hcfR6SKKjjG5NLSa6/OgPs0P5FPDPf9/5Ok7Z7Ni+e9efnl7dSkU1O62yzgdacw2TtBaqzWwYRLNf4A==, tarball: file:projects/atomic-redux-state-react.tgz}
+  file:projects/atomic-redux-state-react.tgz_d71b11c56d6839753f558a815345b8cd:
+    resolution: {integrity: sha512-9X6ncqq2s6gddAMOReUOLwj2m2eCSpNb43Gp7sZ/ZrzJSzkRsp8X4SAwsNP9ZsmD5/iNiUrAWY+QmjpbS8tlOg==, tarball: file:projects/atomic-redux-state-react.tgz}
     id: file:projects/atomic-redux-state-react.tgz
     name: '@rush-temp/atomic-redux-state-react'
     version: 0.0.0
@@ -11774,7 +11816,6 @@ packages:
       jest-environment-jsdom: 28.1.0
       jest-standard-reporter: 2.0.0
       react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
       react-redux: 8.0.2_cad515bb57912320824263251f74acdf
       ts-jest: 28.0.4_e490584784132dcb4d7a2b1fd0409039
       typescript: 4.7.3
@@ -11786,6 +11827,7 @@ packages:
       - canvas
       - esbuild
       - node-notifier
+      - react-dom
       - react-native
       - redux
       - supports-color
@@ -11828,7 +11870,7 @@ packages:
     dev: false
 
   file:projects/redux-saga-example.tgz:
-    resolution: {integrity: sha512-s6V26wg0rKrbV/k1EY/X39ZBHja+6sw42KhLhlkj09cmql7xsf8LBrjuBEHCXLSOfXUgCN+MM2FwaSnzgGqHwA==, tarball: file:projects/redux-saga-example.tgz}
+    resolution: {integrity: sha512-T3P04sOFQ/CPHZi6NbHMkrHzCxzmfTKA+2P8CMceNTYfJsyKN7m8aTK8gjmkkuVqnvZQg9j7kgdsuvDdIOwCeA==, tarball: file:projects/redux-saga-example.tgz}
     name: '@rush-temp/redux-saga-example'
     version: 0.0.0
     dependencies:
@@ -11936,7 +11978,7 @@ packages:
     dev: false
 
   file:projects/server-side-rendering.tgz_@babel+core@7.18.2:
-    resolution: {integrity: sha512-uGCJBGmnNoQcUcPkZl29bMO/quCbAK99SkZ/arNQYTeAcedHSZ7L3jlNOrFfsLiwoZ2uGXFchtGyxbo0xfFmeg==, tarball: file:projects/server-side-rendering.tgz}
+    resolution: {integrity: sha512-XOiFhCRL2/AJa8lKCAS2Er72taPA6YddZgZMhG8E2b7RpMi8nD2VA7wncaMJyfNdjYkk4kjqwq+VgFHb4DDblA==, tarball: file:projects/server-side-rendering.tgz}
     id: file:projects/server-side-rendering.tgz
     name: '@rush-temp/server-side-rendering'
     version: 0.0.0
