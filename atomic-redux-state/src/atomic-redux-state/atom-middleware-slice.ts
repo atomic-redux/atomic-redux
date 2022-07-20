@@ -1,5 +1,4 @@
 import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
-import { AtomLoadingState } from './atom-loading-state';
 import { SafeRecord } from './utils';
 
 type AtomGraphNode = {
@@ -10,16 +9,10 @@ type AtomGraphNode = {
 
 export type AtomMiddlewareSliceState = {
     graph: SafeRecord<string, AtomGraphNode>;
-    pendingAtomUpdates: SafeRecord<number, string[]>; // key: atom depth, value: atom keys
-    stagedChanges: SafeRecord<string, unknown>;
-    stagedLoadingStates: SafeRecord<string, AtomLoadingState>;
 };
 
 const initialState: AtomMiddlewareSliceState = {
-    graph: {},
-    pendingAtomUpdates: {},
-    stagedChanges: {},
-    stagedLoadingStates: {}
+    graph: {}
 };
 
 const updateGraphDepthFromAtom = (
@@ -115,35 +108,6 @@ export const atomMiddlewareSlice = createSlice({
             if (toNode !== undefined) {
                 toNode.dependants = toNode.dependants.filter(d => d !== fromAtomKey);
             }
-        },
-        internalMarkAtomPendingUpdate: (state, action: PayloadAction<string>) => {
-            const node = state.graph[action.payload];
-            if (node === undefined) {
-                return;
-            }
-
-            if (state.pendingAtomUpdates[node.depth] === undefined) {
-                state.pendingAtomUpdates[node.depth] = [];
-            }
-
-            if (!state.pendingAtomUpdates[node.depth]?.includes(action.payload)) {
-                state.pendingAtomUpdates[node.depth]?.push(action.payload);
-            }
-        },
-        internalClearPendingAtomUpdates: state => {
-            state.pendingAtomUpdates = {};
-        },
-        internalStageValue: (state, action: PayloadAction<{ atomKey: string, value: unknown }>) => {
-            state.stagedChanges[action.payload.atomKey] = action.payload.value;
-        },
-        internalStageLoadingState: (state, action: PayloadAction<{
-            atomKey: string, loadingState: AtomLoadingState
-        }>) => {
-            state.stagedLoadingStates[action.payload.atomKey] = action.payload.loadingState;
-        },
-        internalClearStagedChanges: state => {
-            state.stagedChanges = {};
-            state.stagedLoadingStates = {};
         }
     }
 });
@@ -153,12 +117,7 @@ export const {
     internalAddNodeToGraph,
     internalAddGraphConnection,
     internalResetGraphNodeDependencies,
-    internalRemoveGraphConnection,
-    internalMarkAtomPendingUpdate,
-    internalClearPendingAtomUpdates,
-    internalStageValue,
-    internalStageLoadingState,
-    internalClearStagedChanges
+    internalRemoveGraphConnection
 } = atomMiddlewareSlice.actions;
 
 export const atomMiddlewareReducer = atomMiddlewareSlice.reducer;
