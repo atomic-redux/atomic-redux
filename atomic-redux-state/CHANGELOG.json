@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.2.1",
+      "tag": "atomic-redux-state_v2.2.1",
+      "date": "Wed, 20 Jul 2022 21:49:07 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Performance improvements to atom updates - Approx 4x faster",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "b8812528ff01d193ec78668daec8fc56b44c46ad"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.2.0",
       "tag": "atomic-redux-state_v2.2.0",
       "date": "Wed, 20 Jul 2022 17:08:26 GMT",
