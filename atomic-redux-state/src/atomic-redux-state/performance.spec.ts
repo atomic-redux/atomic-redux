@@ -160,7 +160,7 @@ const runAtomicReduxTest = () => {
 };
 
 describe('Atomic Redux State performance', () => {
-    it('should be performant', () => {
+    it.skip('should be performant', () => {
         const baseline = runBaselineTest();
         console.info(`Baseline: ${baseline}ms`);
 

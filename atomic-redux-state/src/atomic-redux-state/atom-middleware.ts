@@ -502,12 +502,12 @@ const setNodesAfterAtomAsPendingUpdate = (
             continue;
         }
 
-        if (pendingChanges.atomsPendingUpdate[graphNode.depth] === undefined) {
-            pendingChanges.atomsPendingUpdate[graphNode.depth] = [];
+        if (pendingChanges.atomsPendingUpdate[dependerNode.depth] === undefined) {
+            pendingChanges.atomsPendingUpdate[dependerNode.depth] = [];
         }
 
-        if (!pendingChanges.atomsPendingUpdate[graphNode.depth].includes(dependerKey)) {
-            pendingChanges.atomsPendingUpdate[graphNode.depth].push(dependerKey);
+        if (!pendingChanges.atomsPendingUpdate[dependerNode.depth].includes(dependerKey)) {
+            pendingChanges.atomsPendingUpdate[dependerNode.depth].push(dependerKey);
         }
 
         setNodesAfterAtomAsPendingUpdate(dependerKey, middlewareStore, pendingChanges);
