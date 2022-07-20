@@ -1,7 +1,8 @@
 import { atomicReduxDevtoolsEventType, DevtoolsMessage, DevtoolsState } from 'atomic-redux-state';
 import { DevtoolsAtomState } from 'atomic-redux-state/out/devtools/devtools-message';
-import { useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { AtomConnectors } from '../components/AtomConnectors';
 import { AtomStateDisplay } from '../components/AtomStateDisplay';
 
 const Container = styled.div`
@@ -15,12 +16,14 @@ const Container = styled.div`
 const Graph = styled.div`
     display: flex;
     overflow: auto;
+    position: relative;
 `;
 
 const Column = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    align-items: flex-end;
 `;
 
 const Header = styled.h3`
@@ -31,7 +34,9 @@ interface AtomStateWithKey extends DevtoolsAtomState {
     atomKey: string;
 }
 
-const renderDevtools = (state: DevtoolsState) => {
+const DevTools: FC<{ state: DevtoolsState }> = ({ state }) => {
+    const atomElementsRef = useRef <Record<string, HTMLElement | null>>({});
+
     const atomsByDepth: Record<number, AtomStateWithKey[]> = {};
     for (const atomKey in state.states) {
         const atomState = state.states[atomKey];
@@ -64,10 +69,12 @@ const renderDevtools = (state: DevtoolsState) => {
                                     atomKey={atomState.atomKey}
                                     value={atomState.value}
                                     loadingState={atomState.loadingState}
+                                    ref={el => { atomElementsRef.current[atomState.atomKey] = el; }}
                                 />
                             ))}
                         </Column>
                     ))}
+                <AtomConnectors atomsElementsRef={atomElementsRef} graph={state.graph} />
             </Graph>
         </Container>
     );
@@ -94,5 +101,5 @@ export const AtomicReduxDevtools = () => {
         };
     }, [handleWindowMessage]);
 
-    return renderDevtools(atomsState);
+    return <DevTools state={atomsState} />;
 };

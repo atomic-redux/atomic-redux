@@ -1,5 +1,5 @@
 import { AtomLoadingState } from 'atomic-redux-state/out/atomic-redux-state/atom-loading-state';
-import { FC } from 'react';
+import { forwardRef } from 'react';
 import styled from 'styled-components';
 import { ObjectTree } from './ObjectTree';
 
@@ -13,7 +13,7 @@ const Container = styled.div`
     padding: 5px;
     padding-right: 20px;
     width: fit-content;
-    margin: 5px 10px;
+    margin: 5px 20px;
 `;
 
 const LoadingIndicator = styled.div<{ loadingState: AtomLoadingState }>`
@@ -53,10 +53,12 @@ interface AtomStateDisplayProps {
     loadingState: AtomLoadingState
 }
 
-export const AtomStateDisplay: FC<AtomStateDisplayProps> = ({ atomKey, value, loadingState }) => (
-    <Container>
-        <div>{atomKey}</div>
-        <ObjectTree data={value} open={false} />
-        <LoadingIndicator loadingState={loadingState} title={getLoadingText(loadingState)} />
-    </Container>
+export const AtomStateDisplay = forwardRef<HTMLDivElement, AtomStateDisplayProps>(
+    ({ atomKey, value, loadingState }, ref) => (
+        <Container ref={ref}>
+            <div>{atomKey}</div>
+            <ObjectTree data={value} open={false} />
+            <LoadingIndicator loadingState={loadingState} title={getLoadingText(loadingState)} />
+        </Container>
+    )
 );
