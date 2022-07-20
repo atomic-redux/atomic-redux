@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Performance improvements to atom updates - Approx 4x faster",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
