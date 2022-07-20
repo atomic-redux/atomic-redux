@@ -1,5 +1,6 @@
 import { configureStore, Dispatch, Middleware, MiddlewareAPI, PayloadAction } from '@reduxjs/toolkit';
 import produce from 'immer';
+import { updateDevtools } from '../devtools/devtools-update';
 import { AtomLoadingState } from './atom-loading-state';
 import {
     atomMiddlewareReducer,
@@ -403,7 +404,7 @@ type AtomMiddleware =
         getState: (() => AtomMiddlewareSliceState)
     };
 
-export const getAtomMiddleware = (preloadedState?: AtomMiddlewareSliceState) => {
+export const getAtomMiddleware = (preloadedState?: AtomMiddlewareSliceState, devtools: boolean = true) => {
     const middlewareStore = configureStore({
         reducer: atomMiddlewareReducer,
         devTools: {
@@ -422,7 +423,9 @@ export const getAtomMiddleware = (preloadedState?: AtomMiddlewareSliceState) => 
             }
 
             if (action.type === setAtom.toString()) {
-                return handleSetAtomAction(store, middlewareStore, action, atoms, promises);
+                handleSetAtomAction(store, middlewareStore, action, atoms, promises);
+                updateDevtools(store.getState(), middlewareStore.getState(), devtools);
+                return undefined;
             }
 
             return next(action);

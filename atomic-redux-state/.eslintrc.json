@@ -51,7 +51,8 @@
         "object-curly-newline": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "implicit-arrow-linebreak": "off",
-        "linebreak-style": "off"
+        "linebreak-style": "off",
+        "no-plusplus": "off"
     },
     "settings": {
         "import/resolver": {
