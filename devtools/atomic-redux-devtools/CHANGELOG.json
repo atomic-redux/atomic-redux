@@ -1,0 +1,27 @@
+{
+  "name": "atomic-redux-devtools",
+  "entries": [
+    {
+      "version": "1.0.1",
+      "tag": "atomic-redux-devtools_v1.0.1",
+      "date": "Wed, 20 Jul 2022 17:08:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "Initial devtools release",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "08880da1ab4c8d47902d42b42fc20e4eb5908cc0"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"atomic-redux-state\" from `2.1.0` to `2.2.0`"
+          },
+          {
+            "comment": "Updating dependency \"atomic-redux-state\" from `^2.1.0` to `^2.2.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

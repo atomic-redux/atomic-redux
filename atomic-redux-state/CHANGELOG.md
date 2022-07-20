@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Fri, 24 Jun 2022 21:43:49 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Jul 2022 17:08:26 GMT and should not be manually modified.
+
+## 2.2.0
+Wed, 20 Jul 2022 17:08:26 GMT
+
+### Minor changes
+
+- Add support for DevTools
 
 ## 2.1.0
 Fri, 24 Jun 2022 21:43:49 GMT
