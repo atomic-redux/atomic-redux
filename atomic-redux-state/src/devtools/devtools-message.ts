@@ -9,6 +9,7 @@ export interface DevtoolsAtomState {
 export interface DevtoolsGraphNode {
     dependencies: string[];
     dependants: string[];
+    depth: number;
 }
 
 export interface DevtoolsState {

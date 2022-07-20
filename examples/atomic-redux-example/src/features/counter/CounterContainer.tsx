@@ -1,4 +1,3 @@
-import { AtomicReduxDevtools } from 'atomic-redux-devtools';
 import styles from './Counter.module.css';
 import { CounterA } from './CounterA';
 import { CounterB } from './CounterB';
@@ -7,22 +6,19 @@ import { Person } from './Person';
 
 const CounterContainer = () => {
     return (
-        <div>
-            <div className={styles.columns}>
-                <div className={styles.column}>
-                    <CounterA />
-                </div>
-                <div className={styles.column}>
-                    <CounterB />
-                </div>
-                <div className={styles.column}>
-                    <CounterC />
-                </div>
-                <div className={styles.column}>
-                    <Person />
-                </div>
+        <div className={styles.columns}>
+            <div className={styles.column}>
+                <CounterA />
             </div>
-            <AtomicReduxDevtools />
+            <div className={styles.column}>
+                <CounterB />
+            </div>
+            <div className={styles.column}>
+                <CounterC />
+            </div>
+            <div className={styles.column}>
+                <Person />
+            </div>
         </div>
     )
 };

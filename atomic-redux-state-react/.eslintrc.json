@@ -32,6 +32,7 @@
         "@typescript-eslint/indent": ["error", 4, {
             "SwitchCase": 1
         }],
+        "react/jsx-indent": "off",
         "max-len": ["error", 120],
         "max-classes-per-file": "off",
         "arrow-parens": ["error", "as-needed"],

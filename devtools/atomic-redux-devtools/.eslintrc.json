@@ -32,6 +32,12 @@
         "@typescript-eslint/indent": ["error", 4, {
             "SwitchCase": 1
         }],
+        "react/jsx-indent": "off",
+        "react/jsx-indent-props": "off",
+        "react/function-component-definition": ["error", {
+            "namedComponents": "arrow-function"
+        }],
+        "react/require-default-props": "off",
         "max-len": ["error", 120],
         "max-classes-per-file": "off",
         "arrow-parens": ["error", "as-needed"],
@@ -54,7 +60,8 @@
         "implicit-arrow-linebreak": "off",
         "linebreak-style": "off",
         "react/react-in-jsx-scope": "off",
-        "no-plusplus": "off"
+        "no-plusplus": "off",
+        "guard-for-in": "off"
     },
     "settings": {
         "import/resolver": {
