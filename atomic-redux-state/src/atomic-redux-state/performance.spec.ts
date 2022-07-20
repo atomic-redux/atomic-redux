@@ -133,24 +133,25 @@ const runAtomicReduxTest = () => {
     } = createAtomicReduxStore();
 
     const selectAtoms = () => {
-        selectAtom(store.getState(), aAtom);
-        selectAtom(store.getState(), bAtom);
-        selectAtom(store.getState(), cAtom);
-        selectAtom(store.getState(), multipliedAAtom);
-        selectAtom(store.getState(), multipliedBAtom);
-        selectAtom(store.getState(), multipliedCAtom);
-        selectAtom(store.getState(), equationAtom);
+        const state = store.getState();
+        selectAtom(state, aAtom);
+        selectAtom(state, bAtom);
+        selectAtom(state, cAtom);
+        selectAtom(state, multipliedAAtom);
+        selectAtom(state, multipliedBAtom);
+        selectAtom(state, multipliedCAtom);
+        selectAtom(state, equationAtom);
     };
 
     const start = performance.now();
 
     for (let i = 0; i < 100000; i++) {
-        store.dispatch(setAtom(aAtom, x => x++));
+        store.dispatch(setAtom(aAtom, i));
         selectAtoms();
     }
 
     for (let i = 0; i < 100000; i++) {
-        store.dispatch(setAtom(aAtom, x => x--));
+        store.dispatch(setAtom(aAtom, i));
         selectAtoms();
     }
 
@@ -159,7 +160,7 @@ const runAtomicReduxTest = () => {
 };
 
 describe('Atomic Redux State performance', () => {
-    it.skip('should be performant', () => {
+    it('should be performant', () => {
         const baseline = runBaselineTest();
         console.info(`Baseline: ${baseline}ms`);
 
