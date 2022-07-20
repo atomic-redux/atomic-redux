@@ -430,9 +430,7 @@ export const getAtomMiddleware = (preloadedState?: AtomMiddlewareSliceState, dev
             name: atomMiddlewareStoreName
         },
         preloadedState,
-        middleware: getDefaultMiddleware => getDefaultMiddleware({
-            thunk: false
-        })
+        middleware: []
     });
 
     const setAtomMiddleware: AtomMiddleware = store => next => {
