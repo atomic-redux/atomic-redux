@@ -9,7 +9,7 @@ export const updateDevtools = (
     middlewareState: AtomMiddlewareSliceState,
     devtools: boolean
 ) => {
-    if (!devtools) {
+    if (!devtools || window === undefined || window.postMessage === undefined) {
         return;
     }
 
