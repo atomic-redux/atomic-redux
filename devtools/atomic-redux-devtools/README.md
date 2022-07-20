@@ -1,11 +1,17 @@
-# Atomic Redux State - React
+# Atomic Redux State - DevTools
 
-React bindings for https://github.com/matt-winfield/atomic-redux
+DevTools for https://github.com/matt-winfield/atomic-redux
 
-### Building
+### Usage
 
-Build using `pnpm build`
+```tsx
+import { AtomicReduxDevtools } from 'atomic-redux-devtools';
 
-### Testing
-
-Test using `pnpm test`
+function App() {
+    return (
+        <div>
+            <AtomicReduxDevtools />
+        </div>
+    )
+}
+```
