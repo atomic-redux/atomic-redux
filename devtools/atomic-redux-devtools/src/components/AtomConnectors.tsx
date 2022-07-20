@@ -1,9 +1,9 @@
 import { DevtoolsGraphNode } from 'atomic-redux-state/out/devtools/devtools-message';
-import { FC, MutableRefObject } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 
 interface AtomConnectorsProps {
-    atomsElementsRef: MutableRefObject<Record<string, HTMLElement | null>>;
+    atomElementRefs: Record<string, HTMLElement | null>;
     graph: Record<string, DevtoolsGraphNode | undefined>;
 }
 
@@ -29,11 +29,11 @@ const getPathFromCoordinates = (coordinates: LineCoordinates) =>
     + `${coordinates.x2 - 30}, ${coordinates.y2} `
     + `${coordinates.x2}, ${coordinates.y2}`;
 
-export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomsElementsRef, graph }) => {
+export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomElementRefs, graph }) => {
     const lines: LineCoordinates[] = [];
 
     for (const atomKey in graph) {
-        const atomElement = atomsElementsRef.current[atomKey];
+        const atomElement = atomElementRefs[atomKey];
         if (atomElement !== undefined && atomElement !== null) {
             const x1 = atomElement.offsetLeft + atomElement.offsetWidth;
             const y1 = atomElement.offsetTop + (atomElement.offsetHeight / 2);
@@ -41,7 +41,7 @@ export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomsElementsRef, grap
             const graphNode = graph[atomKey];
             if (graphNode !== undefined) {
                 for (const dependantKey of graphNode.dependants) {
-                    const dependantElement = atomsElementsRef.current[dependantKey];
+                    const dependantElement = atomElementRefs[dependantKey];
                     if (dependantElement !== undefined && dependantElement !== null) {
                         const x2 = dependantElement.offsetLeft;
                         const y2 = dependantElement.offsetTop + (dependantElement.offsetHeight / 2);
@@ -63,7 +63,7 @@ export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomsElementsRef, grap
             <g fill="none" stroke="#eeeeee" strokeWidth="2">
                 {
                     // eslint-disable-next-line react/no-array-index-key
-                    lines.map((line, index) => <path key={index} d={getPathFromCoordinates(line)} />)
+                    lines.map(line => <path key={getPathFromCoordinates(line)} d={getPathFromCoordinates(line)} />)
                 }
             </g>
         </Container>
