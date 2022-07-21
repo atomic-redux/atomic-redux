@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.2.3",
+      "tag": "atomic-redux-state_v2.2.3",
+      "date": "Thu, 21 Jul 2022 21:26:44 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix graph depth not updating when edge removed from graph",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "a788a5aa7d61964a65eb2a3c449ee55dfb63443c"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.2.2",
       "tag": "atomic-redux-state_v2.2.2",
       "date": "Thu, 21 Jul 2022 13:13:51 GMT",
