@@ -22,11 +22,13 @@ const updateGraphDepthFromAtom = (
     atomStack: string[] = []
 ) => {
     const atom = graph[atomKey];
-    if (atom === undefined || atomStack.includes(atomKey) || atom.depth >= depth) {
+    if (atom === undefined || atomStack.includes(atomKey)) {
         return;
     }
 
-    atom.depth = depth;
+    if (atom.depth < depth) {
+        atom.depth = depth;
+    }
 
     for (const dependencyKey of atom.dependencies) {
         atomStack.push(atomKey);
@@ -78,8 +80,6 @@ export const atomMiddlewareSlice = createSlice({
                 };
             }
 
-            updateGraphDepthFromAtom(state.graph, fromAtomKey, fromAtomDepth);
-
             if (!state.graph[fromAtomKey]?.dependants?.includes(toAtomKey)) {
                 state.graph[fromAtomKey]?.dependants?.push(toAtomKey);
             }
@@ -87,6 +87,8 @@ export const atomMiddlewareSlice = createSlice({
             if (!state.graph[toAtomKey]?.dependencies?.includes(fromAtomKey)) {
                 state.graph[toAtomKey]?.dependencies?.push(fromAtomKey);
             }
+
+            updateGraphDepthFromAtom(state.graph, fromAtomKey, fromAtomDepth);
         },
         internalResetGraphNodeDependencies: (state, action: PayloadAction<string>) => {
             const node = state.graph[action.payload];
