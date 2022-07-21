@@ -36,6 +36,7 @@ interface AtomStateWithKey extends DevtoolsAtomState {
 
 const DevTools: FC<{ state: DevtoolsState }> = ({ state }) => {
     const [atomElementRefs, setAtomElementRefs] = useState<Record<string, HTMLElement>>({});
+    const [hoverState, setHoverState] = useState<Record<string, boolean>>({});
 
     const refUpdateCallback = useCallback((element: HTMLElement | null, atomKey: string) => {
         if (element === null) {
@@ -44,6 +45,10 @@ const DevTools: FC<{ state: DevtoolsState }> = ({ state }) => {
 
         setAtomElementRefs(refs => ({ ...refs, [atomKey]: element }));
     }, [setAtomElementRefs]);
+
+    const onHoverStateChange = useCallback((atomKey: string, newState: boolean) => {
+        setHoverState(refs => ({ ...refs, [atomKey]: newState }));
+    }, [setHoverState]);
 
     const atomsByDepth = useMemo(() => {
         const output: Record<number, AtomStateWithKey[]> = {};
@@ -78,17 +83,18 @@ const DevTools: FC<{ state: DevtoolsState }> = ({ state }) => {
                             value={atomState.value}
                             loadingState={atomState.loadingState}
                             ref={el => refUpdateCallback(el, atomState.atomKey)}
+                            onHoverStateChange={onHoverStateChange}
                         />
                     ))}
                 </Column>
-            )), [atomsByDepth, refUpdateCallback]);
+            )), [atomsByDepth, refUpdateCallback, onHoverStateChange]);
 
     return (
         <Container>
             <Header>Atomic Redux DevTools</Header>
             <Graph>
                 {atomValueDisplay}
-                <AtomConnectors atomElementRefs={atomElementRefs} graph={state.graph} />
+                <AtomConnectors atomElementRefs={atomElementRefs} graph={state.graph} hoverState={hoverState} />
             </Graph>
         </Container>
     );
