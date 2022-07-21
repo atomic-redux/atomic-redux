@@ -54,8 +54,7 @@ function createAtomGetter(
         atomStack.push(previousAtom.key);
         middlewareStore.dispatch(internalAddGraphConnection({
             fromAtomKey: previousAtom.key,
-            toAtomKey: currentAtom.key,
-            fromAtomDepth: atomStack.length
+            toAtomKey: currentAtom.key
         }));
 
         checkForDependencyLoop(atomStack);
@@ -89,8 +88,7 @@ function createAsyncAtomGetter(
         atomStack.push(previousAtom.key);
         middlewareStore.dispatch(internalAddGraphConnection({
             fromAtomKey: previousAtom.key,
-            toAtomKey: currentAtom.key,
-            fromAtomDepth: atomStack.length
+            toAtomKey: currentAtom.key
         }));
 
         checkForDependencyLoop(atomStack);
