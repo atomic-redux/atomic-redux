@@ -1,5 +1,5 @@
 import { DevtoolsGraphNode } from 'atomic-redux-state/out/devtools/devtools-message';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface AtomConnectorsProps {
@@ -37,35 +37,41 @@ const getPathFromCoordinates = (coordinates: LineCoordinates) =>
     + `${coordinates.x2}, ${coordinates.y2}`;
 
 export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomElementRefs, graph, hoverState }) => {
-    const lines: LineCoordinates[] = [];
+    const [lines, setLines] = useState<LineCoordinates[]>([]);
 
-    for (const atomKey in graph) {
-        const atomElement = atomElementRefs[atomKey];
-        if (atomElement !== undefined && atomElement !== null) {
-            const x1 = atomElement.offsetLeft + atomElement.offsetWidth;
-            const y1 = atomElement.offsetTop + (atomElement.offsetHeight / 2);
+    useEffect(() => {
+        const newLines: LineCoordinates[] = [];
 
-            const graphNode = graph[atomKey];
-            if (graphNode !== undefined) {
-                for (const dependantKey of graphNode.dependants) {
-                    const dependantElement = atomElementRefs[dependantKey];
-                    if (dependantElement !== undefined && dependantElement !== null) {
-                        const x2 = dependantElement.offsetLeft;
-                        const y2 = dependantElement.offsetTop + (dependantElement.offsetHeight / 2);
+        for (const atomKey in graph) {
+            const atomElement = atomElementRefs[atomKey];
+            if (atomElement !== undefined && atomElement !== null) {
+                const x1 = atomElement.offsetLeft + atomElement.offsetWidth;
+                const y1 = atomElement.offsetTop + (atomElement.offsetHeight / 2);
 
-                        lines.push({
-                            toKey: dependantKey,
-                            fromKey: atomKey,
-                            x1,
-                            y1,
-                            x2,
-                            y2
-                        });
+                const graphNode = graph[atomKey];
+                if (graphNode !== undefined) {
+                    for (const dependantKey of graphNode.dependants) {
+                        const dependantElement = atomElementRefs[dependantKey];
+                        if (dependantElement !== undefined && dependantElement !== null) {
+                            const x2 = dependantElement.offsetLeft;
+                            const y2 = dependantElement.offsetTop + (dependantElement.offsetHeight / 2);
+
+                            newLines.push({
+                                toKey: dependantKey,
+                                fromKey: atomKey,
+                                x1,
+                                y1,
+                                x2,
+                                y2
+                            });
+                        }
                     }
                 }
             }
         }
-    }
+
+        setLines(newLines);
+    }, [atomElementRefs, graph]);
 
     return (
         <Container>

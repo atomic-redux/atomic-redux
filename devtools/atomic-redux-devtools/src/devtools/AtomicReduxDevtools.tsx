@@ -84,6 +84,7 @@ const DevTools: FC<{ state: DevtoolsState }> = ({ state }) => {
                             loadingState={atomState.loadingState}
                             ref={el => refUpdateCallback(el, atomState.atomKey)}
                             onHoverStateChange={onHoverStateChange}
+                            onExpandChange={() => setAtomElementRefs(x => ({ ...x }))}
                         />
                     ))}
                 </Column>
