@@ -1,4 +1,4 @@
-import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SafeRecord } from './utils';
 
 type AtomGraphNode = {
@@ -15,10 +15,23 @@ const initialState: AtomMiddlewareSliceState = {
     graph: {}
 };
 
+const calculateAtomDepth = (
+    atom: AtomGraphNode,
+    graph: SafeRecord<string, AtomGraphNode>
+): number => {
+    let maxDepth = 0;
+    for (const dependantKey of atom.dependants) {
+        maxDepth = Math.max(maxDepth, graph[dependantKey]?.depth ?? 0);
+    }
+
+    return atom.dependants.length > 0
+        ? maxDepth + 1
+        : 0;
+};
+
 const updateGraphDepthFromAtom = (
-    graph: Draft<SafeRecord<string, AtomGraphNode>>,
+    graph: SafeRecord<string, AtomGraphNode>,
     atomKey: string,
-    depth: number,
     atomStack: string[] = []
 ) => {
     const atom = graph[atomKey];
@@ -26,13 +39,11 @@ const updateGraphDepthFromAtom = (
         return;
     }
 
-    if (atom.depth < depth) {
-        atom.depth = depth;
-    }
+    atom.depth = calculateAtomDepth(atom, graph);
 
     for (const dependencyKey of atom.dependencies) {
         atomStack.push(atomKey);
-        updateGraphDepthFromAtom(graph, dependencyKey, depth + 1, atomStack);
+        updateGraphDepthFromAtom(graph, dependencyKey, atomStack);
         atomStack.pop();
     }
 };
@@ -54,11 +65,9 @@ export const atomMiddlewareSlice = createSlice({
         internalAddGraphConnection: (state, action: PayloadAction<{
             fromAtomKey: string,
             toAtomKey: string,
-            fromAtomDepth: number
         }>) => {
             const fromAtomKey = action.payload.fromAtomKey;
             const toAtomKey = action.payload.toAtomKey;
-            const fromAtomDepth = action.payload.fromAtomDepth;
 
             if (fromAtomKey === toAtomKey) {
                 return;
@@ -68,7 +77,7 @@ export const atomMiddlewareSlice = createSlice({
                 state.graph[fromAtomKey] = {
                     dependants: [],
                     dependencies: [],
-                    depth: fromAtomDepth
+                    depth: 1
                 };
             }
 
@@ -76,7 +85,7 @@ export const atomMiddlewareSlice = createSlice({
                 state.graph[toAtomKey] = {
                     dependants: [],
                     dependencies: [],
-                    depth: fromAtomDepth - 1
+                    depth: 0
                 };
             }
 
@@ -88,7 +97,7 @@ export const atomMiddlewareSlice = createSlice({
                 state.graph[toAtomKey]?.dependencies?.push(fromAtomKey);
             }
 
-            updateGraphDepthFromAtom(state.graph, fromAtomKey, fromAtomDepth);
+            updateGraphDepthFromAtom(state.graph, fromAtomKey);
         },
         internalResetGraphNodeDependencies: (state, action: PayloadAction<string>) => {
             const node = state.graph[action.payload];
@@ -110,6 +119,8 @@ export const atomMiddlewareSlice = createSlice({
             if (toNode !== undefined) {
                 toNode.dependants = toNode.dependants.filter(d => d !== fromAtomKey);
             }
+
+            updateGraphDepthFromAtom(state.graph, toAtomKey);
         }
     }
 });
