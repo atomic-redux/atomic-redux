@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-devtools",
+      "comment": "Update styling and highlight connections on hover",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-devtools"
+}

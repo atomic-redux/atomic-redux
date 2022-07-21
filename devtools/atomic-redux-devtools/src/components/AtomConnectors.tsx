@@ -5,9 +5,12 @@ import styled from 'styled-components';
 interface AtomConnectorsProps {
     atomElementRefs: Record<string, HTMLElement | null>;
     graph: Record<string, DevtoolsGraphNode | undefined>;
+    hoverState: Record<string, boolean>;
 }
 
 interface LineCoordinates {
+    toKey: string;
+    fromKey: string;
     x1: number;
     y1: number;
     x2: number;
@@ -23,13 +26,17 @@ const Container = styled.svg`
     pointer-events: none;
 `;
 
+const Connector = styled.path<{ highlighted?: boolean }>`
+    opacity: ${props => (props.highlighted ? 1 : 0.4)};
+`;
+
 const getPathFromCoordinates = (coordinates: LineCoordinates) =>
     `M ${coordinates.x1}, ${coordinates.y1} `
     + `C ${coordinates.x1 + 30}, ${coordinates.y1} `
     + `${coordinates.x2 - 30}, ${coordinates.y2} `
     + `${coordinates.x2}, ${coordinates.y2}`;
 
-export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomElementRefs, graph }) => {
+export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomElementRefs, graph, hoverState }) => {
     const lines: LineCoordinates[] = [];
 
     for (const atomKey in graph) {
@@ -47,6 +54,8 @@ export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomElementRefs, graph
                         const y2 = dependantElement.offsetTop + (dependantElement.offsetHeight / 2);
 
                         lines.push({
+                            toKey: dependantKey,
+                            fromKey: atomKey,
                             x1,
                             y1,
                             x2,
@@ -63,7 +72,13 @@ export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomElementRefs, graph
             <g fill="none" stroke="#eeeeee" strokeWidth="2">
                 {
                     // eslint-disable-next-line react/no-array-index-key
-                    lines.map(line => <path key={getPathFromCoordinates(line)} d={getPathFromCoordinates(line)} />)
+                    lines.map(line => (
+                        <Connector
+                            key={getPathFromCoordinates(line)}
+                            d={getPathFromCoordinates(line)}
+                            highlighted={hoverState[line.fromKey] || hoverState[line.toKey]}
+                        />
+                    ))
                 }
             </g>
         </Container>

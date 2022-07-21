@@ -14,6 +14,7 @@ const Container = styled.div`
     padding-right: 20px;
     width: fit-content;
     margin: 5px 20px;
+    background-color: #002c64;
 `;
 
 const LoadingIndicator = styled.div<{ loadingState: AtomLoadingState }>`
@@ -51,11 +52,16 @@ interface AtomStateDisplayProps {
     atomKey: string,
     value: any;
     loadingState: AtomLoadingState
+    onHoverStateChange?: (atomKey: string, hoverState: boolean) => void;
 }
 
 export const AtomStateDisplay = forwardRef<HTMLDivElement, AtomStateDisplayProps>(
-    ({ atomKey, value, loadingState }, ref) => (
-        <Container ref={ref}>
+    ({ atomKey, value, loadingState, onHoverStateChange }, ref) => (
+        <Container
+            ref={ref}
+            onMouseEnter={() => onHoverStateChange?.(atomKey, true)}
+            onMouseLeave={() => onHoverStateChange?.(atomKey, false)}
+        >
             <div>{atomKey}</div>
             <ObjectTree data={value} open={false} />
             <LoadingIndicator loadingState={loadingState} title={getLoadingText(loadingState)} />
