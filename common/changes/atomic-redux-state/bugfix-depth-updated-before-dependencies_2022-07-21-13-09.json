@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Fix atom depth in graph sometimes calculating incorrectly",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
