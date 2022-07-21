@@ -1,10 +1,11 @@
-import { FC, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 interface ObjectTreeProps {
     data: any,
     open?: boolean,
     name?: string
+    onExpandChange?: () => void;
 }
 
 const ToggleButton = styled.div<{ open: boolean }>`
@@ -37,9 +38,14 @@ const BorderContainer = styled(Container)`
     margin: 2px 0;
 `;
 
-export const ObjectTree: FC<ObjectTreeProps> = ({ data, open = true, name }) => {
+export const ObjectTree: FC<ObjectTreeProps> = ({ data, open = true, name, onExpandChange }) => {
     const [isOpen, setIsOpen] = useState(open);
     const isArray = Array.isArray(data);
+
+    const onToggleClick = useCallback(() => {
+        setIsOpen(x => !x);
+        onExpandChange?.();
+    }, [onExpandChange]);
 
     if (typeof data !== 'object') {
         return <Container>{name ? `${name}: ${data}` : data}</Container>;
@@ -47,12 +53,12 @@ export const ObjectTree: FC<ObjectTreeProps> = ({ data, open = true, name }) => 
 
     return (
         <BorderContainer>
-            <ToggleButton open={isOpen} onClick={() => setIsOpen(!isOpen)} />
+            <ToggleButton open={isOpen} onClick={onToggleClick} />
             <span>{isArray ? '[' : '{'}</span>
 
             <span>{!isOpen && '...'}</span>
             {isOpen && Object.keys(data).map(key =>
-                <ObjectTree key={key} data={data[key]} name={key} open={false} />)}
+                <ObjectTree key={key} data={data[key]} name={key} open={false} onExpandChange={onExpandChange} />)}
 
             <span>{isArray ? ']' : '}'}</span>
         </BorderContainer>

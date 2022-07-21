@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-devtools",
+      "comment": "Fix connectors not updating when atom value expanded/collapsed",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-devtools"
+}

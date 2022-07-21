@@ -53,17 +53,18 @@ interface AtomStateDisplayProps {
     value: any;
     loadingState: AtomLoadingState
     onHoverStateChange?: (atomKey: string, hoverState: boolean) => void;
+    onExpandChange?: (atomKey: string) => void;
 }
 
 export const AtomStateDisplay = forwardRef<HTMLDivElement, AtomStateDisplayProps>(
-    ({ atomKey, value, loadingState, onHoverStateChange }, ref) => (
+    ({ atomKey, value, loadingState, onHoverStateChange, onExpandChange }, ref) => (
         <Container
             ref={ref}
             onMouseEnter={() => onHoverStateChange?.(atomKey, true)}
             onMouseLeave={() => onHoverStateChange?.(atomKey, false)}
         >
             <div>{atomKey}</div>
-            <ObjectTree data={value} open={false} />
+            <ObjectTree data={value} open={false} onExpandChange={() => onExpandChange?.(atomKey)} />
             <LoadingIndicator loadingState={loadingState} title={getLoadingText(loadingState)} />
         </Container>
     )
