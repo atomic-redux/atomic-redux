@@ -2,6 +2,20 @@
   "name": "atomic-redux-devtools",
   "entries": [
     {
+      "version": "1.0.5",
+      "tag": "atomic-redux-devtools_v1.0.5",
+      "date": "Thu, 21 Jul 2022 14:26:45 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix connectors not updating when atom value expanded/collapsed",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "c0938a90321528f48ed8858ec63e3b89262d7b56"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.4",
       "tag": "atomic-redux-devtools_v1.0.4",
       "date": "Thu, 21 Jul 2022 13:52:02 GMT",
