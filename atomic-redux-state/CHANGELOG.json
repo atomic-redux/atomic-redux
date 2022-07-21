@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.2.2",
+      "tag": "atomic-redux-state_v2.2.2",
+      "date": "Thu, 21 Jul 2022 13:13:51 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix atom depth in graph sometimes calculating incorrectly",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "6d44acd3810beadf0da348196f73c0f5a7b181f5"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.2.1",
       "tag": "atomic-redux-state_v2.2.1",
       "date": "Wed, 20 Jul 2022 21:49:07 GMT",
