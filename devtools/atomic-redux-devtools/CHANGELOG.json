@@ -2,6 +2,20 @@
   "name": "atomic-redux-devtools",
   "entries": [
     {
+      "version": "1.0.4",
+      "tag": "atomic-redux-devtools_v1.0.4",
+      "date": "Thu, 21 Jul 2022 13:52:02 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update styling and highlight connections on hover",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "0f556d10fb1c204dad57a107113adcb987a3330c"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.3",
       "tag": "atomic-redux-devtools_v1.0.3",
       "date": "Thu, 21 Jul 2022 13:13:51 GMT",
