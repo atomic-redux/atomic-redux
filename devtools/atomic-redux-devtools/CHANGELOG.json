@@ -2,6 +2,20 @@
   "name": "atomic-redux-devtools",
   "entries": [
     {
+      "version": "1.0.8",
+      "tag": "atomic-redux-devtools_v1.0.8",
+      "date": "Fri, 22 Jul 2022 08:02:27 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Simplify key used for connector lines",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "54579d5850f79c42702e8afd7165f7867943092c"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.7",
       "tag": "atomic-redux-devtools_v1.0.7",
       "date": "Fri, 22 Jul 2022 07:48:12 GMT",

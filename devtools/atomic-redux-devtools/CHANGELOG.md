@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-devtools
 
-This log was last generated on Fri, 22 Jul 2022 07:48:12 GMT and should not be manually modified.
+This log was last generated on Fri, 22 Jul 2022 08:02:27 GMT and should not be manually modified.
+
+## 1.0.8
+Fri, 22 Jul 2022 08:02:27 GMT
+
+### Patches
+
+- Simplify key used for connector lines
 
 ## 1.0.7
 Fri, 22 Jul 2022 07:48:12 GMT
