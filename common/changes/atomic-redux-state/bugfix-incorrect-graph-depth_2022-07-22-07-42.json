@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Fix graph depth not updating in some circumstances",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
