@@ -10,3 +10,4 @@ export interface AtomicReduxContextValue {
 export const AtomicReduxContext = createContext<AtomicReduxContextValue>({
     atomsToInitialise: []
 });
+AtomicReduxContext.displayName = 'Atomic Redux';

@@ -9,6 +9,12 @@ import { useCallback, useContext, useEffect, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AtomicReduxContext } from '../context/AtomicReduxContext';
 
+/**
+ * useLayoutEffect cannot be used for SSR and throws warnings
+ * This method will call useLayoutEffect in browsers and useEffect in SSR
+ */
+const useSsrLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
 
 export function useAtomicValue<T>(atom: Atom<T, AsyncAtomValue<T>>): Immutable<T> | LoadingAtom;
@@ -18,7 +24,7 @@ export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable
     const dispatch = useDispatch();
     const context = useContext(AtomicReduxContext);
 
-    useLayoutEffect(() => {
+    useSsrLayoutEffect(() => {
         if (!context.atomsToInitialise.some(a => atom.key === a.key)) {
             context.atomsToInitialise.push(atom);
         }
