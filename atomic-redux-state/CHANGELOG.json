@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.3.0",
+      "tag": "atomic-redux-state_v2.3.0",
+      "date": "Fri, 22 Jul 2022 15:32:04 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Allow batching of atom initialisation",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "cc82c0c3ec5471159bfb893a4f3b805997a16ac9"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.2.4",
       "tag": "atomic-redux-state_v2.2.4",
       "date": "Fri, 22 Jul 2022 07:48:12 GMT",

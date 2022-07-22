@@ -1,6 +1,6 @@
 {
   "name": "atomic-redux-devtools",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "DevTools component for Atomic Redux",
   "keywords": [
     "React",
@@ -40,7 +40,7 @@
     "@types/react": "~18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
-    "atomic-redux-state": "2.2.4",
+    "atomic-redux-state": "2.3.0",
     "eslint": "^8.9.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.4",
@@ -58,7 +58,7 @@
     "@types/styled-components": "~5.1.25"
   },
   "peerDependencies": {
-    "atomic-redux-state": "^2.2.4",
+    "atomic-redux-state": "^2.3.0",
     "react": "^17.0.0 || ^18.0.0"
   }
 }
