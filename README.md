@@ -36,6 +36,17 @@ const store = configureStore({
 });
 ```
 
+If using React, change your Redux provider to an Atomic Redux provider:
+```tsx
+import { AtomicReduxProvider } from 'atomic-redux-state-react';
+
+root.render(
+    <AtomicReduxProvider store={store}>
+      <App />
+    </AtomicReduxProvider>
+);
+```
+
 ### Usage
 Most principles from Recoil apply to `atomic-redux-state`.
 

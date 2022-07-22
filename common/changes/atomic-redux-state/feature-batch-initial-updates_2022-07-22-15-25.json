@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Allow batching of atom initialisation",
+      "type": "minor"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
