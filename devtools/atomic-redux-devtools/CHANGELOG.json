@@ -2,6 +2,20 @@
   "name": "atomic-redux-devtools",
   "entries": [
     {
+      "version": "1.0.9",
+      "tag": "atomic-redux-devtools_v1.0.9",
+      "date": "Fri, 22 Jul 2022 13:25:12 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Simplify DevTools message handler",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "013f5b50ad3aeb8eab0a0b1b9a82f5a0202b3e46"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.8",
       "tag": "atomic-redux-devtools_v1.0.8",
       "date": "Fri, 22 Jul 2022 08:02:27 GMT",

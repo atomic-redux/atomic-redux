@@ -1,6 +1,6 @@
 {
   "name": "atomic-redux-devtools",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "DevTools component for Atomic Redux",
   "keywords": [
     "React",
