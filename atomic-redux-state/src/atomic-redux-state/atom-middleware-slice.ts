@@ -39,12 +39,16 @@ const updateGraphDepthFromAtom = (
         return;
     }
 
-    atom.depth = calculateAtomDepth(atom, graph);
+    const newDepth = calculateAtomDepth(atom, graph);
 
-    for (const dependencyKey of atom.dependencies) {
-        atomStack.push(atomKey);
-        updateGraphDepthFromAtom(graph, dependencyKey, atomStack);
-        atomStack.pop();
+    if (atom.depth !== newDepth) {
+        atom.depth = newDepth;
+
+        for (const dependencyKey of atom.dependencies) {
+            atomStack.push(atomKey);
+            updateGraphDepthFromAtom(graph, dependencyKey, atomStack);
+            atomStack.pop();
+        }
     }
 };
 
@@ -120,6 +124,7 @@ export const atomMiddlewareSlice = createSlice({
                 toNode.dependants = toNode.dependants.filter(d => d !== fromAtomKey);
             }
 
+            updateGraphDepthFromAtom(state.graph, fromAtomKey);
             updateGraphDepthFromAtom(state.graph, toAtomKey);
         }
     }
