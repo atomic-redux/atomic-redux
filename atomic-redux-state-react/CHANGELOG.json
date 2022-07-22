@@ -2,6 +2,20 @@
   "name": "atomic-redux-state-react",
   "entries": [
     {
+      "version": "1.0.38",
+      "tag": "atomic-redux-state-react_v1.0.38",
+      "date": "Fri, 22 Jul 2022 13:05:58 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix useAtomicValue triggering updates during render",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "fbf99344a24073040aaa91d8160b4e0b4ac412a0"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.37",
       "tag": "atomic-redux-state-react_v1.0.37",
       "date": "Fri, 22 Jul 2022 07:48:12 GMT",
