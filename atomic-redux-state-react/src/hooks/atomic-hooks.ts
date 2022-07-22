@@ -4,7 +4,7 @@ import {
     LoadingAtom, setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
 } from 'atomic-redux-state';
 import { Immutable } from 'immer';
-import { useCallback } from 'react';
+import { useCallback, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
@@ -14,7 +14,9 @@ export function useAtomicValue<T>(atom: Atom<T, AtomValue<T>>): Immutable<T>;
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom;
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom {
     const dispatch = useDispatch();
-    dispatch(initialiseAtom(atom));
+    useLayoutEffect(() => {
+        dispatch(initialiseAtom(atom));
+    }, []);
     return useAtomicSelector(state => getAtomValueFromState(state, atom));
 }
 
