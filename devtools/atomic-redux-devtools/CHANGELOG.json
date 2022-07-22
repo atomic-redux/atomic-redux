@@ -2,6 +2,21 @@
   "name": "atomic-redux-devtools",
   "entries": [
     {
+      "version": "1.0.7",
+      "tag": "atomic-redux-devtools_v1.0.7",
+      "date": "Fri, 22 Jul 2022 07:48:12 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"atomic-redux-state\" from `2.2.3` to `2.2.4`"
+          },
+          {
+            "comment": "Updating dependency \"atomic-redux-state\" from `^2.2.3` to `^2.2.4`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.6",
       "tag": "atomic-redux-devtools_v1.0.6",
       "date": "Thu, 21 Jul 2022 21:26:44 GMT",

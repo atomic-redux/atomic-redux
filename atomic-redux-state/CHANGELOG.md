@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Thu, 21 Jul 2022 21:26:44 GMT and should not be manually modified.
+This log was last generated on Fri, 22 Jul 2022 07:48:12 GMT and should not be manually modified.
+
+## 2.2.4
+Fri, 22 Jul 2022 07:48:12 GMT
+
+### Patches
+
+- Fix graph depth not updating in some circumstances
 
 ## 2.2.3
 Thu, 21 Jul 2022 21:26:44 GMT

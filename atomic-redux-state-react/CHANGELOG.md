@@ -1,6 +1,11 @@
 # Change Log - atomic-redux-state-react
 
-This log was last generated on Thu, 21 Jul 2022 21:26:44 GMT and should not be manually modified.
+This log was last generated on Fri, 22 Jul 2022 07:48:12 GMT and should not be manually modified.
+
+## 1.0.37
+Fri, 22 Jul 2022 07:48:12 GMT
+
+_Version update only_
 
 ## 1.0.36
 Thu, 21 Jul 2022 21:26:44 GMT

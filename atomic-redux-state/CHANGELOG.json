@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.2.4",
+      "tag": "atomic-redux-state_v2.2.4",
+      "date": "Fri, 22 Jul 2022 07:48:12 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix graph depth not updating in some circumstances",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "5aaf978a6b053aa9dd14aea3df2b73be77206c6b"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.2.3",
       "tag": "atomic-redux-state_v2.2.3",
       "date": "Thu, 21 Jul 2022 21:26:44 GMT",
