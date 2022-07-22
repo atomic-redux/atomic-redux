@@ -107,20 +107,20 @@ export const AtomicReduxDevtools = () => {
         graph: {}
     });
 
-    const handleWindowMessage = useCallback((evt: MessageEvent<DevtoolsMessage>) => {
-        if (!evt.data || evt.data.type === undefined || evt.data.type !== atomicReduxDevtoolsEventType) {
-            return;
-        }
-
-        setAtomsState(evt.data.payload);
-    }, []);
-
     useEffect(() => {
+        const handleWindowMessage = (evt: MessageEvent<DevtoolsMessage>) => {
+            if (!evt.data || evt.data.type === undefined || evt.data.type !== atomicReduxDevtoolsEventType) {
+                return;
+            }
+
+            setAtomsState(evt.data.payload);
+        };
+
         window.addEventListener('message', handleWindowMessage);
         return () => {
             window.removeEventListener('message', handleWindowMessage);
         };
-    }, [handleWindowMessage]);
+    }, []);
 
     return <DevTools state={atomsState} />;
 };

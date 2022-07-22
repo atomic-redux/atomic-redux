@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-devtools",
+      "comment": "Simplify DevTools message handler",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-devtools"
+}
