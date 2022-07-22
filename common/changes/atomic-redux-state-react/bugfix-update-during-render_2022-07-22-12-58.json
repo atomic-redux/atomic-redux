@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state-react",
+      "comment": "Fix useAtomicValue triggering updates during render",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state-react"
+}
