@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state-react",
+      "comment": "Batch atom initialisation in useAtomicValue",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state-react"
+}
