@@ -1,11 +1,13 @@
 import {
     AsyncAtomValue, Atom, AtomicStoreState, AtomValue,
-    DefaultValue, getAtomValueFromState, initialiseAtom, isAtomUpdating,
+    batchInitialiseAtoms,
+    DefaultValue, getAtomValueFromState, isAtomUpdating,
     LoadingAtom, setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
 } from 'atomic-redux-state';
 import { Immutable } from 'immer';
-import { useCallback, useLayoutEffect } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { AtomicReduxContext } from '../context/AtomicReduxContext';
 
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
 
@@ -14,9 +16,23 @@ export function useAtomicValue<T>(atom: Atom<T, AtomValue<T>>): Immutable<T>;
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom;
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom {
     const dispatch = useDispatch();
+    const context = useContext(AtomicReduxContext);
+
     useLayoutEffect(() => {
-        dispatch(initialiseAtom(atom));
+        if (!context.atomsToInitialise.some(a => atom.key === a.key)) {
+            context.atomsToInitialise.push(atom);
+        }
     }, []);
+
+    useEffect(() => {
+        if (context.atomsToInitialise.length < 1) {
+            return;
+        }
+
+        dispatch(batchInitialiseAtoms(context.atomsToInitialise));
+        context.atomsToInitialise = [];
+    });
+
     return useAtomicSelector(state => getAtomValueFromState(state, atom));
 }
 

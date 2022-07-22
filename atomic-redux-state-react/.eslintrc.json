@@ -33,6 +33,9 @@
             "SwitchCase": 1
         }],
         "react/jsx-indent": "off",
+        "react/function-component-definition": ["error", {
+            "namedComponents": "arrow-function"
+        }],
         "max-len": ["error", 120],
         "max-classes-per-file": "off",
         "arrow-parens": ["error", "as-needed"],

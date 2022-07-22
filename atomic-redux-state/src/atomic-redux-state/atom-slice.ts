@@ -29,6 +29,10 @@ export const initialiseAtom = createAction<Atom<unknown, SyncOrAsyncValue<unknow
     'atoms/initialiseAtom'
 );
 
+export const batchInitialiseAtoms = createAction<Atom<unknown, SyncOrAsyncValue<unknown>>[]>(
+    'atoms/batchInitialiseAtoms'
+);
+
 const setAtomActionName = 'atoms/setAtom';
 export function setAtom<T>(
     atom: WritableAtom<T, SyncOrAsyncValue<T>>,

@@ -13,7 +13,7 @@ import {
 import {
     AtomicStoreState,
     AtomLoadingStateUpdate,
-    AtomUpdate, initialiseAtom, initialiseAtomFromState, internalSet,
+    AtomUpdate, batchInitialiseAtoms, initialiseAtom, initialiseAtomFromState, internalSet,
     internalSetLoadingState,
     setAtom,
     SetAtomPayload
@@ -267,6 +267,27 @@ const handleInitialiseAtomAction = <T>(
     };
     getAtomValue(store, middlewareStore, atom, atoms, promises, [], pendingChanges, devtools);
     middlewareStore.dispatch(internalAddNodeToGraph(atom.key));
+    commitStagedUpdates(store, middlewareStore, pendingChanges, devtools);
+};
+
+const handleBatchInitialiseAtomsAction = <T>(
+    store: MainStore,
+    middlewareStore: MiddlewareStore,
+    action: PayloadAction<Atom<T, SyncOrAsyncValue<T>>[]>,
+    atoms: Atoms,
+    promises: AtomPromises,
+    devtools: boolean
+): void => {
+    const atomsToInitialise = action.payload;
+    const pendingChanges = {
+        stagedValues: {},
+        stagedLoadingStates: {},
+        atomsPendingUpdate: {}
+    };
+    for (const atom of atomsToInitialise) {
+        getAtomValue(store, middlewareStore, atom, atoms, promises, [], pendingChanges, devtools);
+        middlewareStore.dispatch(internalAddNodeToGraph(atom.key));
+    }
     commitStagedUpdates(store, middlewareStore, pendingChanges, devtools);
 };
 
@@ -570,6 +591,10 @@ export const getAtomMiddleware = (preloadedState?: AtomMiddlewareSliceState, dev
         return action => {
             if (action.type === initialiseAtom.toString()) {
                 return handleInitialiseAtomAction(store, middlewareStore, action, atoms, promises, devtools);
+            }
+
+            if (action.type === batchInitialiseAtoms.toString()) {
+                return handleBatchInitialiseAtomsAction(store, middlewareStore, action, atoms, promises, devtools);
             }
 
             if (action.type === setAtom.toString()) {
