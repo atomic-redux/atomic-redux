@@ -80,7 +80,7 @@ export const AtomConnectors: FC<AtomConnectorsProps> = ({ atomElementRefs, graph
                     // eslint-disable-next-line react/no-array-index-key
                     lines.map(line => (
                         <Connector
-                            key={getPathFromCoordinates(line)}
+                            key={`${line.fromKey}-${line.toKey}`}
                             d={getPathFromCoordinates(line)}
                             highlighted={hoverState[line.fromKey] || hoverState[line.toKey]}
                         />
