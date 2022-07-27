@@ -1,6 +1,7 @@
 import {
-    AsyncAtomValue, Atom, AtomicStoreState, AtomValue, DefaultValue, initialiseAtom, isAtomUpdating,
-    LoadingAtom, selectAtom, setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
+    AsyncAtomValue, Atom, AtomicStoreState, AtomValue, DefaultValue,
+    initialiseAtom, LoadingAtom, selectAtom, selectIsAtomUpdating,
+    setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
 } from 'atomic-redux-state';
 import { Immutable } from 'immer';
 import { useCallback, useSyncExternalStore } from 'react';
@@ -41,7 +42,7 @@ export const useResetAtomicState = (atom: WritableAtom<any, any>): () => void =>
 
 export const useIsAtomUpdating = <T>(
     atom: Atom<T, SyncOrAsyncValue<T>>
-): boolean => useAtomicSelector(state => isAtomUpdating(state, atom));
+): boolean => useAtomicSelector(state => selectIsAtomUpdating(state, atom));
 
 // eslint-disable-next-line max-len
 export function useAtomicState<T>(atom: WritableAtom<T, AsyncAtomValue<T>>): [value: Immutable<T> | LoadingAtom, set: (value: ValueOrSetter<T>) => void, reset: () => void, isUpdating: boolean];
