@@ -1,4 +1,4 @@
-import { createAction, createSlice, Dispatch, PayloadAction, Store } from '@reduxjs/toolkit';
+import { createAction, createSelector, createSlice, Dispatch, PayloadAction, Store } from '@reduxjs/toolkit';
 import { Immutable } from 'immer';
 import { AtomLoadingState } from './atom-loading-state';
 import { Atom, SyncOrAsyncValue, WritableAtom } from './atom-types';
@@ -163,32 +163,30 @@ export function getAtomValueFromState<T>(
         : result;
 }
 
+type AtomSelector = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsyncValue<T>>) => T | undefined;
+
 /**
  * A selector function that returns the current state of an atom
  * @param state The state of the atom store
  * @param atom The atom to select
  * @returns Current atom value
  */
-export const selectAtom = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsyncValue<T>>): T | undefined => {
-    const atomState = state.atoms.states[atom.key];
+export const selectAtom: AtomSelector = createSelector(
+    (state: AtomicStoreState, atom: Atom<unknown, SyncOrAsyncValue<unknown>>) => state.atoms.states[atom.key],
+    atomState => (atomState === undefined ? undefined : atomState.value)
+) as AtomSelector;
 
-    if (atomState === undefined) {
-        return undefined;
-    }
-
-    return atomState.value as T;
-};
-
+type IsAtomUpdatingSelector = (state: AtomicStoreState, atom: Atom<unknown, SyncOrAsyncValue<unknown>>) => boolean;
 /**
  * Returns `true` if atom is currently updating
  * @param state The store state
  * @param atom The atom to check
  * @returns Updating status
  */
-export const isAtomUpdating = <T>(state: AtomicStoreState, atom: Atom<T, SyncOrAsyncValue<T>>): boolean => {
-    const atomState = state.atoms.states[atom.key];
-    return atomState !== undefined && atomState.loadingState === AtomLoadingState.Updating;
-};
+export const selectIsAtomUpdating: IsAtomUpdatingSelector = createSelector(
+    (state: AtomicStoreState, atom: Atom<unknown, SyncOrAsyncValue<unknown>>) => state.atoms.states[atom.key],
+    atomState => atomState !== undefined && atomState.loadingState === AtomLoadingState.Updating
+);
 
 /** @internal */
 export const {

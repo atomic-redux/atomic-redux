@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Memoise atom selectors",
+      "type": "minor"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}

@@ -6,7 +6,7 @@ import { AtomLoadingState } from './atom-loading-state';
 import {
     getAtomValueFromState, initialiseAtom, initialiseAtomFromState,
     initialiseAtomFromStore, internalSetLoadingState,
-    isAtomUpdating
+    selectIsAtomUpdating
 } from './atom-slice';
 import { derivedAtom } from './derived-atom';
 import { LoadingAtom } from './getter-setter-utils';
@@ -209,7 +209,7 @@ describe('isAtomUpdating', () => {
             default: 0
         });
 
-        const result = isAtomUpdating(store.getState(), testAtom);
+        const result = selectIsAtomUpdating(store.getState(), testAtom);
 
         expect(result).toBe(false);
     });
@@ -224,7 +224,7 @@ describe('isAtomUpdating', () => {
 
         store.dispatch(initialiseAtom(testAtom));
 
-        const result = isAtomUpdating(store.getState(), testAtom);
+        const result = selectIsAtomUpdating(store.getState(), testAtom);
 
         expect(result).toBe(false);
     });
@@ -243,7 +243,7 @@ describe('isAtomUpdating', () => {
             loadingState: AtomLoadingState.Updating
         }]));
 
-        const result = isAtomUpdating(store.getState(), testAtom);
+        const result = selectIsAtomUpdating(store.getState(), testAtom);
 
         expect(result).toBe(true);
     });
