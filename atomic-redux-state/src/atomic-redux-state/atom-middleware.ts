@@ -15,6 +15,7 @@ import {
     AtomLoadingStateUpdate,
     AtomUpdate, batchInitialiseAtoms, initialiseAtom, initialiseAtomFromState, internalSet,
     internalSetLoadingState,
+    selectAtom,
     setAtom,
     SetAtomPayload
 } from './atom-slice';
@@ -258,7 +259,7 @@ const handleInitialiseAtomAction = <T>(
     atoms: Atoms,
     promises: AtomPromises,
     devtools: boolean
-): void => {
+): T => {
     const atom = action.payload;
     const pendingChanges = {
         stagedValues: {},
@@ -268,6 +269,7 @@ const handleInitialiseAtomAction = <T>(
     getAtomValue(store, middlewareStore, atom, atoms, promises, [], pendingChanges, devtools);
     middlewareStore.dispatch(internalAddNodeToGraph(atom.key));
     commitStagedUpdates(store, middlewareStore, pendingChanges, devtools);
+    return selectAtom(store.getState(), atom) as T;
 };
 
 const handleBatchInitialiseAtomsAction = <T>(
