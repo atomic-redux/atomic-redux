@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state-react
 
-This log was last generated on Wed, 27 Jul 2022 14:42:04 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Jul 2022 14:53:02 GMT and should not be manually modified.
+
+## 1.0.41
+Wed, 27 Jul 2022 14:53:02 GMT
+
+### Patches
+
+- Fix loading atoms returning as undefined instead of LoadingAtom
 
 ## 1.0.40
 Wed, 27 Jul 2022 14:42:04 GMT

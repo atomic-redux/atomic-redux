@@ -2,6 +2,20 @@
   "name": "atomic-redux-state-react",
   "entries": [
     {
+      "version": "1.0.41",
+      "tag": "atomic-redux-state-react_v1.0.41",
+      "date": "Wed, 27 Jul 2022 14:53:02 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix loading atoms returning as undefined instead of LoadingAtom",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "56c97fdec9979a7969eff382fceda93cb627a225"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.40",
       "tag": "atomic-redux-state-react_v1.0.40",
       "date": "Wed, 27 Jul 2022 14:42:04 GMT",
