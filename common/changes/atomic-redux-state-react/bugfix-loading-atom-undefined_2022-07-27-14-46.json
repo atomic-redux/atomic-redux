@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state-react",
+      "comment": "Fix loading atoms returning as undefined instead of LoadingAtom",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state-react"
+}
