@@ -1,19 +1,10 @@
 import {
-    AsyncAtomValue, Atom, AtomicStoreState, AtomValue,
-    batchInitialiseAtoms,
-    DefaultValue, getAtomValueFromState, isAtomUpdating,
-    LoadingAtom, setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
+    AsyncAtomValue, Atom, AtomicStoreState, AtomValue, DefaultValue, initialiseAtom, isAtomUpdating,
+    LoadingAtom, selectAtom, setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
 } from 'atomic-redux-state';
 import { Immutable } from 'immer';
-import { useCallback, useContext, useEffect, useLayoutEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AtomicReduxContext } from '../context/AtomicReduxContext';
-
-/**
- * useLayoutEffect cannot be used for SSR and throws warnings
- * This method will call useLayoutEffect in browsers and useEffect in SSR
- */
-const useSsrLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+import { useCallback, useSyncExternalStore } from 'react';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
 
@@ -22,24 +13,14 @@ export function useAtomicValue<T>(atom: Atom<T, AtomValue<T>>): Immutable<T>;
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom;
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom {
     const dispatch = useDispatch();
-    const context = useContext(AtomicReduxContext);
+    const store = useStore<AtomicStoreState>();
+    const storeState = useSyncExternalStore(
+        store.subscribe,
+        () => store.getState()
+    );
 
-    useSsrLayoutEffect(() => {
-        if (!context.atomsToInitialise.some(a => atom.key === a.key)) {
-            context.atomsToInitialise.push(atom);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (context.atomsToInitialise.length < 1) {
-            return;
-        }
-
-        dispatch(batchInitialiseAtoms(context.atomsToInitialise));
-        context.atomsToInitialise = [];
-    });
-
-    return useAtomicSelector(state => getAtomValueFromState(state, atom));
+    const initialValue = dispatch(initialiseAtom(atom)) as unknown as T;
+    return selectAtom(storeState, atom) ?? initialValue;
 }
 
 export const useSetAtomicState = <T>(

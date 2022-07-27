@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Return initialised atom value when initialiseAtom is dispatched",
+      "type": "minor"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}
