@@ -20,7 +20,7 @@ export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable
     );
 
     const initialValue = dispatch(initialiseAtom(atom)) as unknown as T;
-    return selectAtom(storeState, atom) ?? initialValue;
+    return selectAtom(storeState, atom) ?? initialValue ?? new LoadingAtom();
 }
 
 export const useSetAtomicState = <T>(
