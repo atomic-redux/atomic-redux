@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state-react
 
-This log was last generated on Fri, 22 Jul 2022 15:32:04 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Jul 2022 14:42:04 GMT and should not be manually modified.
+
+## 1.0.40
+Wed, 27 Jul 2022 14:42:04 GMT
+
+### Patches
+
+- Initialise atom synchronously to reduce calls to derived atom getters on initial page load
 
 ## 1.0.39
 Fri, 22 Jul 2022 15:32:04 GMT

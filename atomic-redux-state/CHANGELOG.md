@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Fri, 22 Jul 2022 15:32:04 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Jul 2022 14:42:04 GMT and should not be manually modified.
+
+## 2.4.0
+Wed, 27 Jul 2022 14:42:04 GMT
+
+### Minor changes
+
+- Return initialised atom value when initialiseAtom is dispatched
 
 ## 2.3.0
 Fri, 22 Jul 2022 15:32:04 GMT
