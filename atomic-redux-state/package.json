@@ -1,6 +1,6 @@
 {
   "name": "atomic-redux-state",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "A state management solution built on top of Redux, inspired by Recoil",
   "keywords": [
     "Redux",

@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Wed, 27 Jul 2022 14:42:04 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Jul 2022 15:59:48 GMT and should not be manually modified.
+
+## 2.5.0
+Wed, 27 Jul 2022 15:59:48 GMT
+
+### Minor changes
+
+- Memoise atom selectors
 
 ## 2.4.0
 Wed, 27 Jul 2022 14:42:04 GMT

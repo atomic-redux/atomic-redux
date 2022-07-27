@@ -2,6 +2,20 @@
   "name": "atomic-redux-state",
   "entries": [
     {
+      "version": "2.5.0",
+      "tag": "atomic-redux-state_v2.5.0",
+      "date": "Wed, 27 Jul 2022 15:59:48 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Memoise atom selectors",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "1ad7340183128df4228a64dbe2279df77f840d64"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.4.0",
       "tag": "atomic-redux-state_v2.4.0",
       "date": "Wed, 27 Jul 2022 14:42:04 GMT",

@@ -1,6 +1,11 @@
 # Change Log - atomic-redux-devtools
 
-This log was last generated on Wed, 27 Jul 2022 14:42:04 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Jul 2022 15:59:48 GMT and should not be manually modified.
+
+## 1.0.12
+Wed, 27 Jul 2022 15:59:48 GMT
+
+_Version update only_
 
 ## 1.0.11
 Wed, 27 Jul 2022 14:42:04 GMT
