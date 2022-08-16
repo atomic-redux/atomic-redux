@@ -2,6 +2,20 @@
   "name": "atomic-redux-state-react",
   "entries": [
     {
+      "version": "1.0.43",
+      "tag": "atomic-redux-state-react_v1.0.43",
+      "date": "Tue, 16 Aug 2022 14:43:03 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix useAtomicSelector re-rendering when other atom values change",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "3b3e4a6aa4862b792aa494d7d4b98aa055dd24ad"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.42",
       "tag": "atomic-redux-state-react_v1.0.42",
       "date": "Wed, 27 Jul 2022 15:59:48 GMT",
