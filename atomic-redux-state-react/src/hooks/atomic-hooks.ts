@@ -15,13 +15,17 @@ export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom {
     const dispatch = useDispatch();
     const store = useStore<AtomicStoreState>();
-    const storeState = useSyncExternalStore(
+    const storeAtomState = useSyncExternalStore(
         store.subscribe,
-        () => store.getState()
+        () => selectAtom(store.getState(), atom)
     );
 
+    if (storeAtomState !== undefined) {
+        return storeAtomState;
+    }
+
     const initialValue = dispatch(initialiseAtom(atom)) as unknown as T;
-    return selectAtom(storeState, atom) ?? initialValue ?? new LoadingAtom();
+    return initialValue ?? new LoadingAtom();
 }
 
 export const useSetAtomicState = <T>(
