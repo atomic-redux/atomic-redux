@@ -1,6 +1,13 @@
 # Change Log - atomic-redux-state
 
-This log was last generated on Wed, 27 Jul 2022 15:59:48 GMT and should not be manually modified.
+This log was last generated on Thu, 18 Aug 2022 14:42:40 GMT and should not be manually modified.
+
+## 2.5.1
+Thu, 18 Aug 2022 14:42:40 GMT
+
+### Patches
+
+- Stage initial loading state instead of setting directly
 
 ## 2.5.0
 Wed, 27 Jul 2022 15:59:48 GMT

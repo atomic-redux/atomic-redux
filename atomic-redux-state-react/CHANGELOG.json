@@ -2,6 +2,21 @@
   "name": "atomic-redux-state-react",
   "entries": [
     {
+      "version": "1.0.45",
+      "tag": "atomic-redux-state-react_v1.0.45",
+      "date": "Thu, 18 Aug 2022 14:42:40 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"atomic-redux-state\" from `2.5.0` to `2.5.1`"
+          },
+          {
+            "comment": "Updating dependency \"atomic-redux-state\" from `^2.5.0` to `^2.5.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.44",
       "tag": "atomic-redux-state-react_v1.0.44",
       "date": "Thu, 18 Aug 2022 13:59:37 GMT",
