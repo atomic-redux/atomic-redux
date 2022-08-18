@@ -4,7 +4,7 @@ import {
     setAtom, SyncOrAsyncValue, ValueOrSetter, WritableAtom
 } from 'atomic-redux-state';
 import { Immutable } from 'immer';
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
 const useAtomicSelector = <T>(selector: (state: AtomicStoreState) => T) => useSelector<AtomicStoreState, T>(selector);
@@ -15,13 +15,23 @@ export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable
 export function useAtomicValue<T>(atom: Atom<T, SyncOrAsyncValue<T>>): Immutable<T> | LoadingAtom {
     const dispatch = useDispatch();
     const store = useStore<AtomicStoreState>();
-    const storeAtomState = useSyncExternalStore(
-        store.subscribe,
-        () => selectAtom(store.getState(), atom)
-    );
+    const [value, setValue] = useState<T | undefined>(undefined);
 
-    if (storeAtomState !== undefined) {
-        return storeAtomState;
+    useEffect(() => {
+        const unsubscribe = store.subscribe(() => {
+            const newValue = selectAtom(store.getState(), atom);
+            if (newValue !== value) {
+                setValue(newValue);
+            }
+        });
+
+        return () => {
+            unsubscribe();
+        };
+    }, [store, atom]);
+
+    if (value !== undefined) {
+        return value;
     }
 
     const initialValue = dispatch(initialiseAtom(atom)) as unknown as T;

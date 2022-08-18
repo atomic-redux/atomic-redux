@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state-react",
+      "comment": "Use useEffect for managing useAtomicValue store subscription",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state-react"
+}
