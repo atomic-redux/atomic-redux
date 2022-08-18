@@ -672,7 +672,7 @@ async function handlePromise<T>(
     stageValue(pendingChanges, atomKey, value);
 
     if (promises[atomKey]!.length < 1) {
-        pendingChanges.stagedLoadingStates[atomKey] = AtomLoadingState.Idle;
+        stageLoadingState(pendingChanges, atomKey, AtomLoadingState.Idle);
     }
 
     if (atom === undefined) {
