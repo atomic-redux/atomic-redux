@@ -2,6 +2,20 @@
   "name": "atomic-redux-state-react",
   "entries": [
     {
+      "version": "1.0.44",
+      "tag": "atomic-redux-state-react_v1.0.44",
+      "date": "Thu, 18 Aug 2022 13:59:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Use useEffect for managing useAtomicValue store subscription",
+            "author": "Matthew Winfield <matthew.thomas.winfield@gmail.com>",
+            "commit": "4f99944e88f6f5e956424e0ce2796ed6a2680eda"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.43",
       "tag": "atomic-redux-state-react_v1.0.43",
       "date": "Tue, 16 Aug 2022 14:43:03 GMT",

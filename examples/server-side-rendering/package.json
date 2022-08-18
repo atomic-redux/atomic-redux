@@ -16,7 +16,7 @@
     "react-dom": "~18.1.0",
     "react-redux": "~8.0.2",
     "@reduxjs/toolkit": "~1.8.2",
-    "atomic-redux-state-react": "1.0.43",
+    "atomic-redux-state-react": "1.0.44",
     "atomic-redux-state": "2.5.0"
   },
   "devDependencies": {
