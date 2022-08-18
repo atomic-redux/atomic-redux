@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "atomic-redux-state",
+      "comment": "Stage initial loading state instead of setting directly",
+      "type": "patch"
+    }
+  ],
+  "packageName": "atomic-redux-state"
+}

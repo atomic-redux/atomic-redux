@@ -113,6 +113,10 @@ const stageValue = (pendingChanges: PendingChanges, atomKey: string, value: unkn
     pendingChanges.stagedValues[atomKey] = value;
 };
 
+const stageLoadingState = (pendingChanges: PendingChanges, atomKey: string, loadingState: AtomLoadingState) => {
+    pendingChanges.stagedLoadingStates[atomKey] = loadingState;
+};
+
 const clearStagedChanges = (pendingChanges: PendingChanges) => {
     pendingChanges.stagedValues = {};
     pendingChanges.stagedLoadingStates = {};
@@ -654,12 +658,13 @@ async function handlePromise<T>(
     promises[atomKey]!.push(promise);
 
     const atomState = store.getState().atoms.states[atomKey];
-    store.dispatch(internalSetLoadingState([{
+    stageLoadingState(
+        pendingChanges,
         atomKey,
-        loadingState: atomState === undefined
+        atomState === undefined
             ? AtomLoadingState.Loading
             : AtomLoadingState.Updating
-    }]));
+    );
 
     const value = await promise;
 
@@ -667,7 +672,7 @@ async function handlePromise<T>(
     stageValue(pendingChanges, atomKey, value);
 
     if (promises[atomKey]!.length < 1) {
-        pendingChanges.stagedLoadingStates[atomKey] = AtomLoadingState.Idle;
+        stageLoadingState(pendingChanges, atomKey, AtomLoadingState.Idle);
     }
 
     if (atom === undefined) {
